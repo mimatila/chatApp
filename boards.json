@@ -1,0 +1,58 @@
+{
+  "Mika": {
+    "users": [
+      {
+        "username": "Opa",
+        "email": "mika@gmail.com",
+        "role": "owner",
+        "password": "1",
+        "token": "081cf553-3d93-47c6-b2a8-8ef279acae2f"
+      }
+    ],
+    "boardMessages": [
+      {
+        "id": "e4512886-f36d-4146-9ae5-53cd1ffef524",
+        "author": "Opa",
+        "time": "2026-07-11T17:17:02.191Z",
+        "text": "hey",
+        "type": "normal"
+      },
+      {
+        "id": "df6e03a3-b003-4fe5-ad8b-ed9d130dd5a2",
+        "author": "Opa",
+        "time": "2026-07-11T17:17:07.167Z",
+        "text": "Kuntosalilla",
+        "type": "normal"
+      }
+    ],
+    "pendingRequests": [
+      {
+        "id": "546bc196-b1b5-4f45-84d6-672b4f9cbc66",
+        "username": "Eino",
+        "password": "1",
+        "email": "eino@gmail.com",
+        "status": "pending",
+        "time": "2026-07-11T17:17:31.842Z"
+      }
+    ],
+    "autoDeleteDays": 10,
+    "quickMessages": [
+      "Kaupassa",
+      "Töissä",
+      "Kotona",
+      "Nukkumassa",
+      "Syömässä",
+      "Tulossa",
+      "Myöhässä",
+      "Sairas",
+      "Tauolla",
+      "Kuntosalilla"
+    ],
+    "visitedUsers": [
+      {
+        "name": "Opa",
+        "lastSeen": 1783790275087
+      }
+    ]
+  }
+}
