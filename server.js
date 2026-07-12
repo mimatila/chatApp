@@ -3,6 +3,27 @@ const fs = require("fs");
 const cors = require("cors");
 const app = express();
 const crypto = require("crypto");
+const mysql = require("mysql2/promise");
+
+const pool = mysql.createPool({
+  host: "localhost",
+  port: 3306,
+  user: "mimatila",
+  password: "Ollikuhta70",
+  database: "chatApp",
+  waitForConnections: true,
+  connectionLimit: 10
+});
+
+(async () => {
+  try {
+    const conn = await pool.getConnection();
+    console.log("MariaDB connected!");
+    conn.release();
+  } catch (err) {
+    console.error(err);
+  }
+})();
 
 // 🔥 CORS ENSIN
 app.use(cors());
@@ -16,72 +37,78 @@ if (!fs.existsSync(FILE)) {
   fs.writeFileSync(FILE, "{}");
 }
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
 
   const { boardName, boardUsername, boardPassword } = req.body;
 
-  const data = loadData();
-  const board = data[boardName];
+  try {
 
-  if (!board) {
-    return res.status(404).json({ success: false, message: "Board not found" });
+    // Hae käyttäjä ja board yhdellä kyselyllä
+    const [rows] = await pool.query(
+      `SELECT users.id,
+              users.password,
+              users.role
+       FROM users
+       JOIN boards
+         ON users.board_id = boards.id
+       WHERE boards.name = ?
+         AND users.username = ?`,
+      [boardName, boardUsername]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Board or user not found"
+      });
+    }
+
+    const user = rows[0];
+
+    if (user.password !== boardPassword) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid login"
+      });
+    }
+
+    const token = crypto.randomUUID();
+
+    await pool.query(
+      "UPDATE users SET token = ? WHERE id = ?",
+      [token, user.id]
+    );
+
+    res.json({
+      success: true,
+      token,
+      username: boardUsername,
+      role: user.role
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
   }
 
-  const user = board.users.find(
-    u => u.username === boardUsername
-  );
-
-  if (!user || user.password !== boardPassword) {
-    return res.status(401).json({ success: false, message: "Invalid login" });
-  }
-
-  const token = crypto.randomUUID();
-  user.token = token;
-
-  saveData(data);
-
-  res.json({
-    success: true,
-    token,
-    username: boardUsername,
-    role: user.role
-  });
 });
 
-app.post("/create", (req, res) => {
+app.post("/create", async (req, res) => {
 
   const {
     boardName,
     boardUsername,
     boardPassword,
-    ownerEmail   // 👈 LISÄÄ TÄMÄ
+    ownerEmail
   } = req.body;
 
-  const data = loadData();
-
-  if (data[boardName]) {
-    return res.status(400).json({
-      success: false,
-      message: "Taulu on jo olemassa"
-    });
-  }
-
-  data[boardName] = {
-    users: [
-    {
-      username: boardUsername,
-      email: ownerEmail,   // 👈 TÄMÄ
-      role: "owner",
-      password: boardPassword,
-      token: null
-    }
-  ],
-
-  boardMessages: [],
-  pendingRequests: [],
-  autoDeleteDays: 10,
-
-  quickMessages: [
+  const quickMessages = [
     "Kaupassa",
     "Töissä",
     "Kotona",
@@ -92,159 +119,106 @@ app.post("/create", (req, res) => {
     "Sairas",
     "Tauolla",
     "Kuntosalilla"
-  ],
+  ];
 
-  visitedUsers: []
-};
+  const connection = await pool.getConnection();
 
-  saveData(data);
+  try {
 
-  res.json({
-    success: true,
-    message: "Board created!"
-  });
+    await connection.beginTransaction();
+
+    // Onko board jo olemassa?
+    const [boards] = await connection.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length > 0) {
+      await connection.rollback();
+      return res.status(400).json({
+        success: false,
+        message: "Taulu on jo olemassa"
+      });
+    }
+
+    // Luo board
+    const [boardResult] = await connection.query(
+      "INSERT INTO boards (name) VALUES (?)",
+      [boardName]
+    );
+
+    const boardId = boardResult.insertId;
+
+    // Luo owner
+    await connection.query(
+      `INSERT INTO users
+      (board_id, username, email, role, password, token)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        boardId,
+        boardUsername,
+        ownerEmail,
+        "owner",
+        boardPassword,
+        null
+      ]
+    );
+
+    // Luo asetukset
+    await connection.query(
+      `INSERT INTO settings
+      (board_id, autoDeleteDays)
+      VALUES (?, ?)`,
+      [
+        boardId,
+        10
+      ]
+    );
+
+    // Lisää quickMessages
+    for (const msg of quickMessages) {
+      await connection.query(
+        `INSERT INTO quickMessages
+        (board_id, message)
+        VALUES (?, ?)`,
+        [
+          boardId,
+          msg
+        ]
+      );
+    }
+
+    await connection.commit();
+
+    res.json({
+      success: true,
+      message: "Board created!"
+    });
+
+  } catch (err) {
+
+    await connection.rollback();
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
+  } finally {
+
+    connection.release();
+
+  }
 
 });
 
-app.delete("/delete/:boardName", (req, res) => {
+app.delete("/delete/:boardName", async (req, res) => {
 
   const boardName = req.params.boardName;
 
-  const data = loadData();
-  const board = data[boardName];
-
-  if (!board) {
-    return res.status(404).json({
-      success: false,
-      message: "Taulua ei löytynyt"
-    });
-  }
-
-  const user = authUser(req, board);
-
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: "Kirjaudu uudelleen"
-    });
-  }
-
-  console.log("ROLE:", user.role);
-
-  if (user.role !== "owner") {
-  return res.status(403).json({ success: false, message: "Not owner" });
-}
-
-  delete data[boardName];
-
-  saveData(data);
-
-  res.json({
-    success: true,
-    message: "Taulu poistettu"
-  });
-});
-
-app.post("/boardMessage", (req, res) => {
-
-  const {
-    boardName,
-    boardMessage,
-    type
-  } = req.body;
-
-  const token = req.headers.authorization;
-
-  const data = loadData();
-
-  const board = data[boardName];
-
-  if (!board) {
-    return res.status(404).json({
-      success: false,
-      message: "Taulua ei löydy"
-    });
-  }
-
-  // Tarkista token
-  const user = board.users.find(u => u.token === token);
-
-  console.log("FOUND USER:", user);
-
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: "Kirjaudu uudelleen"
-    });
-  }
-
-  cleanup(board);
-
-  board.boardMessages.push({
-    id: crypto.randomUUID(),
-    author: user.username,      // <-- käytetään tokenista löytynyttä käyttäjää
-    time: new Date().toISOString(),
-    text: boardMessage,
-    type
-  });
-
-  saveData(data);
-
-  res.json({
-    success: true,
-    message: "Viesti tallennettu"
-  });
-
-});
-
-app.get("/favicon.ico", (req, res) => {
-  res.status(204).end();
-});
-
-app.get("/board/:boardName", (req, res) => {
-
-  //const data = JSON.parse(fs.readFileSync(FILE, "utf8"));
-  const data = loadData();
-
-  const board = data[req.params.boardName];
-
-  if (!board) {
-    return res.status(404).json({
-      success: false,
-      message: "Taulua ei löydy"
-    });
-  }
-
-  cleanup(board);
-  //saveData(data);
-
-  res.json(board);
-});
-
-app.get("/boards", (req, res) => {
-
-  //const data = JSON.parse(fs.readFileSync(FILE, "utf8"));
-  const data = loadData();
-
-  res.json(data);
-});
-
-app.delete("/clear/:boardName", (req, res) => {
-
-  const data = loadData();
-
-  const board = data[req.params.boardName];
-
-  if (!board) {
-    return res.status(404).json({
-      success: false,
-      message: "Taulua ei löytynyt"
-    });
-  }
-
-  const user = authUser(req, board);
-
-  console.log(user);
+  const user = await authUser(req, boardName);
 
   if (!user) {
     return res.status(401).json({
@@ -256,91 +230,411 @@ app.delete("/clear/:boardName", (req, res) => {
   if (user.role !== "owner") {
     return res.status(403).json({
       success: false,
-      message: "Ei oikeuksia"
+      message: "Not owner"
     });
   }
 
-  board.boardMessages = [];
+  const connection = await pool.getConnection();
 
-  saveData(data);
+  try {
 
-  res.json({
-    success: true,
-    message: "Viestit tyhjennetty"
-  });
+    await connection.beginTransaction();
+
+    // Hae board_id
+    const [boards] = await connection.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length === 0) {
+      await connection.rollback();
+
+      return res.status(404).json({
+        success: false,
+        message: "Taulua ei löytynyt"
+      });
+    }
+
+    const boardId = boards[0].id;
+
+    await connection.query(
+  "DELETE FROM boards WHERE id = ?",
+  [boardId]
+);
+
+    await connection.commit();
+
+    res.json({
+      success: true,
+      message: "Taulu poistettu"
+    });
+
+  } catch (err) {
+
+    await connection.rollback();
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
+  } finally {
+
+    connection.release();
+
+  }
 
 });
 
-app.get("/boards/count", (req, res) => {
+app.post("/boardMessage", async (req, res) => {
 
-  const data = loadData();
-
-  const count = Object.keys(data).length;
-
-  console.log("COUNT:", count);
-
-  res.json({ count });
-});
-
-app.post("/quickMessages", (req, res) => {
-
-  console.log("HIT /quickMessages", req.body);
-
-  const { boardName, index, text } = req.body;
+  const {
+    boardName,
+    boardMessage,
+    type
+  } = req.body;
 
   const token = req.headers.authorization;
 
-  const data = loadData();
+  try {
 
-  const board = data[boardName];
+    // Hae käyttäjä tokenin perusteella
+    const [rows] = await pool.query(
+      `SELECT
+          users.username,
+          boards.id AS board_id
+       FROM users
+       JOIN boards
+         ON users.board_id = boards.id
+       WHERE boards.name = ?
+         AND users.token = ?`,
+      [boardName, token]
+    );
 
-if (!board) {
-  return res.status(404).json({ success: false });
-}
+    if (rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Kirjaudu uudelleen"
+      });
+    }
 
-const user = board.users.find(u => u.token === token);
+    const user = rows[0];
 
-if (!user) {
-  return res.status(401).json({
-    success: false,
-    message: "Kirjaudu uudelleen"
-  });
-}
+    // Lisätään viesti
+    await pool.query(
+      `INSERT INTO boardMessages
+       (id, board_id, author, time, text, type)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        crypto.randomUUID(),
+        user.board_id,
+        user.username,
+        new Date(),
+        boardMessage,
+        type
+      ]
+    );
 
-  // 🔥 VARMISTUS ETTÄ ARRAY ON OLEMASSA
-  if (!board.quickMessages) {
-    board.quickMessages = [
-      "Kaupassa",
-      "Töissä",
-      "Kotona",
-      "Nukkumassa",
-      "Syömässä",
-      "Tulossa",
-      "Myöhässä",
-      "Sairas",
-      "Tauolla",
-      "Kuntosalilla"
-    ];
-  }
-
-  // 🔥 INDEX CHECK TURVALLISESTI
-  if (
-    typeof index !== "number" ||
-    index < 0 ||
-    index >= board.quickMessages.length
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid index"
+    res.json({
+      success: true,
+      message: "Viesti tallennettu"
     });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
   }
 
-  board.quickMessages[index] = text;
+});
 
-  //fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-  saveData(data);
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
 
-  res.json({ success: true });
+app.get("/board/:boardName", async (req, res) => {
+
+  const boardName = req.params.boardName;
+
+  try {
+
+    // Hae board
+    const [boards] = await pool.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Taulua ei löydy"
+      });
+    }
+
+    const boardId = boards[0].id;
+
+    // Hae käyttäjät
+    const [users] = await pool.query(
+      `SELECT username, email, role, token
+       FROM users
+       WHERE board_id = ?`,
+      [boardId]
+    );
+
+    // Hae viestit
+    const [boardMessages] = await pool.query(
+      `SELECT id, author, time, text, type
+       FROM boardMessages
+       WHERE board_id = ?
+       ORDER BY time`,
+      [boardId]
+    );
+
+    // Hae liittymispyynnöt
+    const [pendingRequests] = await pool.query(
+      `SELECT id, username, password, email, status, time
+       FROM pendingRequests
+       WHERE board_id = ?`,
+      [boardId]
+    );
+
+    // Hae asetukset
+    const [settings] = await pool.query(
+      `SELECT autoDeleteDays
+       FROM settings
+       WHERE board_id = ?`,
+      [boardId]
+    );
+
+    // Hae pikaviestit
+    const [quickMessages] = await pool.query(
+      `SELECT message
+       FROM quickMessages
+       WHERE board_id = ?
+       ORDER BY id`,
+      [boardId]
+    );
+
+    // Hae viimeksi nähdyt käyttäjät
+    const [visitedUsers] = await pool.query(
+      `SELECT name, lastSeen
+       FROM visitedUsers
+       WHERE board_id = ?`,
+      [boardId]
+    );
+
+    // Rakennetaan sama JSON kuin ennen
+    const board = {
+
+      users,
+
+      boardMessages,
+
+      pendingRequests,
+
+      autoDeleteDays:
+        settings.length > 0
+          ? settings[0].autoDeleteDays
+          : 10,
+
+      quickMessages:
+        quickMessages.map(q => q.message),
+
+      visitedUsers
+
+    };
+
+    res.json(board);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
+  }
+
+});
+
+app.get("/boards", async (req, res) => {
+
+  try {
+
+    const [boards] = await pool.query(
+      "SELECT name FROM boards ORDER BY name"
+    );
+
+    res.json(boards);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
+  }
+
+});
+
+app.delete("/clear/:boardName", async (req, res) => {
+
+  const boardName = req.params.boardName;
+
+  try {
+
+    const user = await authUser(req, boardName);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Kirjaudu uudelleen"
+      });
+    }
+
+    if (user.role !== "owner") {
+      return res.status(403).json({
+        success: false,
+        message: "Ei oikeuksia"
+      });
+    }
+
+    // Hae board_id
+    const [boards] = await pool.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Taulua ei löytynyt"
+      });
+    }
+
+    const boardId = boards[0].id;
+
+    // Poista kaikki viestit
+    await pool.query(
+      "DELETE FROM boardMessages WHERE board_id = ?",
+      [boardId]
+    );
+
+    res.json({
+      success: true,
+      message: "Viestit tyhjennetty"
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
+  }
+
+});
+
+app.get("/boards/count", async (req, res) => {
+
+  try {
+
+    const [rows] = await pool.query(
+      "SELECT COUNT(*) AS count FROM boards"
+    );
+
+    res.json({
+      count: rows[0].count
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
+  }
+
+});
+
+app.post("/quickMessages", async (req, res) => {
+
+  const { boardName, index, text } = req.body;
+
+  try {
+
+    const user = await authUser(req, boardName);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Kirjaudu uudelleen"
+      });
+    }
+
+    // Hae board_id
+    const [boards] = await pool.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length === 0) {
+      return res.status(404).json({
+        success: false
+      });
+    }
+
+    const boardId = boards[0].id;
+
+    // Päivitä pikaviesti
+    const [result] = await pool.query(
+      `UPDATE quickMessages
+       SET message = ?
+       WHERE board_id = ?
+       AND id = ?`,
+      [text, boardId, index + 1]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid index"
+      });
+    }
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
+  }
+
 });
 
 function loadData() {
@@ -362,83 +656,161 @@ function cleanup(board) {
     );
 }
 
-app.delete("/message/:boardName/:id", (req, res) => {
+app.delete("/message/:boardName/:id", async (req, res) => {
 
   const { boardName, id } = req.params;
 
-  const data = loadData();
+  try {
 
-  const board = data[boardName];
+    const user = await authUser(req, boardName);
 
-  if (!board) {
-    return res.status(404).json({ success:false });
-  }
+    if (!user) {
+      return res.status(401).json({
+        success: false
+      });
+    }
 
-  const user = authUser(req, board);
+    // Hae viesti
+    const [rows] = await pool.query(
+      `SELECT
+          boardMessages.author,
+          boardMessages.board_id
+       FROM boardMessages
+       JOIN boards
+         ON boardMessages.board_id = boards.id
+       WHERE boards.name = ?
+         AND boardMessages.id = ?`,
+      [boardName, id]
+    );
 
-  if (!user) {
-    return res.status(401).json({ success:false });
-  }
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false
+      });
+    }
 
-  const message = board.boardMessages.find(m => m.id === id);
+    const message = rows[0];
 
-  if (!message) {
-    return res.status(404).json({ success:false });
-  }
+    // Owner saa poistaa kaiken,
+    // muut vain omat viestinsä
+    if (
+      user.role !== "owner" &&
+      message.author !== user.username
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Ei oikeuksia"
+      });
+    }
 
-  // Owner saa poistaa kaiken
-  // Muut saavat poistaa vain omat viestinsä
-  if (
-    user.role !== "owner" &&
-    message.author !== user.username
-  ) {
-    return res.status(403).json({
-      success:false,
-      message:"Ei oikeuksia"
+    // Poista viesti
+    await pool.query(
+      `DELETE FROM boardMessages
+       WHERE id = ?`,
+      [id]
+    );
+
+    res.json({
+      success: true
     });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
   }
-
-  board.boardMessages =
-    board.boardMessages.filter(m => m.id !== id);
-
-  saveData(data);
-
-  res.json({ success:true });
 
 });
 
-app.post("/visit", (req, res) => {
+app.post("/visit", async (req, res) => {
 
-  console.log("humppaa eka kerta");
-  
   const { boardName, boardUsername } = req.body;
 
-  const data = JSON.parse(fs.readFileSync(FILE, "utf8"));
-  const board = data[boardName];
+  try {
 
-  if (!board) {
-    return res.status(404).json({ success: false });
-  }
+    // Hae board_id
+    const [boards] = await pool.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
 
-  if (!board.visitedUsers) board.visitedUsers = [];
+    if (boards.length === 0) {
+      return res.status(404).json({
+        success: false
+      });
+    }
 
-  let user = board.visitedUsers.find(u => u.name === boardUsername);
-  console.log("humppaa");
-  if (user) {
-    user.lastSeen = Date.now();
-  } else {
-    board.visitedUsers.push({
-      name: boardUsername,
-      lastSeen: Date.now()
+    const boardId = boards[0].id;
+
+    // Onko käyttäjä jo olemassa?
+    const [rows] = await pool.query(
+      `SELECT id
+       FROM visitedUsers
+       WHERE board_id = ?
+       AND name = ?`,
+      [boardId, boardUsername]
+    );
+
+    if (rows.length > 0) {
+
+      // Päivitä aika
+      await pool.query(
+        `UPDATE visitedUsers
+         SET lastSeen = ?
+         WHERE board_id = ?
+         AND name = ?`,
+        [Date.now(), boardId, boardUsername]
+      );
+
+    } else {
+
+      // Lisää uusi
+      await pool.query(
+        `INSERT INTO visitedUsers
+        (board_id, name, lastSeen)
+        VALUES (?, ?, ?)`,
+        [boardId, boardUsername, Date.now()]
+      );
+
+    }
+
+    // Säilytetään vain 5 uusinta
+    await pool.query(
+      `DELETE FROM visitedUsers
+       WHERE board_id = ?
+       AND id NOT IN (
+         SELECT id
+         FROM (
+           SELECT id
+           FROM visitedUsers
+           WHERE board_id = ?
+           ORDER BY lastSeen DESC
+           LIMIT 5
+         ) AS latest
+       )`,
+      [boardId, boardId]
+    );
+
+    res.json({
+      success: true
     });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
   }
 
-  board.visitedUsers.sort((a, b) => b.lastSeen - a.lastSeen);
-  board.visitedUsers = board.visitedUsers.slice(0, 5);
-
-  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-
-  res.json({ success: true });
 });
 
 app.post("/settings", (req, res) => {
@@ -483,165 +855,265 @@ app.post("/settings", (req, res) => {
   });
 });
 
-app.post("/joinRequest", (req, res) => {
-
-  console.log("JOIN REQUEST HIT");
+app.post("/joinRequest", async (req, res) => {
 
   const { boardName, username, password, email } = req.body;
 
-  const data = loadData();
+  try {
 
-  const board = data[boardName];
+    // Hae board
+    const [boards] = await pool.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
 
-  if (board.users.some(u => u.username === username)) {
-    return res.json({
+    if (boards.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Board not found"
+      });
+    }
+
+    const boardId = boards[0].id;
+
+    // Onko käyttäjä jo olemassa?
+    const [users] = await pool.query(
+      `SELECT id
+       FROM users
+       WHERE board_id = ?
+       AND username = ?`,
+      [boardId, username]
+    );
+
+    if (users.length > 0) {
+      return res.json({
         success: false,
         message: "Username already exists."
+      });
+    }
+
+    // Onko liittymispyyntö jo olemassa?
+    const [requests] = await pool.query(
+      `SELECT id
+       FROM pendingRequests
+       WHERE board_id = ?
+       AND (username = ? OR email = ?)`,
+      [boardId, username, email]
+    );
+
+    if (requests.length > 0) {
+      return res.json({
+        success: false,
+        message: "Request already pending"
+      });
+    }
+
+    // Lisää liittymispyyntö
+    await pool.query(
+      `INSERT INTO pendingRequests
+      (id, board_id, username, password, email, status, time)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        crypto.randomUUID(),
+        boardId,
+        username,
+        password,
+        email,
+        "pending",
+        new Date()
+      ]
+    );
+
+    res.json({
+      success: true,
+      message: "Request sent"
     });
-}
 
-if (board.pendingRequests.some(r => r.username === username)) {
-  return res.json({
-    success: false,
-    message: "Join request already exists."
-  });
-}
+  } catch (err) {
 
-  if (!board) {
-    return res.status(404).json({
+    console.error(err);
+
+    res.status(500).json({
       success: false,
-      message: "Board not found"
+      message: "Database error"
     });
+
   }
 
-  if (!board.pendingRequests) {
-    board.pendingRequests = [];
-  }
-
-  // 👇 Tarkista onko jo olemassa
-  const exists = board.pendingRequests.some(
-    r => r.username === username || r.email === email
-  );
-
-  if (exists) {
-    return res.json({
-      success: false,
-      message: "Request already pending"
-    });
-  }
-
-  // 👇 Lisätään uusi pyyntö
-  board.pendingRequests.push({
-  id: crypto.randomUUID(),
-  username,
-  password,
-  email,
-  status: "pending",
-  time: new Date().toISOString()
 });
 
-  saveData(data);
-
-  res.json({
-    success: true,
-    message: "Request sent"
-  });
-
-});
-
-app.post("/acceptRequest", (req, res) => {
+app.post("/acceptRequest", async (req, res) => {
 
   const { boardName, id } = req.body;
 
-  const data = loadData();
-  const board = data[boardName];
+  const connection = await pool.getConnection();
 
-  if (!board) {
-    return res.status(404).json({ success: false });
+  try {
+
+    await connection.beginTransaction();
+
+    // Hae liittymispyyntö
+    const [rows] = await connection.query(
+      `SELECT
+          pendingRequests.*,
+          boards.id AS board_id
+       FROM pendingRequests
+       JOIN boards
+         ON pendingRequests.board_id = boards.id
+       WHERE boards.name = ?
+         AND pendingRequests.id = ?`,
+      [boardName, id]
+    );
+
+    if (rows.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({
+        success: false
+      });
+    }
+
+    const request = rows[0];
+
+    // Lisää käyttäjä
+    await connection.query(
+      `INSERT INTO users
+      (board_id, username, email, password, role, token)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        request.board_id,
+        request.username,
+        request.email,
+        request.password,
+        "member",
+        null
+      ]
+    );
+
+    // Poista liittymispyyntö
+    await connection.query(
+      `DELETE FROM pendingRequests
+       WHERE id = ?`,
+      [id]
+    );
+
+    await connection.commit();
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    await connection.rollback();
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false
+    });
+
+  } finally {
+
+    connection.release();
+
   }
 
-  const reqItem = board.pendingRequests.find(r => r.id === id);
-
-  if (!reqItem) {
-    return res.status(404).json({ success: false });
-  }
-
-  // 1. lisää users-listaan
-  board.users.push({
-    username: reqItem.username,
-    email: reqItem.email,
-    password: reqItem.password,
-    role: "member",
-    token: null
-  });
-
-  // 2. poista pendingistä
-  board.pendingRequests =
-    board.pendingRequests.filter(r => r.id !== id);
-
-  saveData(data);
-
-  res.json({ success: true });
 });
 
-app.post("/rejectRequest", (req, res) => {
+app.post("/rejectRequest", async (req, res) => {
 
   const { boardName, id } = req.body;
+  const token = req.headers.authorization;
 
-  const data = loadData();
-  const board = data[boardName];
+  try {
 
-  if (!board) {
-    return res.status(404).json({ success: false });
+    // Tarkista että token kuuluu ownerille tässä boardissa
+    const [owners] = await pool.query(
+      `SELECT users.id
+       FROM users
+       JOIN boards
+         ON users.board_id = boards.id
+       WHERE boards.name = ?
+         AND users.token = ?
+         AND users.role = 'owner'`,
+      [boardName, token]
+    );
+
+    if (owners.length === 0) {
+      return res.status(403).json({
+        success: false
+      });
+    }
+
+    // Poista liittymispyyntö
+    const [result] = await pool.query(
+      `DELETE pendingRequests
+       FROM pendingRequests
+       JOIN boards
+         ON pendingRequests.board_id = boards.id
+       WHERE boards.name = ?
+         AND pendingRequests.id = ?`,
+      [boardName, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Request rejected"
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
   }
 
-  const user = authUser(req, board);
-
-  if (!user) {
-    return res.status(401).json({ success: false });
-  }
-
-  if (user.role !== "owner") {
-    return res.status(403).json({ success: false });
-  }
-
-  // poista vain pendingistä
-  board.pendingRequests =
-    board.pendingRequests.filter(r => r.id !== id);
-
-  saveData(data);
-
-  res.json({
-    success: true,
-    message: "Request rejected"
-  });
 });
 
-app.post("/authCheck", (req, res) => {
+app.post("/authCheck", async (req, res) => {
 
   const { boardName } = req.body;
 
-  const data = loadData();
-  const board = data[boardName];
+  try {
 
-  if (!board) {
-    return res.status(404).json({ success: false });
+    const user = await authUser(req, boardName);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false
+      });
+    }
+
+    res.json({
+      success: true,
+      username: user.username,
+      role: user.role
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
+
   }
 
-  const user = authUser(req, board);
-
-  if (!user) {
-    return res.status(401).json({ success: false });
-  }
-
-  res.json({
-    success: true,
-    username: user.username,
-    role: user.role
-  });
 });
 
-function authUser(req, board) {
+async function authUser(req, boardName) {
 
     const token = req.headers.authorization;
 
@@ -649,7 +1121,21 @@ function authUser(req, board) {
         return null;
     }
 
-    return board.users.find(u => u.token === token);
+    const [rows] = await pool.query(
+        `SELECT users.*
+         FROM users
+         JOIN boards
+           ON users.board_id = boards.id
+         WHERE boards.name = ?
+           AND users.token = ?`,
+        [boardName, token]
+    );
+
+    if (rows.length === 0) {
+        return null;
+    }
+
+    return rows[0];
 }
 
 app.listen(3000, () => {
