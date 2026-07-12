@@ -142,10 +142,22 @@ app.post("/create", async (req, res) => {
     }
 
     // Luo board
-    const [boardResult] = await connection.query(
-      "INSERT INTO boards (name) VALUES (?)",
-      [boardName]
-    );
+    // Luo board
+const [boardResult] = await connection.query(
+  "INSERT INTO boards (name) VALUES (?)",
+  [boardName]
+);
+
+const boardId = boardResult.insertId;
+
+
+// Luo settings oletusarvolla 10 päivää
+await connection.query(
+  `INSERT INTO settings
+   (board_id, autoDeleteDays)
+   VALUES (?, ?)`,
+  [boardId, 10]
+);
 
     const boardId = boardResult.insertId;
 
@@ -322,21 +334,38 @@ app.post("/boardMessage", async (req, res) => {
 
     const user = rows[0];
 
-    // Lisätään viesti
-    await pool.query(
-      `INSERT INTO boardMessages
-       (id, board_id, author, time, text, type)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [
-        crypto.randomUUID(),
-        user.board_id,
-        user.username,
-        new Date(),
-        boardMessage,
-        type
-      ]
-    );
+    const [settings] = await pool.query(
+  `SELECT autoDeleteDays
+   FROM settings
+   WHERE board_id = ?`,
+  [boardId]
+);
 
+const autoDeleteDays = settings[0].autoDeleteDays;
+
+
+// Poista vanhat viestit
+await pool.query(
+  `DELETE FROM boardMessages
+   WHERE board_id = ?
+   AND time < DATE_SUB(NOW(), INTERVAL ? DAY)`,
+  [boardId, autoDeleteDays]
+);
+
+
+// Lisää uusi viesti
+await pool.query(
+  `INSERT INTO boardMessages
+   (id, board_id, author, time, text, type)
+   VALUES (?, ?, ?, NOW(), ?, ?)`,
+  [
+    crypto.randomUUID(),
+    boardId,
+    user.username,
+    boardMessage,
+    type
+  ]
+);
     res.json({
       success: true,
       message: "Viesti tallennettu"
@@ -813,46 +842,71 @@ app.post("/visit", async (req, res) => {
 
 });
 
-app.post("/settings", (req, res) => {
+app.post("/settings", async (req, res) => {
 
   const {
     boardName,
     autoDeleteDays
   } = req.body;
 
-  const data = loadData();
+  try {
 
-  const board = data[boardName];
+    const user = await authUser(req, boardName);
 
-  if (!board) {
-    return res.status(404).json({
-      success: false
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Kirjaudu uudelleen"
+      });
+    }
+
+    if (user.role !== "owner") {
+      return res.status(403).json({
+        success: false,
+        message: "Ei oikeuksia"
+      });
+    }
+
+    // Hae board_id
+    const [boards] = await pool.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length === 0) {
+      return res.status(404).json({
+        success: false
+      });
+    }
+
+    const boardId = boards[0].id;
+
+    // Päivitä asetus
+    await pool.query(
+      `UPDATE settings
+       SET autoDeleteDays = ?
+       WHERE board_id = ?`,
+      [
+        Number(autoDeleteDays),
+        boardId
+      ]
+    );
+
+    res.json({
+      success: true
     });
-  }
 
-  const user = authUser(req, board);
+  } catch (err) {
 
-  if (!user) {
-    return res.status(401).json({
+    console.error(err);
+
+    res.status(500).json({
       success: false,
-      message: "Kirjaudu uudelleen"
+      message: "Database error"
     });
+
   }
 
-  if (user.role !== "owner") {
-    return res.status(403).json({
-      success: false,
-      message: "Ei oikeuksia"
-    });
-  }
-
-  board.autoDeleteDays = Number(autoDeleteDays);
-
-  saveData(data);
-
-  res.json({
-    success: true
-  });
 });
 
 app.post("/joinRequest", async (req, res) => {
