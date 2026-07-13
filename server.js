@@ -161,9 +161,9 @@ const boardId = boardResult.insertId;
       [
         boardId,
         boardUsername,
-        ownerEmail,
-        "owner",
         boardPassword,
+        ownerEmail,
+        "owner",    
         null
       ]
     );

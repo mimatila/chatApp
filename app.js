@@ -515,8 +515,8 @@ function loginWithPassword() {
   },
     body: JSON.stringify({
     boardName,
-    boardPassword,
-    boardUsername
+    boardUsername,
+    boardPassword
 })
     })
   .then(res => res.json())
@@ -968,8 +968,8 @@ function submitCreateBoard() {
     body: JSON.stringify({
       boardName,
       boardUsername,
-      ownerEmail,
-      boardPassword
+      boardPassword,
+      ownerEmail
     })
   })
   .then(r => r.json())
