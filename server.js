@@ -1099,6 +1099,8 @@ app.post("/rejectRequest", async (req, res) => {
 
 app.post("/authCheck", async (req, res) => {
 
+  console.log("authCheck RUN");
+
   const { boardName } = req.body;
 
   try {

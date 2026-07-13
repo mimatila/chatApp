@@ -457,7 +457,7 @@ function updateMessage() {
   
 }
 
-
+/*
 // =====================
 // LOGIN
 // =====================
@@ -500,7 +500,7 @@ function loginBoard() {
 
   // 👇 jos tokenia ei ole
   loginWithPassword();
-}
+}*/
 
 function loginWithPassword() {
 
@@ -1120,8 +1120,12 @@ document.addEventListener("click", function(e) {
 
 });
 
-document.getElementById("requestsPopup").addEventListener("click", function(e) {
-  if (e.target === this) {
-    closeRequests();
-  }
-});
+const requestsPopup = document.getElementById("requestsPopup");
+
+if (requestsPopup) {
+  requestsPopup.addEventListener("click", function(e) {
+    if (e.target === this) {
+      closeRequests();
+    }
+  });
+}
