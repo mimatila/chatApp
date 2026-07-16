@@ -125,14 +125,24 @@ function initApp() {
 function bindUI() {
 
   const msgInput = document.getElementById("boardNewMsg");
+  
   if (msgInput) {
-    msgInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
+  msgInput.addEventListener("keydown", (e) => {
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      const editMode = document.getElementById("editMode")?.checked;
+
+      if (editMode) {
+        saveQuickMessage();
+      } else {
         updateMessage();
       }
-    });
-  }
+
+    }
+  });
+}
 
   document.addEventListener("change", (e) => {
   if (e.target?.id === "todayMode") {
@@ -662,6 +672,8 @@ function logout() {
 
 function saveQuickMessage() {
 
+  console.log("SAVE QUICK CALLED", editingIndex);
+
   if (editingIndex === null) {
     alert("Valitse ensin Edit-moodi");
     return;
@@ -672,6 +684,12 @@ function saveQuickMessage() {
 
   const boardName = localStorage.getItem("boardName");
   const token = localStorage.getItem("token");
+
+  console.log("SAVE QUICK DATA", {
+  boardName,
+  index: editingIndex,
+  text
+});
 
 fetch("http://localhost:3000/quickMessages", {
   method: "POST",
@@ -686,17 +704,28 @@ fetch("http://localhost:3000/quickMessages", {
   })
 })
   .then(res => res.json())
-  .then(() => {
+  .then(data => {
+
+     console.log("SAVE RESPONSE", data);
+
+    if (!data.success) {
+      alert(data.message);
+      return;
+    }
 
     document.getElementById("boardNewMsg").value = "";
 
     editingIndex = null;
 
-    document.getElementById("editMode").checked = false;
-    document.getElementById("editMode").dispatchEvent(new Event("change"));
+    const edit = document.getElementById("editMode");
+
+    if (edit) {
+      edit.checked = false;
+      edit.dispatchEvent(new Event("change"));
+    }
 
     loadMessage(true);
-  });
+});
 }
 
 function loadBoardCount() {
@@ -861,18 +890,25 @@ if (infoMode) {
 }
 
 document.getElementById("editMode")?.addEventListener("change", (e) => {
-  const saveBtn = document.getElementById("saveBtn");
 
-  if (!saveBtn) return;
+  const sendBtn = document.getElementById("sendBtn");
+
+  if (!sendBtn) return;
 
   if (e.target.checked) {
-    saveBtn.style.display = "inline-block";
+
+    sendBtn.textContent = "Save";
+    sendBtn.onclick = saveQuickMessage;
+
   } else {
-    saveBtn.style.display = "none";
-    editingIndex = null; // optional: reset edit state
+
+    sendBtn.textContent = "Send";
+    sendBtn.onclick = updateMessage;
+
+    editingIndex = null;
   }
 
-  loadMessage(false); // jo sulla on tämä idea käytössä
+  loadMessage(false);
 });
 
 const membersPopup = document.getElementById("membersPopup");

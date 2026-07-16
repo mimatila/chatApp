@@ -39,16 +39,17 @@ app.post("/login", async (req, res) => {
 
     // Hae käyttäjä ja board yhdellä kyselyllä
     const [rows] = await pool.query(
-      `SELECT users.id,
-              users.password,
-              users.role
-       FROM users
-       JOIN boards
-         ON users.board_id = boards.id
-       WHERE boards.name = ?
-         AND users.username = ?`,
-      [boardName, boardUsername]
-    );
+  `SELECT users.id,
+          users.password,
+          users.role,
+          users.username
+   FROM users
+   JOIN boards
+     ON users.board_id = boards.id
+   WHERE boards.name = ?
+     AND BINARY users.username = BINARY ?`,
+  [boardName, boardUsername]
+);
 
     if (rows.length === 0) {
       return res.status(404).json({
@@ -79,11 +80,11 @@ if (!ok) {
     );
 
     res.json({
-      success: true,
-      token,
-      username: boardUsername,
-      role: user.role
-    });
+  success: true,
+  token,
+  username: user.username,
+  role: user.role
+});
 
   } catch (err) {
 
@@ -672,13 +673,30 @@ app.post("/quickMessages", async (req, res) => {
     const boardId = boards[0].id;
 
     // Päivitä pikaviesti
-    const [result] = await pool.query(
-      `UPDATE quickMessages
-       SET message = ?
-       WHERE board_id = ?
-       AND id = ?`,
-      [text, boardId, index + 1]
-    );
+    const [rows] = await pool.query(
+  `SELECT id
+   FROM quickMessages
+   WHERE board_id = ?
+   ORDER BY id`,
+  [boardId]
+);
+
+const quickId = rows[index]?.id;
+
+if (!quickId) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid index"
+  });
+}
+
+const [result] = await pool.query(
+  `UPDATE quickMessages
+   SET message = ?
+   WHERE board_id = ?
+   AND id = ?`,
+  [text, boardId, quickId]
+);
 
     if (result.affectedRows === 0) {
       return res.status(400).json({

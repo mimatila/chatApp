@@ -45,14 +45,22 @@
 </div>
 
 <!-- viesti -->
-<div class="input-row">
+<div class="message-area">
 
   <span id="quickMessagesBtn" onclick="toggleQuickMessages()">
     💬
   </span>
-  
-  <input id="boardNewMsg" placeholder="Kirjoita viesti">
-  <button class="send-btn" onclick="updateMessage()">Send</button>
+
+  <div class="input-row">
+
+    <input id="boardNewMsg" placeholder="Kirjoita viesti">
+
+   <button id="sendBtn" class="send-btn" onclick="updateMessage()">
+  Send
+</button>
+
+  </div>
+
 </div>
 
 <div id="quickEditor" class="input-row">
@@ -60,9 +68,6 @@
     <option value="">Valitse tila...</option>
   </select>
 
-  <button id="saveBtn" onclick="saveQuickMessage()" style="display:none;">
-  Tallenna
-</button>
 </div>
 
 <button id="menuBtn">☰</button>

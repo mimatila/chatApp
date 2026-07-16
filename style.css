@@ -16,9 +16,8 @@ body {
 }
 
 input:not([type="checkbox"]) {
-  display: block;
-  margin: 10px auto;
   padding: 8px;
+  text-align: center;
 }
 
 button {
@@ -115,15 +114,19 @@ button {
   font-size: 12px;
 }
 
-#quickMessagesBtn {
-    font-size: 24px;
-    cursor: pointer;
-    user-select: none;
-    margin-right: 8px;
+.message-area {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-#quickMessagesBtn:hover {
-    opacity: 0.8;
+#quickMessagesBtn {
+  position: absolute;
+  left: -35px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .board {
@@ -187,10 +190,6 @@ button {
   z-index: 2000;
 }
 
-input {
-  text-align: center;
-}
-
 input::placeholder {
   text-align: center;
 }
@@ -249,6 +248,8 @@ input::placeholder {
 
 #boardNewMsg {
   flex: 1;
+  min-width: 0;
+  margin: 10px 0;
   font-size: 0.9rem;
   text-align: left;
   color: #2c5aa0;
