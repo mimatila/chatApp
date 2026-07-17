@@ -1234,6 +1234,71 @@ async function authUser(req, boardName) {
     return rows[0];
 }
 
+app.post("/removeMember", async (req, res) => {
+
+  const { boardName, username } = req.body;
+
+  try {
+
+    const owner = await authUser(req, boardName);
+
+    if (!owner || owner.role !== "owner") {
+      return res.status(403).json({
+        success: false,
+        message: "Only owner can remove members"
+      });
+    }
+
+    const [boards] = await pool.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Board not found"
+      });
+    }
+
+    const boardId = boards[0].id;
+
+
+    const [result] = await pool.query(
+      `DELETE FROM users
+       WHERE board_id = ?
+       AND username = ?
+       AND role = 'member'`,
+      [boardId, username]
+    );
+
+
+    if (result.affectedRows === 0) {
+      return res.json({
+        success: false,
+        message: "Member not found"
+      });
+    }
+
+
+    res.json({
+      success: true
+    });
+
+
+  } catch(err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success:false,
+      message:"Database error"
+    });
+
+  }
+
+});
+
 app.listen(3000, () => {
   console.log("Serveri käynnissä portissa 3000");
 });

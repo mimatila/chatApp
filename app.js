@@ -240,7 +240,7 @@ function initBoard() {
   });
 
   // Näkyvät vain memberille
-const memberButtons = ["deleteUserBtn"];
+const memberButtons = ["leaveBoardBtn"];
 
 memberButtons.forEach(id => {
   const btn = document.getElementById(id);
@@ -261,6 +261,12 @@ memberButtons.forEach(id => {
   if (!boardNameEl || !box || !boardName) return;
 
   boardNameEl.innerText = boardName;
+
+  const leaveBtn = document.getElementById("leaveBoardBtn");
+
+if (leaveBtn) {
+  leaveBtn.style.display = "none";
+}
 
 if (refreshInterval) clearInterval(refreshInterval);
 
@@ -892,8 +898,19 @@ if (infoMode) {
 document.getElementById("editMode")?.addEventListener("change", (e) => {
 
   const sendBtn = document.getElementById("sendBtn");
+  const leaveBtn = document.getElementById("leaveBoardBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
+  const deleteBoardBtn = document.getElementById("deleteBoardBtn");
+  const role = localStorage.getItem("role");
 
   if (!sendBtn) return;
+
+  if (leaveBtn) {
+    leaveBtn.style.display =
+      (role === "member" && e.target.checked)
+        ? "block"
+        : "none";
+  }
 
   if (e.target.checked) {
 
@@ -907,6 +924,22 @@ document.getElementById("editMode")?.addEventListener("change", (e) => {
 
     editingIndex = null;
   }
+
+  if (settingsBtn) {
+  settingsBtn.style.display =
+    (role === "owner" && e.target.checked)
+      ? "block"
+      : "none";
+}
+
+if (deleteBoardBtn) {
+  deleteBoardBtn.style.display =
+    (role === "owner" && e.target.checked)
+      ? "block"
+      : "none";
+}
+
+  
 
   loadMessage(false);
 });
@@ -950,8 +983,12 @@ function showMembers() {
 
       const owners = members.filter(m => m.role === "owner");
       const others = members.filter(m => m.role !== "owner");
+      const editMode = document.getElementById("editMode")?.checked;
+      const owner = localStorage.getItem("role") === "owner";
 
-      console.log(members);
+      console.log("members: ",members);
+      console.log("owner:", owner);
+console.log("editMode:", editMode);
 
       el.innerHTML =
       owners.map(m => `
@@ -962,12 +999,20 @@ function showMembers() {
       `).join("") +
 
     `<div class="member-grid">
-        ${others.map(m => `
-            <div class="member-row">
-                ${m.username}
-                <span class="member-role">(${m.role})</span>
-            </div>
-        `).join("")}
+       ${others.map(m => `
+    <div class="member-row">
+        ${m.username}
+        <span class="member-role">(${m.role})</span>
+
+        ${owner && editMode
+          ? `<button
+  class="member-trash-btn"
+  onclick="removeMember('${m.username}')">
+  🗑
+</button>`
+          : ""}
+    </div>
+`).join("")}
     </div>`;
 
       popup.style.display = "block";
@@ -1215,5 +1260,38 @@ if (requestsPopup) {
     if (e.target === this) {
       closeRequests();
     }
+  });
+}
+
+function removeMember(username) {
+
+  if (!confirm(`Poistetaanko käyttäjä ${username}?`)) {
+    return;
+  }
+
+  const boardName = localStorage.getItem("boardName");
+  const token = localStorage.getItem("token");
+
+  fetch("http://localhost:3000/removeMember", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({
+      boardName,
+      username
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    if (!data.success) {
+      alert(data.message || "Remove failed");
+      return;
+    }
+
+    showMembers();
+    loadMessage(false);
   });
 }

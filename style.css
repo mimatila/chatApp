@@ -15,9 +15,16 @@ body {
   border: 1px solid #ccc;
 }
 
+.login-box h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
 input:not([type="checkbox"]) {
-  padding: 8px;
+  display: block;
   text-align: center;
+  margin: 5px auto;
+  padding: 8px;
 }
 
 button {
@@ -377,10 +384,43 @@ input::placeholder {
     gap: 6px 16px;
 }
 
+/*
 .member-row {
     text-align: center;
     padding: 4px 0;
 }
+
+.member-trash-btn {
+  margin-left: 10px;
+  cursor: pointer;
+}*/
+
+.member-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.member-trash-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.member-trash-btn:hover {
+    transform: scale(1.2);
+}
+
+
 
 .member-name {
     display: inline;
@@ -395,4 +435,16 @@ input::placeholder {
   color: white;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.login-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-box input,
+.login-box button {
+  width: 100%;
+  box-sizing: border-box;
 }
