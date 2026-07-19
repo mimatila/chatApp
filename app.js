@@ -1153,7 +1153,13 @@ function saveQuickMessages() {
       return;
     }
 
-    document.getElementById("editMode").checked = false;
+    const edit = document.getElementById("editMode");
+
+    if (edit && edit.checked) {
+      edit.checked = false;
+      edit.dispatchEvent(new Event("change"));
+    }
+
     closeQuickMessages();
     loadMessage(false);
 

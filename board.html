@@ -57,22 +57,12 @@
 </div>
 <button id="menuBtn">☰</button>
 <div class="top-nav" id="topMenu">
+  <button onclick="showMembers()"> Members </button>
+  <button id="requestsBtn" onclick="openRequests()"> Requests </button>
   <button id="deleteBoardBtn" onclick="deleteBoard()">Delete Board</button>
-  <button id="requestsBtn" onclick="openRequests()">
-  Requests
-</button>
-  <button onclick="showMembers()">
-    Members
-  </button>
-   <button id="leaveBoardBtn" onclick="leaveBoard()">
-    Leave Board
-  </button>
-  <button id="settingsBtn" onclick="openSettings()">
-    Settings
-  </button>
-  <button onclick="logout()">
-    Logout
-  </button>
+  <button id="leaveBoardBtn" onclick="leaveBoard()"> Leave Board </button>
+  <button id="settingsBtn" onclick="openSettings()"> Settings </button>
+  <button onclick="logout()"> Logout </button>
 </div>
 
 <div id="membersPopup" class="popup">

@@ -7,7 +7,16 @@ body {
   font-family: Arial;
   text-align: center;
   margin-top: 80px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
+
+/*
+.allow-select {
+    user-select: text;
+}*/
 
 .board-container {
     max-width: 700px;
