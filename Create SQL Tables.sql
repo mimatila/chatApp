@@ -4,7 +4,8 @@ USE chatApp;
 
 CREATE TABLE boards (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) UNIQUE
+    name VARCHAR(100) UNIQUE,
+    boardType VARCHAR(20) NOT NULL DEFAULT 'family'
 );
 
 CREATE TABLE users (
