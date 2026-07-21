@@ -1101,11 +1101,19 @@ function renderQuickPopup(){
 } else {
 
   el.innerHTML =
-    quickMessages.map((msg, index) => `
-      <div class="quick-row" onclick="sendQuickMessage('${msg}')">
-        ${msg}
-      </div>
-    `).join("");
+    quickMessages.map((msg, index) => {
+
+      const shortMsg = msg.length > 39 
+        ? msg.substring(0, 39) + "..."
+        : msg;
+
+      return `
+        <div class="quick-row" onclick="sendQuickMessage(this, '${msg}')">
+          ${shortMsg}
+        </div>
+      `;
+
+    }).join("");
 
 
       }
@@ -1114,10 +1122,19 @@ function renderQuickPopup(){
     });
 } 
 
-function sendQuickMessage(msg) {
-    document.getElementById("boardNewMsg").value = msg;
-    updateMessage();
-    closeQuickMessages();
+function sendQuickMessage(el, msg) {
+
+    el.classList.add("pressed");
+
+    setTimeout(() => {
+        el.classList.remove("pressed");   // <-- tämä puuttuu
+    }, 400);
+
+    setTimeout(() => {
+        document.getElementById("boardNewMsg").value = msg;
+        updateMessage();
+        closeQuickMessages();
+    }, 800);
 }
 
 function saveQuickMessages() {
@@ -1155,13 +1172,12 @@ function saveQuickMessages() {
 
     const edit = document.getElementById("editMode");
 
-    if (edit && edit.checked) {
-      edit.checked = false;
-      edit.dispatchEvent(new Event("change"));
-    }
+   if (edit && edit.checked) {
+  edit.checked = false;
+}
 
-    closeQuickMessages();
-    loadMessage(false);
+closeQuickMessages();
+loadMessage(false);
 
   })
   .catch(err => {
