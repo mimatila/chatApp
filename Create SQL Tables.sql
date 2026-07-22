@@ -29,7 +29,8 @@ CREATE TABLE boardMessages (
     time DATETIME,
     text TEXT,
     type VARCHAR(20),
-    category VARCHAR(50),
+    category VARCHAR(50) NOT NULL DEFAULT 'general',
+    topic VARCHAR(100) DEFAULT NULL,
 
     FOREIGN KEY (board_id)
         REFERENCES boards(id)
