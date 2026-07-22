@@ -508,3 +508,12 @@ input::placeholder {
 #quickMessagesList {
     overflow-y: visible;
 }
+
+.notice-row {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notice-row .msg-content {
+    display: flex;
+}

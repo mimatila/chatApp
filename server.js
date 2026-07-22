@@ -103,6 +103,7 @@ app.post("/create", async (req, res) => {
 
   const {
     boardName,
+    boardType,
     boardUsername,
     boardPassword,
     ownerEmail
@@ -143,8 +144,8 @@ app.post("/create", async (req, res) => {
 
     // Luo board
 const [boardResult] = await connection.query(
-  "INSERT INTO boards (name) VALUES (?)",
-  [boardName]
+  "INSERT INTO boards (name, boardType) VALUES (?, ?)",
+  [boardName, boardType]
 );
 
 const boardId = boardResult.insertId;
@@ -435,9 +436,9 @@ app.get("/board/:boardName", async (req, res) => {
 
     // Hae board
     const [boards] = await pool.query(
-      "SELECT id FROM boards WHERE name = ?",
-      [boardName]
-    );
+  "SELECT id, boardType FROM boards WHERE name = ?",
+  [boardName]
+);
 
     if (boards.length === 0) {
       return res.status(404).json({
@@ -500,6 +501,8 @@ app.get("/board/:boardName", async (req, res) => {
 
     // Rakennetaan sama JSON kuin ennen
     const board = {
+
+      boardType: boards[0].boardType,
 
       users,
 

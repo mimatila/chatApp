@@ -28,10 +28,18 @@
 <div id="createPopup" class="popup">
   <div class="popup-content">
     <h3>Create Board</h3>
+
+    <label for="cp_boardType">Board Type</label>
+    <select id="cp_boardType">
+      <option value="family">Family</option>
+      <option value="notice">Notice</option>
+    </select>
+
     <input id="cp_boardName" placeholder="Board Name">
     <input id="cp_username" placeholder="Username">
     <input id="cp_email" placeholder="Email">
     <input id="cp_boardPassword" placeholder="Board Password" type="password">
+
     <button onclick="submitCreateBoard()">Create</button>
     <button onclick="closeCreatePopup()">Cancel</button>
   </div>
@@ -54,7 +62,7 @@
   </div>
 </div>
 
-<script src="app.js"></script>
+<script src="app.js?v=2"></script>
 
 </body>
 </html>

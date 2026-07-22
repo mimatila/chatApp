@@ -166,6 +166,7 @@ if (leaveBtn) {
 
 updateEditModeUI();
 
+/*
 if (refreshInterval) clearInterval(refreshInterval);
 
 refreshInterval = setInterval(() => {
@@ -173,6 +174,19 @@ refreshInterval = setInterval(() => {
     loadMessage(false);
   }
 }, 5000);
+*/
+
+if (refreshInterval) clearInterval(refreshInterval);
+
+const boardType = localStorage.getItem("boardType");
+
+const refreshTime = boardType === "notice" ? 60000 : 15000;
+
+refreshInterval = setInterval(() => {
+  if (!document.hidden) {
+    loadMessage(false);
+  }
+}, refreshTime);
 
 }
 
@@ -198,7 +212,22 @@ function loadMessage(forceScroll = false) {
   .then(res => res.json())
   .then(data => {
 
+    console.log("Board type123:", data.boardType);
+
+  const boardType = data.boardType;
+  localStorage.setItem("boardType", boardType);
+
   const requestButton = document.getElementById("requestsBtn");
+
+  const quickBtn = document.getElementById("quickMessagesBtn");
+
+if (quickBtn) {
+    if (data.boardType === "notice") {
+        quickBtn.style.display = "none";
+    } else {
+        quickBtn.style.display = "inline";
+    }
+}
 
   if (requestButton) {
     if (data.pendingRequests.length > 0) {
@@ -238,7 +267,12 @@ function loadMessage(forceScroll = false) {
 messages.forEach(msg => {
 
   const div = document.createElement("div");
-  div.className = "msg-row";
+
+  if (data.boardType === "notice") {
+    div.className = "notice-row";
+  } else {
+    div.className = "msg-row";
+  }
 
   if (msg.type === "important") {
     div.classList.add("important-msg");
@@ -571,12 +605,32 @@ function renderVisitedUsers(users) {
     .sort((a, b) => b.lastSeen - a.lastSeen)
     .slice(0, 5);
 
+    /*
   const loggedUser = localStorage.getItem("boardUsername") || "";
 
   el.innerHTML =
   `👤 Logged in: <b>${loggedUser}</b>&nbsp;&nbsp;&nbsp;&nbsp;🟢 Last visited: ` +
   sorted.map(u => u.name).join(", ");
+  */
+  const loggedUser = localStorage.getItem("boardUsername") || "";
+  const boardType = localStorage.getItem("boardType") || "family";
+
+  const typeInfo =
+  boardType === "notice"
+    ? "📢 Notice"
+    : "🏠 Family";
+
+  const typeText =
+    boardType === "notice" ? "Notice" : "Family";
+
+  el.innerHTML =
+`📌 Type: <b>${typeInfo}</b>&nbsp;&nbsp;&nbsp;&nbsp;👤 Logged in: <b>${loggedUser}</b>&nbsp;&nbsp;&nbsp;&nbsp;🟢 Last visited: ` +
+sorted.map(u => u.name).join(", ");
+
+  
 }
+
+
 
 function updateQuickUI(data) {
   //currentButtonsCache = data.quickMessages ?? [];
@@ -828,9 +882,12 @@ function closeCreatePopup() {
 function submitCreateBoard() {
 
   const boardName = document.getElementById("cp_boardName").value;
+  const boardType = document.getElementById("cp_boardType").value;
   const boardUsername = document.getElementById("cp_username").value;
   const ownerEmail = document.getElementById("cp_email").value;
   const boardPassword = document.getElementById("cp_boardPassword").value;
+
+  console.log("boardType: ",boardType);
 
   fetch("http://localhost:3000/create", {
     method: "POST",
@@ -839,6 +896,7 @@ function submitCreateBoard() {
   },
     body: JSON.stringify({
       boardName,
+      boardType,
       boardUsername, 
       boardPassword,
       ownerEmail,
@@ -852,6 +910,7 @@ function submitCreateBoard() {
 
       loadBoardCount();      // <-- tämä
       document.getElementById("cp_boardName").value = "";
+      document.getElementById("cp_boardType").value = "family";
       document.getElementById("cp_username").value = "";
       document.getElementById("cp_email").value = "";
       document.getElementById("cp_boardPassword").value = "";
