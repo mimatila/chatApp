@@ -43,7 +43,8 @@ app.post("/login", async (req, res) => {
        users.password,
        users.role,
        users.username,
-       boards.boardType
+       boards.boardType,
+       boards.noticeTemplate
    FROM users
    JOIN boards
      ON users.board_id = boards.id
@@ -87,7 +88,8 @@ if (!ok) {
   token,
   username: user.username,
   role: user.role,
-  boardType: user.boardType
+  boardType: user.boardType,
+  noticeTemplate: user.noticeTemplate
 });
 
   } catch (err) {
@@ -108,6 +110,7 @@ app.post("/create", async (req, res) => {
   const {
     boardName,
     boardType,
+    noticeTemplate,
     boardUsername,
     boardPassword,
     ownerEmail
@@ -148,8 +151,12 @@ app.post("/create", async (req, res) => {
 
     // Luo board
 const [boardResult] = await connection.query(
-  "INSERT INTO boards (name, boardType) VALUES (?, ?)",
-  [boardName, boardType]
+  "INSERT INTO boards (name, boardType, noticeTemplate) VALUES (?, ?, ?)",
+  [
+    boardName,
+    boardType,
+    boardType === "notice" ? noticeTemplate : null
+  ]
 );
 
 const boardId = boardResult.insertId;
@@ -447,7 +454,7 @@ app.get("/board/:boardName", async (req, res) => {
 
     // Hae board
     const [boards] = await pool.query(
-  "SELECT id, boardType FROM boards WHERE name = ?",
+  "SELECT id, boardType, noticeTemplate FROM boards WHERE name = ?",
   [boardName]
 );
 
@@ -514,6 +521,8 @@ app.get("/board/:boardName", async (req, res) => {
     const board = {
 
       boardType: boards[0].boardType,
+
+      noticeTemplate: boards[0].noticeTemplate,
 
       users,
 
@@ -614,6 +623,7 @@ app.post("/loadMessages", async (req, res) => {
 
 });
 
+/*
 app.get("/boards", async (req, res) => {
 
   try {
@@ -635,7 +645,7 @@ app.get("/boards", async (req, res) => {
 
   }
 
-});
+});*/
 
 app.delete("/clear/:boardName", async (req, res) => {
 

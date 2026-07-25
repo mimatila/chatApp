@@ -1,17 +1,13 @@
 let loading = false;
 let refreshInterval = null;
+let categories = [];
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
 console.log("APP START");
 
-const categories = [
-    "general",
-    "maintenance",
-    "meetings",
-    "events",
-    "Sports"
-];
+
+const categories_family = [];
 
 const categories_taloyhtio = [
     "general",
@@ -159,15 +155,38 @@ function initBoard() {
 
   const role = localStorage.getItem("role");
 
+  const boardType = localStorage.getItem("boardType");
+  const noticeTemplate = localStorage.getItem("noticeTemplate");
+
+  console.log("INIT boardType:", boardType);
+console.log("INIT noticeTemplate:", noticeTemplate);
+
+  categories = selectCategories(boardType, noticeTemplate);
+
+  const savedCategory = localStorage.getItem("currentCategory") || "general";
+
+  currentCategory = savedCategory;
+
   loadCategories();
 
-  document.getElementById("categorySelect").value = "general";
+  console.log("AFTER loadCategories:");
+console.log(
+  "savedCategory:",
+  savedCategory
+);
+console.log(
+  "select value:",
+  document.getElementById("categorySelect").value
+);
+
+  document.getElementById("categorySelect").value = savedCategory;
+  
+  currentTopic = "";
 
   document.getElementById("topicSelect").innerHTML =
     '<option value="">select topic</option>';
 
-  currentCategory = "general";
-  currentTopic = "";
+  
 
   initLanguage();
 
@@ -223,29 +242,6 @@ if (leaveBtn) {
 
 updateEditModeUI();
 
-/*
-if (refreshInterval) clearInterval(refreshInterval);
-
-refreshInterval = setInterval(() => {
-  if (!document.hidden) {
-    loadMessage(false);
-  }
-}, 5000);
-*/
-
-/*
-initLanguage();
-
-langFi.onclick = () => {
-    localStorage.setItem("language", "fi");
-    loadLanguage();
-};
-
-langEn.onclick = () => {
-    localStorage.setItem("language", "en");
-    loadLanguage();
-};*/
-
 const topicSelect = document.getElementById("topicSelect");
 
 topicSelect.onchange = function () {
@@ -261,35 +257,12 @@ topicSelect.onchange = function () {
 
 if (refreshInterval) clearInterval(refreshInterval);
 
-const boardType = localStorage.getItem("boardType");
-/*
-let categories;
 
-if (boardType === "notice") {
 
-    switch (noticeTemplate) {
 
-        case "taloyhtio":
-            categories = categories_taloyhtio;
-            break;
 
-        case "urheiluseura":
-            categories = categories_urheiluseura;
-            break;
-        case "koulu":
-            categories = categories_urheiluseura;
-            break;
-        case "yhdistys":
-            categories = categories_urheiluseura;
-            break;
-
-    }
-
-} else {
-
-    categories = categories_family;
-
-}*/
+console.log("boardType:", boardType);
+console.log("noticeTemplate:", noticeTemplate);
 
 const refreshTime = boardType === "notice" ? 60000 : 15000;
 
@@ -299,14 +272,16 @@ refreshInterval = setInterval(() => {
   }
 }, refreshTime);
 
-
 const topicSummary = document.getElementById("topicSummary");
 
 if (boardType === "notice") {
-    //topicSummary.style.display = "block";
-    loadTopicCounts();
+
     clearMessages();
+
     loadTopicsFromDatabase(currentCategory);
+
+    loadTopicCounts();
+
 }else {
     topicSummary.style.display = "none";
 }
@@ -321,6 +296,33 @@ if (boardType === "notice") {
     document.getElementById("topicBtn").style.display = "none";
 }
 
+}
+
+function selectCategories(boardType, noticeTemplate) {
+
+    if (boardType === "notice") {
+
+        switch (noticeTemplate) {
+
+            case "taloyhtio":
+                return categories_taloyhtio;
+
+            case "urheiluseura":
+                return categories_urheiluseura;
+
+            case "koulu":
+                return categories_koulu;
+
+            case "yhdistys":
+                return categories_yhdistys;
+
+            default:
+                return categories_taloyhtio;
+        }
+
+    }
+
+    return categories_family;
 }
 
 function initLanguage() {
@@ -367,6 +369,10 @@ function loadCategories() {
         });
 
     });
+    console.log(
+  "loadCategories END value:",
+  document.getElementById("categorySelect").value
+);
 }
 
 function loadLanguage(lang) {
@@ -426,7 +432,13 @@ function loadMessage(forceScroll = false) {
     console.log("visitedUsers:", data.visitedUsers);
 
   const boardType = data.boardType;
+  const noticeTemplate = data.noticeTemplate;
   localStorage.setItem("boardType", boardType);
+  localStorage.setItem("noticeTemplate", noticeTemplate);
+
+  categories = selectCategories(boardType, noticeTemplate);
+
+  //loadCategories();
 
   if (boardType === "notice" && !currentTopic) {
     clearMessages();
@@ -691,6 +703,7 @@ function loginWithPassword() {
     localStorage.setItem("boardUsername", boardUsername);
     localStorage.setItem("role", data.role);
     localStorage.setItem("boardType", data.boardType);
+    localStorage.setItem("noticeTemplate", data.noticeTemplate);
 
     await fetch("http://localhost:3000/visit", {
       method: "POST",
@@ -703,6 +716,8 @@ function loginWithPassword() {
       })
     });
 
+    console.log("LOGIN boardType:", localStorage.getItem("boardType"));
+console.log("LOGIN noticeTemplate:", localStorage.getItem("noticeTemplate"));
     window.location.href = "board.html";
   });
 } 
@@ -815,6 +830,8 @@ function clearTable() {
     alert(data.message);
 
     if (data.success) {
+      loadTopicsFromDatabase(currentCategory);
+      loadTopicCounts();
       loadMessage(true);
     }
 
@@ -1183,6 +1200,7 @@ function submitCreateBoard() {
     body: JSON.stringify({
       boardName,
       boardType,
+      noticeTemplate,
       boardUsername, 
       boardPassword,
       ownerEmail,
@@ -1197,6 +1215,7 @@ function submitCreateBoard() {
       loadBoardCount();      // <-- tämä
       document.getElementById("cp_boardName").value = "";
       document.getElementById("cp_boardType").value = "family";
+      document.getElementById("cp_noticeTemplate").value = "taloyhtio";
       document.getElementById("cp_username").value = "";
       document.getElementById("cp_email").value = "";
       document.getElementById("cp_boardPassword").value = "";
@@ -1246,6 +1265,10 @@ if (!message.trim()) {
 
 console.log("boardName:", boardName);
 
+console.log("Saving topic");
+console.log("Category:", category);
+console.log("Topic:", topic);
+
   fetch("http://localhost:3000/createTopic", {
     method: "POST",
     headers: {
@@ -1268,19 +1291,21 @@ console.log("boardName:", boardName);
 if (data.success) {
 
     closeTopicPopup();
-    if (data.boardType === "notice") {
-    loadTopicCounts();
-}
-
-    document.getElementById("categorySelect").value = category;
 
     currentCategory = category;
+    document.getElementById("categorySelect").value = category;
+    localStorage.setItem("currentCategory", category);
 
-    console.log("Calling loadTopics");
-console.log("category:", category);
-console.log("topic:", topic);
- console.log("submitTopic -> loadTopicsFromDatabase");
+    console.log(
+  "submitTopic select after set:",
+  document.getElementById("categorySelect").value
+);
+
     loadTopicsFromDatabase(category, topic);
+
+    if (data.boardType === "notice") {
+        loadTopicCounts();
+    }
 
     document.getElementById("cp_category").value = "general";
     document.getElementById("cp_topic").value = "";
@@ -1292,17 +1317,20 @@ console.log("topic:", topic);
 
 function changeCategory() {
 
-    const category = document.getElementById("categorySelect").value;
+    currentCategory = document.getElementById("categorySelect").value;
+
     const topicSelect = document.getElementById("topicSelect");
 
-    currentCategory = category;
+    localStorage.setItem("currentCategory", currentCategory);
+
     currentTopic = "";
 
-    topicSelect.innerHTML = '<option value="">select topic</option>';
+    document.getElementById("topicSelect").innerHTML =
+    '<option value="">select topic</option>';
 
     clearMessages();
 
-    loadTopicsFromDatabase(category);
+    loadTopicsFromDatabase(currentCategory);
 }
 
 function clearMessages() {
@@ -1310,6 +1338,9 @@ function clearMessages() {
 }
 
 function loadTopicsFromDatabase(category, selectedTopic = "") {
+
+  console.log("Template:", localStorage.getItem("noticeTemplate"));
+console.log("Current category:", currentCategory);
 
   console.log("loadTopicsFromDatabase");
 console.log("category:", category);
@@ -1356,8 +1387,10 @@ console.log("selectedTopic:", selectedTopic);
 
     currentTopic = selectedTopic;
 
+    loadTopicCounts();
+
     loadMessage(true);
-        }
+    }
 
     });
 }
@@ -1725,7 +1758,12 @@ if (deleteBoardBtn) {
 
 function loadTopicCounts() {
 
+  console.log("=== loadTopicCounts ===");
+console.log("categories:", categories);
+
     const boardName = localStorage.getItem("boardName");
+
+    console.log("categories:", categories);
 
     fetch("http://localhost:3000/topicCounts", {
         method:"POST",
@@ -1741,25 +1779,23 @@ function loadTopicCounts() {
 
     if (!data.success) return;
 
-    const order = [
-        "general",
-        "maintenance",
-        "meetings",
-        "events"
-    ];
+    const order = categories;
 
-    let text = "Topics: ";
+    console.log("counts from server:", data.counts);
 
-    order.forEach(category => {
+let text = "Topics: ";
 
-        const c = data.counts.find(item => item.category === category);
+order.forEach(category => {
 
-        if (c) {
-            text += `${c.category} (${c.count})  `;
-        }
+    const c = data.counts.find(item => item.category === category);
 
-    });
+    if (c) {
+        text += `${c.category} (${c.count})  `;
+    }
 
+});
+
+    console.log("topicSummary:", text);
     document.getElementById("topicSummary").textContent = text;
 
 });
