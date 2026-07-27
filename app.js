@@ -157,31 +157,20 @@ if (sessionStorage.getItem("skipAutoLogin")) {
 
 function initBoard() {
 
+  console.log("INITBOARD CALLED");
+
   const role = localStorage.getItem("role");
 
   const boardType = localStorage.getItem("boardType");
   const noticeTemplate = localStorage.getItem("noticeTemplate");
 
-  console.log("INIT boardType:", boardType);
-  console.log("INIT noticeTemplate:", noticeTemplate);
-
   categories = selectCategories(boardType, noticeTemplate);
 
-  const savedCategory = localStorage.getItem("currentCategory") || "general";
+  const savedCategory = localStorage.getItem("currentCategory") || "information";
 
   currentCategory = savedCategory;
 
   loadCategories();
-
-  console.log("AFTER loadCategories:");
-console.log(
-  "savedCategory:",
-  savedCategory
-);
-console.log(
-  "select value:",
-  document.getElementById("categorySelect").value
-);
 
   document.getElementById("categorySelect").value = savedCategory;
   
@@ -189,8 +178,6 @@ console.log(
 
   document.getElementById("topicSelect").innerHTML =
     '<option value="">select topic</option>';
-
-  
 
   initLanguage();
 
@@ -229,7 +216,6 @@ memberButtons.forEach(id => {
   }
 });
 
-  console.log("INITBOARD CALLED");
   const boardName = getBoardName();
   const boardNameEl = document.getElementById("boardTitle");
   const box = document.getElementById("boardMessagesDiv");
@@ -260,13 +246,6 @@ topicSelect.onchange = function () {
 };
 
 if (refreshInterval) clearInterval(refreshInterval);
-
-
-
-
-
-console.log("boardType:", boardType);
-console.log("noticeTemplate:", noticeTemplate);
 
 const refreshTime = boardType === "notice" ? 60000 : 15000;
 
@@ -309,7 +288,6 @@ if (boardType === "notice") {
     document.getElementById("noticeControls").style.display = "none";
     document.getElementById("topicBtn").style.display = "none";
 }
-
 }
 
 function selectCategories(boardType, noticeTemplate) {
@@ -353,7 +331,6 @@ function initLanguage() {
     }
 
     loadLanguage(lang);
-
 }
 
 function loadCategories() {
@@ -383,10 +360,6 @@ function loadCategories() {
         });
 
     });
-    console.log(
-  "loadCategories END value:",
-  document.getElementById("categorySelect").value
-);
 }
 
 function loadLanguage(lang) {
@@ -418,9 +391,7 @@ function loadLanguage(lang) {
         deleteBoardBtn.textContent = "Delete Board";
         requestsBtn.textContent = "Requests";
         document.getElementById("boardNewMsg").placeholder = "Write message...";
-
     }
-
 }
 
 // =====================
@@ -504,11 +475,6 @@ if (quickBtn) {
     );
 
 }
-
-/*
-    if (boardType === "notice" && !currentTopic) {
-    messages = [];
-}*/
 
     if (todayMode) {
     const now = new Date();
@@ -604,8 +570,7 @@ messages.forEach(msg => {
     wrapper.appendChild(trash);   // ← tänne
   }
 
-  div.appendChild(wrapper);
-   
+  div.appendChild(wrapper);  
   box.appendChild(div);
   });
 
@@ -850,7 +815,6 @@ function clearTable() {
       loadTopicCounts();
       loadMessage(true);
     }
-
   });
 }
 
@@ -914,13 +878,6 @@ function renderVisitedUsers(users) {
     .sort((a, b) => b.lastSeen - a.lastSeen)
     .slice(0, 5);
 
-    /*
-  const loggedUser = localStorage.getItem("boardUsername") || "";
-
-  el.innerHTML =
-  `👤 Logged in: <b>${loggedUser}</b>&nbsp;&nbsp;&nbsp;&nbsp;🟢 Last visited: ` +
-  sorted.map(u => u.name).join(", ");
-  */
   const loggedUser = localStorage.getItem("boardUsername") || "";
   const boardType = localStorage.getItem("boardType") || "family";
 
@@ -934,28 +891,18 @@ function renderVisitedUsers(users) {
 
   el.innerHTML =
 `📌 Type: <b>${typeInfo}</b>&nbsp;&nbsp;&nbsp;&nbsp;👤 Logged in: <b>${loggedUser}</b>&nbsp;&nbsp;&nbsp;&nbsp;🟢 Last visited: ` +
-sorted.map(u => u.name).join(", ");
-
-  
+sorted.map(u => u.name).join(", "); 
 }
 
-
-
 function updateQuickUI(data) {
-  //currentButtonsCache = data.quickMessages ?? [];
   renderVisitedUsers(data.visitedUsers);
 }
 
 function openSettings() {
   console.log("OPEN SETTINGS TRIGGERED BY CLICK");
-  //();
 
   const boardName =
     localStorage.getItem("boardName");
-
-  /*
-  fetch("http://localhost:3000/board/" + boardName)
-  */
 
   fetch(`http://localhost:3000/board/${boardName}`)
     .then(res => res.json())
@@ -1014,11 +961,13 @@ function saveSettings() {
   });
 }
 
+
+/*
 function getCurrentUsername() {
   
   return document.getElementById("boardUsername")?.value
     || localStorage.getItem("boardUsername");
-}
+}*/
 
 const importantMode = document.getElementById("importantMode");
 
@@ -1031,7 +980,6 @@ if (importantMode) {
 
   });
 }
-
 
 const infoMode = document.getElementById("infoMode");
 
@@ -1182,7 +1130,6 @@ function openCreatePopup() {
     document.getElementById("cp_boardType").value = "family";
     document.getElementById("noticeTemplateDiv").style.display = "none";
     document.getElementById("createPopup").style.display = "block";
-
 }
 
 function closeCreatePopup() {
@@ -1525,12 +1472,7 @@ document.addEventListener("click", function(e) {
   if (!topMenu.contains(e.target)) {
     topMenu.classList.remove("open");
   }
-
-  
-
 });
-
-
 
 const quickMessagesPopup = document.getElementById("quickMessagesPopup");
 
@@ -1587,10 +1529,6 @@ function removeMember(username) {
     loadMessage(false);
   });
 }
-
-/*
-document.getElementById("editMode")?.addEventListener("change", updateEditModeUI);
-*/
 
 function openQuickMessages() {
     renderQuickPopup();
@@ -1653,9 +1591,7 @@ function renderQuickPopup(){
       `;
 
     }).join("");
-
-
-      }
+    }
 
       popup.style.display = "block";
     });
@@ -1792,25 +1728,24 @@ visibleCategories.forEach(category => {
     if (c) {
         text += `${c.category} (${c.count})  `;
     }
-
 });
 
     document.getElementById("topicSummary").textContent = text;
-
 });
 }
 
+/*
 function changeCreateBoardType() {
 
     const boardType = document.getElementById("cp_boardType").value;
 
     document.getElementById("noticeTemplateDiv").style.display =
         boardType === "notice" ? "block" : "none";
-}
+}*/
 
 function createTopicPopupCategoryChanged() {
 
-    console.log("changeCreateCategory");
+    console.log("changeCreateCategoryPopup");
 
     const category = document.getElementById("cp_category").value;
     const topic = document.getElementById("cp_topic");
