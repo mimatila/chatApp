@@ -10,6 +10,7 @@ console.log("APP START");
 const categories_family = [];
 
 const categories_taloyhtio = [
+    "information",
     "general",
     "maintenance",
     "meetings",
@@ -17,6 +18,7 @@ const categories_taloyhtio = [
 ];
 
 const categories_urheiluseura = [
+    "information",
     "general",
     "training",
     "matches",
@@ -24,6 +26,7 @@ const categories_urheiluseura = [
 ];
 
 const categories_koulu = [
+    "information",
     "general",
     "homework",
     "meetings",
@@ -31,6 +34,7 @@ const categories_koulu = [
 ];
 
 const categories_yhdistys = [
+    "information",
     "general",
     "meetings",
     "events",
@@ -159,7 +163,7 @@ function initBoard() {
   const noticeTemplate = localStorage.getItem("noticeTemplate");
 
   console.log("INIT boardType:", boardType);
-console.log("INIT noticeTemplate:", noticeTemplate);
+  console.log("INIT noticeTemplate:", noticeTemplate);
 
   categories = selectCategories(boardType, noticeTemplate);
 
@@ -278,12 +282,22 @@ if (boardType === "notice") {
 
     clearMessages();
 
-    loadTopicsFromDatabase(currentCategory);
+    if (currentCategory === "information") {
+
+        loadTopicsFromDatabase(currentCategory, "information");
+
+    } else {
+
+        loadTopicsFromDatabase(currentCategory);
+
+    }
 
     loadTopicCounts();
 
-}else {
+} else {
+
     topicSummary.style.display = "none";
+
 }
 
 loadMessage(true);
@@ -380,20 +394,30 @@ function loadLanguage(lang) {
     if (lang === "fi") {
 
         document.getElementById("topicBtn").textContent = "Uusi aihe";
+        document.getElementById("sendBtn").textContent = "Lähetä";
+        document.getElementById("clearBtn").textContent = "Tyhjennä";
         document.getElementById("settingsBtn").textContent = "Asetukset";
+        document.getElementById("members").textContent = "Jäsenet";
+        document.getElementById("logout").textContent = "Kirjaudu ulos";
         topicBtn.textContent = "Uusi aihe";
         settingsBtn.textContent = "Asetukset";
         deleteBoardBtn.textContent = "Poista taulu";
         requestsBtn.textContent = "Pyynnöt";
+        document.getElementById("boardNewMsg").placeholder = "Kirjoita viesti...";
 
     } else {
 
         document.getElementById("topicBtn").textContent = "New Topic";
+        document.getElementById("sendBtn").textContent = "Send";
+        document.getElementById("clearBtn").textContent = "Clear";
         document.getElementById("settingsBtn").textContent = "Settings";
+        document.getElementById("members").textContent = "Members";
+        document.getElementById("logout").textContent = "Logout";
         topicBtn.textContent = "New Topic";
         settingsBtn.textContent = "Settings";
         deleteBoardBtn.textContent = "Delete Board";
         requestsBtn.textContent = "Requests";
+        document.getElementById("boardNewMsg").placeholder = "Write message...";
 
     }
 
@@ -426,11 +450,6 @@ function loadMessage(forceScroll = false) {
   .then(res => res.json())
   .then(data => {
 
-    console.log("GET /board OK");
-    console.log("Board type123:", data.boardType);
-    console.log("users:", data.users);
-    console.log("visitedUsers:", data.visitedUsers);
-
   const boardType = data.boardType;
   const noticeTemplate = data.noticeTemplate;
   localStorage.setItem("boardType", boardType);
@@ -442,7 +461,6 @@ function loadMessage(forceScroll = false) {
 
   if (boardType === "notice" && !currentTopic) {
     clearMessages();
-    console.log("Notice ilman topicia");
   }
 
   const requestButton = document.getElementById("requestsBtn");
@@ -716,8 +734,6 @@ function loginWithPassword() {
       })
     });
 
-    console.log("LOGIN boardType:", localStorage.getItem("boardType"));
-console.log("LOGIN noticeTemplate:", localStorage.getItem("noticeTemplate"));
     window.location.href = "board.html";
   });
 } 
@@ -1000,7 +1016,6 @@ function saveSettings() {
 
 function getCurrentUsername() {
   
-  console.log("INPUT username:", document.getElementById("boardUsername")?.value);
   return document.getElementById("boardUsername")?.value
     || localStorage.getItem("boardUsername");
 }
@@ -1125,8 +1140,6 @@ function sendJoinRequest() {
   const password = document.getElementById("joinPassword").value;
   const email = document.getElementById("joinEmail").value;
 
-  console.log(boardName, username, email);
-
   fetch("http://localhost:3000/joinRequest", {
     method: "POST",
     headers: {
@@ -1182,15 +1195,13 @@ function submitCreateBoard() {
   const boardType = document.getElementById("cp_boardType").value;
   const boardUsername = document.getElementById("cp_username").value;
   const ownerEmail = document.getElementById("cp_email").value;
-  const boardPassword = document.getElementById("cp_boardPassword").value;
+  const boardPassword = document.getElementById("cp_password").value;
 
   let noticeTemplate = "";
 
   if (boardType === "notice") {
     noticeTemplate = document.getElementById("cp_noticeTemplate").value;
   }
-
-  console.log("boardType: ",boardType);
 
   fetch("http://localhost:3000/create", {
     method: "POST",
@@ -1218,7 +1229,7 @@ function submitCreateBoard() {
       document.getElementById("cp_noticeTemplate").value = "taloyhtio";
       document.getElementById("cp_username").value = "";
       document.getElementById("cp_email").value = "";
-      document.getElementById("cp_boardPassword").value = "";
+      document.getElementById("cp_password").value = "";
       closeCreatePopup();
 
       localStorage.setItem("boardName", boardName);
@@ -1230,6 +1241,7 @@ function submitCreateBoard() {
 
 function openTopicPopup() {
   document.getElementById("createTopicPopup").style.display = "flex";
+  createTopicPopupCategoryChanged();
 }
 
 function closeTopicPopup() {
@@ -1240,34 +1252,30 @@ function submitTopic() {
 
   let type="normal";
 
-  console.log("testi type: ",type);
-
   const boardName = localStorage.getItem("boardName");
   const category = document.getElementById("cp_category").value;
-  const topic = document.getElementById("cp_topic").value;
+  let topic = document.getElementById("cp_topic").value;
   const message = document.getElementById("cp_message").value;
   const author = localStorage.getItem("boardUsername");
+
+  if (category === "information") {
+    topic = "information";
+  }
 
   if (topic.length > 40) {
     alert("Topic can contain a maximum of 50 characters.");
     return;
-}
+  }
 
-   if (!topic.trim()) {
+   if (category !== "information" && !topic.trim()) {
     alert("Topic is missing");
     return;
-}
+  }
 
 if (!message.trim()) {
     alert("Message is missing");
     return;
-}
-
-console.log("boardName:", boardName);
-
-console.log("Saving topic");
-console.log("Category:", category);
-console.log("Topic:", topic);
+  }
 
   fetch("http://localhost:3000/createTopic", {
     method: "POST",
@@ -1296,11 +1304,6 @@ if (data.success) {
     document.getElementById("categorySelect").value = category;
     localStorage.setItem("currentCategory", category);
 
-    console.log(
-  "submitTopic select after set:",
-  document.getElementById("categorySelect").value
-);
-
     loadTopicsFromDatabase(category, topic);
 
     if (data.boardType === "notice") {
@@ -1319,18 +1322,25 @@ function changeCategory() {
 
     currentCategory = document.getElementById("categorySelect").value;
 
-    const topicSelect = document.getElementById("topicSelect");
-
     localStorage.setItem("currentCategory", currentCategory);
 
     currentTopic = "";
 
     document.getElementById("topicSelect").innerHTML =
-    '<option value="">select topic</option>';
+        '<option value="">Select topic</option>';
 
     clearMessages();
 
-    loadTopicsFromDatabase(currentCategory);
+    if (currentCategory === "information") {
+
+        loadTopicsFromDatabase(currentCategory, "information");
+
+    } else {
+
+        loadTopicsFromDatabase(currentCategory);
+
+    }
+
 }
 
 function clearMessages() {
@@ -1339,12 +1349,7 @@ function clearMessages() {
 
 function loadTopicsFromDatabase(category, selectedTopic = "") {
 
-  console.log("Template:", localStorage.getItem("noticeTemplate"));
-console.log("Current category:", currentCategory);
-
   console.log("loadTopicsFromDatabase");
-console.log("category:", category);
-console.log("selectedTopic:", selectedTopic);
 
     const boardName = localStorage.getItem("boardName");
 
@@ -1379,11 +1384,8 @@ console.log("selectedTopic:", selectedTopic);
         // ← TÄHÄN
         if (selectedTopic) {
 
-             console.log("Selected topic:", selectedTopic);
 
     topicSelect.value = selectedTopic;
-
-    console.log("After set:", topicSelect.value);
 
     currentTopic = selectedTopic;
 
@@ -1396,9 +1398,10 @@ console.log("selectedTopic:", selectedTopic);
 }
 
 function openRequests() {
+
   console.log("OPEN REQUESTS");
   document.getElementById("requestsPopup").style.display = "block";
-  console.log("LOAD REQUESTS FROM OPEN");
+ 
   loadRequests();
 }
 
@@ -1479,7 +1482,7 @@ function acceptRequest(id, event) {
     })
   })
   .then(() => {
-    console.log("LOAD REQUESTS FROM THEN");
+    
     loadRequests(); 
     loadMessage(false);
 });
@@ -1498,7 +1501,7 @@ function rejectRequest(id) {
     body: JSON.stringify({ boardName, id })
   })
   .then(() => {
-    console.log("LOAD REQUESTS FROM THEN");
+    
     loadRequests(); 
     loadMessage(false);
 });
@@ -1759,11 +1762,8 @@ if (deleteBoardBtn) {
 function loadTopicCounts() {
 
   console.log("=== loadTopicCounts ===");
-console.log("categories:", categories);
 
     const boardName = localStorage.getItem("boardName");
-
-    console.log("categories:", categories);
 
     fetch("http://localhost:3000/topicCounts", {
         method:"POST",
@@ -1781,11 +1781,11 @@ console.log("categories:", categories);
 
     const order = categories;
 
-    console.log("counts from server:", data.counts);
+const visibleCategories = order.filter(c => c !== "information");
 
 let text = "Topics: ";
 
-order.forEach(category => {
+visibleCategories.forEach(category => {
 
     const c = data.counts.find(item => item.category === category);
 
@@ -1795,7 +1795,6 @@ order.forEach(category => {
 
 });
 
-    console.log("topicSummary:", text);
     document.getElementById("topicSummary").textContent = text;
 
 });
@@ -1807,4 +1806,24 @@ function changeCreateBoardType() {
 
     document.getElementById("noticeTemplateDiv").style.display =
         boardType === "notice" ? "block" : "none";
+}
+
+function createTopicPopupCategoryChanged() {
+
+    console.log("changeCreateCategory");
+
+    const category = document.getElementById("cp_category").value;
+    const topic = document.getElementById("cp_topic");
+    
+    if (category === "information") {
+
+        topic.style.display = "none";
+        topic.value = "information";
+
+    } else {
+
+        topic.style.display = "block";
+        topic.value = "";
+        topic.placeholder = "Topic";
+    }
 }

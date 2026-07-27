@@ -161,12 +161,14 @@ const [boardResult] = await connection.query(
 
 const boardId = boardResult.insertId;
 
+    const autoDays = (boardType === "notice") ? 30 : 10;
+
     // Luo settings oletusarvolla 10 päivää
     await connection.query(
     `INSERT INTO settings
     (board_id, autoDeleteDays)
     VALUES (?, ?)`,
-    [boardId, 10]
+    [boardId, autoDays]
     );
 
 
@@ -1429,10 +1431,10 @@ app.post("/createTopic", async (req, res) => {
 
   if (topic.length > 40) {
     return res.json({
-        success: false,
-        message: "Topic too long"
+      success: false,
+      message: "Topic too long"
     });
-}
+  }
 
   try {
 
@@ -1451,6 +1453,33 @@ app.post("/createTopic", async (req, res) => {
 
     const boardId = boards[0].id;
 
+    // Hae käyttäjän rooli
+    const [users] = await pool.query(
+      `SELECT role
+       FROM users
+       WHERE board_id = ?
+         AND username = ?`,
+      [boardId, author]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const user = users[0];
+
+    // Informationia saa lisätä vain owner
+    if (category === "information" && user.role !== "owner") {
+      return res.status(403).json({
+        success: false,
+        message: "Only owner can add Information"
+      });
+    }
+
+    // Lisää viesti
     await pool.query(
       `INSERT INTO boardMessages
       (id, board_id, author, time, text, type, category, topic)

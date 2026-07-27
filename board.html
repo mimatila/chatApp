@@ -32,7 +32,7 @@
         </select>
 
     </div>
-  <button class="clear-btn" onclick="clearTable()">Clear</button>
+  <button id="clearBtn" class="clearBtn" onclick="clearTable()">Clear</button>
 </div>
 
 <!-- viestit -->
@@ -75,12 +75,12 @@
 
 <button id="menuBtn">☰</button>
 <div id="topMenu">
-  <button onclick="showMembers()"> Members </button>
+  <button id="members" onclick="showMembers()"> Members </button>
   <button id="requestsBtn" onclick="openRequests()"> Requests </button>
   <button id="deleteBoardBtn" onclick="deleteBoard()">Delete Board</button>
   <button id="leaveBoardBtn" onclick="leaveBoard()"> Leave Board </button>
   <button id="settingsBtn" onclick="openSettings()"> Settings </button>
-  <button onclick="logout()"> Logout </button>
+  <button id="logout" onclick="logout()"> Logout </button>
 </div>
 
 <div id="membersPopup" class="popup">
@@ -138,7 +138,7 @@
   <div class="popup-content">
     <h3>Create New Topic</h3>
 
-    <select id="cp_category">
+    <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
     </select>
     <input id="cp_topic" placeholder="Topic" maxlength="40">
     

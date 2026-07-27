@@ -185,7 +185,7 @@ button {
   border-radius: 10px;
 }
 
-.clear-btn {
+.clearBtn {
   position: static;
   height:34px;
   margin-left: auto;
@@ -315,6 +315,15 @@ input::placeholder {
   margin: 100px auto;
   border-radius: 10px;
 }
+
+.popup-content select,
+.popup-content input,
+.popup-content textarea,
+.popup-content button {
+    margin-bottom: 10px;
+}
+
+
 
 #settingsPopup .popup-content {
   background: #2b6cb0;
