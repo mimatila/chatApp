@@ -9,6 +9,11 @@
 
 <div class="top-nav">
 
+   <div class="language-select">
+        <img src="images/fi.svg" id="langFi" class="lang-flag">
+        <img src="images/gb.svg" id="langEn" class="lang-flag">
+    </div>
+
   <button id="openJoinBtn" onclick="openJoinBoard()">Join Board</button>
   <button id="openCreateBtn" onclick="openCreatePopup()">Create Board</button>
 </div>
@@ -16,7 +21,7 @@
 <div id="boardCount">Boards: ...</div>
 
 <div class="login-box">
-  <h2>Board Login</h2>
+  <h2 id="loginTitle">Board Login</h2>
 
   <form onsubmit="loginWithPassword(); return false;">
     <input id="boardName" placeholder="Board Name">
@@ -75,7 +80,7 @@
   </div>
 </div>
 
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 
 </body>
 </html>

@@ -37,15 +37,6 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,.15);
 }
 
-.language-select {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-
-    display: flex;
-    gap: 8px;
-}
-
 .lang-flag {
     width: 28px;
     height: 20px;
@@ -269,8 +260,15 @@ button {
   top: 10px;
   right: 10px;
   display: flex;
+  align-items: center;
   gap: 8px;
   z-index: 2000;
+}
+
+.language-select {
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
 
 .top-nav button {

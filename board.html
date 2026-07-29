@@ -9,11 +9,6 @@
 
 <div class="board-container">
 
-<div class="language-select">
-        <img src="images/fi.svg" id="langFi" class="lang-flag">
-        <img src="images/gb.svg" id="langEn" class="lang-flag">
-</div>
-
 <h1 id="boardTitle"></h1>
 
 <!-- 🟢 viimeksi paikalla -->
@@ -43,19 +38,19 @@
   <div class="message-options">
     <label>
       <input type="checkbox" id="importantMode">
-      Important
+      <span id="importantModeText">important</span>
     </label>
     <label>
       <input type="checkbox" id="infoMode">
-      Info
+      <span id="infoModeText">info</span>
     </label>
     <label>
       <input type="checkbox" id="todayMode">
-      Today
+      <span id="todayModeText">today</span>
     </label>
     <label>
       <input type="checkbox" id="editMode">
-      Edit
+      <span id="editModeText">edit</span>
     </label>
   </div>
 
@@ -152,7 +147,7 @@
   </div>
 </div>
 
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 
 </body>
 </html>

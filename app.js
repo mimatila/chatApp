@@ -57,8 +57,14 @@ document.addEventListener("DOMContentLoaded", () => {
 function initApp() {
 
   console.log("INITAPP CALLED");
-  bindUI();  
+
+  bindUI();
   autoLoginFill();
+
+  initLanguageButtons();   // <-- tähän
+  // Käännä aina nykyinen sivu
+  initLanguage();
+
   if (document.getElementById("boardMessagesDiv")) {
     initBoard();
   }
@@ -159,6 +165,13 @@ function initBoard() {
 
   console.log("INITBOARD CALLED");
 
+  let boardName = localStorage.getItem("boardName");
+
+  if (!boardName) {
+    window.location.href = "index.html";
+    return;
+  }
+
   const role = localStorage.getItem("role");
 
   const boardType = localStorage.getItem("boardType");
@@ -178,18 +191,6 @@ function initBoard() {
 
   document.getElementById("topicSelect").innerHTML =
     '<option value="">select topic</option>';
-
-  initLanguage();
-
-  document.getElementById("langFi").onclick = () => {
-    localStorage.setItem("language", "fi");
-    initLanguage();
-  };
-
-  document.getElementById("langEn").onclick = () => {
-    localStorage.setItem("language", "en");
-    initLanguage();
-  };
 
   clearMessages();
 
@@ -216,7 +217,7 @@ memberButtons.forEach(id => {
   }
 });
 
-  const boardName = getBoardName();
+  boardName = getBoardName();
   const boardNameEl = document.getElementById("boardTitle");
   const box = document.getElementById("boardMessagesDiv");
 
@@ -290,6 +291,28 @@ if (boardType === "notice") {
 }
 }
 
+function initLanguageButtons() {
+
+    const langFi = document.getElementById("langFi");
+    const langEn = document.getElementById("langEn");
+
+    if (langFi) {
+        langFi.onclick = () => {
+            console.log("FI clicked");
+            localStorage.setItem("language", "fi");
+            initLanguage();
+        };
+    }
+
+    if (langEn) {
+        langEn.onclick = () => {
+            console.log("EN clicked");
+            localStorage.setItem("language", "en");
+            initLanguage();
+        };
+    }
+}
+
 function selectCategories(boardType, noticeTemplate) {
 
     if (boardType === "notice") {
@@ -319,18 +342,35 @@ function selectCategories(boardType, noticeTemplate) {
 
 function initLanguage() {
 
-    const lang = localStorage.getItem("language") || "fi";
+   const lang = localStorage.getItem("language") || "fi";
 
-    document.getElementById("langFi").classList.remove("active");
-    document.getElementById("langEn").classList.remove("active");
+   const langFi = document.getElementById("langFi");
+   const langEn = document.getElementById("langEn");
 
-    if (lang === "fi") {
-        document.getElementById("langFi").classList.add("active");
-    } else {
-        document.getElementById("langEn").classList.add("active");
-    }
+   if (langFi) {
+     langFi.classList.remove("active");
+   }
 
-    loadLanguage(lang);
+   if (langEn) {
+     langEn.classList.remove("active");
+   }
+
+   if (lang === "fi") {
+     if (langFi) langFi.classList.add("active");
+   } else {
+     if (langEn) langEn.classList.add("active");
+   }
+
+   // vain index.html
+   if (document.getElementById("openJoinBtn")) {
+     loadIndexLanguage(lang);
+   }
+
+   // vain board.html
+   if (document.getElementById("boardMessagesDiv")) {
+     loadBoardLanguage(lang);
+     loadBoardCount();
+   }
 }
 
 function loadCategories() {
@@ -362,20 +402,48 @@ function loadCategories() {
     });
 }
 
-function loadLanguage(lang) {
+function loadIndexLanguage(lang) {
 
-    if (lang === "fi") {
+  if (lang === "fi") {
+
+        document.getElementById("loginTitle").textContent = "Kirjaudu Taululle";
+        document.getElementById("openJoinBtn").textContent = "Liity Taululle";
+        document.getElementById("openCreateBtn").textContent = "Luo Taulu";
+        document.getElementById("openBoardBtn").textContent = "Avaa Taulu";
+        document.getElementById("boardName").placeholder = "Taulun nimi";
+        document.getElementById("boardUsername").placeholder = "Käyttäjänimi";
+        document.getElementById("boardPassword").placeholder = "Salasana";
+    } else {
+        document.getElementById("loginTitle").textContent = "Login Board";
+        document.getElementById("openJoinBtn").textContent = "Join Board";
+        document.getElementById("openCreateBtn").textContent = "Create Board";
+        document.getElementById("openBoardBtn").textContent = "Open Board";
+        document.getElementById("boardName").placeholder = "Board Name";
+        document.getElementById("boardUsername").placeholder = "Username";
+        document.getElementById("boardPassword").placeholder = "Password";
+    }
+
+
+} 
+
+function loadBoardLanguage(lang) {
+
+  if (lang === "fi") {
 
         document.getElementById("topicBtn").textContent = "Uusi aihe";
         document.getElementById("sendBtn").textContent = "Lähetä";
         document.getElementById("clearBtn").textContent = "Tyhjennä";
         document.getElementById("settingsBtn").textContent = "Asetukset";
         document.getElementById("members").textContent = "Jäsenet";
+        document.getElementById("todayModeText").textContent = "tänään";
+        document.getElementById("editModeText").textContent = "muokkaa";
+        document.getElementById("importantModeText").textContent = "tärkeä";
+        document.getElementById("infoModeText").textContent = "tiedoksi";
         document.getElementById("logout").textContent = "Kirjaudu ulos";
-        topicBtn.textContent = "Uusi aihe";
-        settingsBtn.textContent = "Asetukset";
-        deleteBoardBtn.textContent = "Poista taulu";
-        requestsBtn.textContent = "Pyynnöt";
+        document.getElementById("topicBtn").textContent = "Uusi aihe";
+        document.getElementById("settingsBtn").textContent = "Asetukset";
+        document.getElementById("deleteBoardBtn").textContent = "Poista taulu";
+        document.getElementById("requestsBtn").textContent = "Pyynnöt";
         document.getElementById("boardNewMsg").placeholder = "Kirjoita viesti...";
 
     } else {
@@ -385,6 +453,57 @@ function loadLanguage(lang) {
         document.getElementById("clearBtn").textContent = "Clear";
         document.getElementById("settingsBtn").textContent = "Settings";
         document.getElementById("members").textContent = "Members";
+        document.getElementById("todayModeText").textContent = "today";
+        document.getElementById("editModeText").textContent = "edit";
+        document.getElementById("importantModeText").textContent = "important";
+        document.getElementById("infoModeText").textContent = "info";
+        document.getElementById("logout").textContent = "Logout";
+        document.getElementById("topicBtn").textContent = "New Topic";
+        document.getElementById("settingsBtn").textContent = "Settings";
+        document.getElementById("deleteBoardBtn").textContent = "Delete Board";
+        document.getElementById("requestsBtn").textContent = "Requests";
+        document.getElementById("boardNewMsg").placeholder = "Write message...";
+    }
+} 
+
+/*
+function loadLanguage(lang) {
+
+    if (lang === "fi") {
+
+        document.getElementById("openJoinBtn").textContent = "Liity Taululle";
+        document.getElementById("openCreateBtn").textContent = "Luo Taulu";
+        document.getElementById("openBoardBtn").textContent = "Avaa Taulu";
+        document.getElementById("topicBtn").textContent = "Uusi aihe";
+        document.getElementById("sendBtn").textContent = "Lähetä";
+        document.getElementById("clearBtn").textContent = "Tyhjennä";
+        document.getElementById("settingsBtn").textContent = "Asetukset";
+        document.getElementById("members").textContent = "Jäsenet";
+        document.getElementById("todayModeText").textContent = "tänään";
+        document.getElementById("editModeText").textContent = "muuta";
+        document.getElementById("importantModeText").textContent = "tärkeä";
+        document.getElementById("infoModeText").textContent = "tiedoksi";
+        document.getElementById("logout").textContent = "Kirjaudu ulos";
+        topicBtn.textContent = "Uusi aihe";
+        settingsBtn.textContent = "Asetukset";
+        deleteBoardBtn.textContent = "Poista taulu";
+        requestsBtn.textContent = "Pyynnöt";
+        document.getElementById("boardNewMsg").placeholder = "Kirjoita viesti...";
+
+    } else {
+
+        document.getElementById("openJoinBtn").textContent = "Join Board";
+        document.getElementById("openCreateBtn").textContent = "Create Board";
+        document.getElementById("openBoardBtn").textContent = "Open Board";
+        document.getElementById("topicBtn").textContent = "New Topic";
+        document.getElementById("sendBtn").textContent = "Send";
+        document.getElementById("clearBtn").textContent = "Clear";
+        document.getElementById("settingsBtn").textContent = "Settings";
+        document.getElementById("members").textContent = "Members";
+        document.getElementById("todayModeText").textContent = "today";
+        document.getElementById("editModeText").textContent = "edit";
+        document.getElementById("importantModeText").textContent = "important";
+        document.getElementById("infoModeText").textContent = "info";
         document.getElementById("logout").textContent = "Logout";
         topicBtn.textContent = "New Topic";
         settingsBtn.textContent = "Settings";
@@ -392,7 +511,7 @@ function loadLanguage(lang) {
         requestsBtn.textContent = "Requests";
         document.getElementById("boardNewMsg").placeholder = "Write message...";
     }
-}
+}*/
 
 // =====================
 // LOAD MESSAGES
@@ -832,15 +951,35 @@ function loadBoardCount() {
   const el = document.getElementById("boardCount");
   if (!el) return;
 
-  el.innerText = "Ladataan...";
+  const lang = localStorage.getItem("language") || "fi";
+
+  console.log("Board count language:", lang);
+
+  if (lang === "fi") {
+    el.innerText = "Ladataan...";
+  } else {
+    el.innerText = "Loading...";
+  }
 
   fetch("http://localhost:3000/boards/count")
     .then(res => res.json())
     .then(data => {
-      el.innerText = `Boards: ${data.count ?? 0}`;
+
+      if (lang === "fi") {
+        el.innerText = `Taulut: ${data.count ?? 0}`;
+      } else {
+        el.innerText = `Boards: ${data.count ?? 0}`;
+      }
+
     })
     .catch(() => {
-      el.innerText = "Cannot get Boards";
+
+      if (lang === "fi") {
+        el.innerText = "Taulujen haku epäonnistui";
+      } else {
+        el.innerText = "Cannot get Boards";
+      }
+
     });
 }
 
@@ -1458,21 +1597,24 @@ const menuBtn = document.getElementById("menuBtn");
 const topMenu = document.getElementById("topMenu");
 
 if (menuBtn && topMenu) {
+
   menuBtn.onclick = () => {
     topMenu.classList.toggle("open");
   };
+
+  document.addEventListener("click", function(e) {
+
+    // Jos klikattiin menupainiketta, ei tehdä mitään
+    if (menuBtn.contains(e.target)) return;
+
+    // Jos klikattiin valikon ulkopuolelle, sulje valikko
+    if (!topMenu.contains(e.target)) {
+      topMenu.classList.remove("open");
+    }
+
+  });
+
 }
-
-document.addEventListener("click", function(e) {
-
-  // Jos klikattiin menupainiketta, ei tehdä mitään
-  if (menuBtn.contains(e.target)) return;
-
-  // Jos klikattiin valikon ulkopuolelle, sulje valikko
-  if (!topMenu.contains(e.target)) {
-    topMenu.classList.remove("open");
-  }
-});
 
 const quickMessagesPopup = document.getElementById("quickMessagesPopup");
 
