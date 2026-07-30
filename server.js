@@ -691,6 +691,9 @@ app.delete("/clear/:boardName", async (req, res) => {
     // Poista kaikki viestit
     const { category, topic } = req.body;
 
+    console.log("DELETE CATEGORY:", category);
+console.log("DELETE TOPIC:", topic);
+
 if (boardType === "notice") {
 
   await pool.query(

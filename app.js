@@ -1,6 +1,8 @@
 let loading = false;
 let refreshInterval = null;
 let categories = [];
+let currentCategory = "";
+let currentTopic = "";
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
@@ -27,6 +29,8 @@ const boardDescriptions = {
 const messages = {
     fi: {   
         BOARD_NOT_FOUND: "Taulua ei löytynyt",
+        onlyOwnerCanWrite: "Vain omistaja voi kirjoittaa tähän ketjuun.",
+        PleaseSelectTopicFirst: "Valitse aihe ensin.",
         LOGIN_FAILED: "Kirjautuminen epäonnistui",
         BOARD_EXISTS: "Taulu on jo olemassa",
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
@@ -64,6 +68,8 @@ const messages = {
         },
     en: {
         BOARD_NOT_FOUND: "Board not found",
+        onlyOwnerCanWrite: "Only the owner can write to this chain.",
+        PleaseSelectTopicFirst: "Select topic first.",
         LOGIN_FAILED: "Login failed",
         BOARD_EXISTS: "Board already exists",
         BOARD_CREATED: "Board created!",
@@ -349,11 +355,16 @@ topicSelect.onchange = function () {
     }
 };*/
 
+
+
 if (refreshInterval) clearInterval(refreshInterval);
 
 const refreshTime = boardType === "notice" ? 60000 : 15000;
 
+console.log("START REFRESH", refreshTime);
+
 refreshInterval = setInterval(() => {
+  
   if (!document.hidden) {
     loadMessage(false);
   }
@@ -390,6 +401,8 @@ function changeTopic() {
 
     currentTopic =
         document.getElementById("topicSelect").value;
+
+        console.log("SELECTED TOPIC:", currentTopic);
 
     if (currentTopic) {
         loadMessage(true);
@@ -645,6 +658,8 @@ function loadLanguage(lang) {
 function loadMessage(forceScroll = false) {
 
   console.log("loadMessage START");
+  console.log("LOAD MESSAGE FROM:", new Error().stack);
+ 
 
   const box = document.getElementById("boardMessagesDiv");
   if (!box) return;
@@ -661,10 +676,11 @@ function loadMessage(forceScroll = false) {
     return;
   }
 
-  fetch(`http://localhost:3000/board/${boardName}`)
+  return fetch(`http://localhost:3000/board/${boardName}`)
   .then(res => res.json())
   .then(data => {
 
+   console.log("MESSAGES FROM DB:", data.boardMessages.length);
   const boardType = data.boardType;
   const noticeTemplate = data.noticeTemplate;
   localStorage.setItem("boardType", boardType);
@@ -845,6 +861,7 @@ function updateMessage() {
   const boardUsername = localStorage.getItem("boardUsername") || boardName;
   let type="normal";
   const boardType = localStorage.getItem("boardType");
+  const role = localStorage.getItem("role");
 
   if (document.getElementById("importantMode").checked) {
     type = "important";
@@ -862,8 +879,18 @@ if (boardType === "notice") {
     category = document.getElementById("categorySelect").value;
     topic = document.getElementById("topicSelect").value;
 
+    if (
+    boardType === "notice" &&
+    currentCategory === "information" &&
+    role !== "owner"
+) {
+    alert(t("onlyOwnerCanWrite"));
+    return;
+}
+
     if (!topic) {
-        alert("Please select a topic first");
+        //alert("Please select a topic first");
+        alert(t("PleaseSelectTopicFirst"));
         return;
     }
 }
@@ -1035,7 +1062,7 @@ function leaveBoard() {
 // CLEAR TABLE
 // =====================
 
-function clearTable() {
+async function clearTable() {
 
   const boardName = localStorage.getItem("boardName");
   const boardType = localStorage.getItem("boardType");
@@ -1054,7 +1081,11 @@ function clearTable() {
   if (!confirm("Are you sure, clear this message chain?")) return;
 
 }
-  fetch(`http://localhost:3000/clear/${boardName}`, {
+
+  console.log("CLEAR CATEGORY:", currentCategory);
+console.log("CLEAR TOPIC:", currentTopic);
+
+  await fetch(`http://localhost:3000/clear/${boardName}`, {
     method: "DELETE",
     headers: {
       "Authorization": localStorage.getItem("token"),
@@ -1069,12 +1100,16 @@ function clearTable() {
   .then(data => {
 
     if (data.success) {
-      loadTopicsFromDatabase(currentCategory);
-      loadTopicCounts();
-      loadMessage(true);
+      
+     loadTopicsFromDatabase(currentCategory);
+     loadTopicCounts();
+     loadMessage(true);
     }
-    alert(t(data.message));
-    
+    //alert(t(data.message));
+    setTimeout(() => {
+        alert(t(data.message));
+    }, 200);
+   
   });
 }
 
@@ -1596,6 +1631,8 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
     .then(r => r.json())
     .then(data => {
 
+      console.log("TOPICS END");
+
         const topicSelect = document.getElementById("topicSelect");
 
         topicSelect.innerHTML = "";
@@ -2000,7 +2037,7 @@ function loadTopicCounts() {
     })
     .then(r => r.json())
     .then(data => {
-
+    console.log("COUNTS END");
     if (!data.success) return;
 
     const order = categories;
