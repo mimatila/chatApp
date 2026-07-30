@@ -608,7 +608,21 @@ input::placeholder {
 }
 
 #cp_category {
-    width: 90px;
+    width: 180px;
+    text-align: center;
+    text-align-last: center;
+    margin: 5px auto;
+    height: 34px;
+    background-color: #d9ecff;
+}
+
+#cp_informationTopic {
+    width: 180px;
+    text-align: center;
+    text-align-last: center;
+    margin: 5px auto;
+    height: 34px;
+    background-color: #d9ecff;
 }
 
 #topicBtn {

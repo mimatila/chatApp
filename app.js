@@ -335,6 +335,7 @@ if (leaveBtn) {
 
 updateEditModeUI();
 
+/*
 const topicSelect = document.getElementById("topicSelect");
 
 topicSelect.onchange = function () {
@@ -346,7 +347,7 @@ topicSelect.onchange = function () {
     } else {
         clearMessages();
     }
-};
+};*/
 
 if (refreshInterval) clearInterval(refreshInterval);
 
@@ -364,15 +365,7 @@ if (boardType === "notice") {
 
     clearMessages();
 
-    if (currentCategory === "information") {
-
-        loadTopicsFromDatabase(currentCategory, "information");
-
-    } else {
-
-        loadTopicsFromDatabase(currentCategory);
-
-    }
+    loadTopicsFromDatabase(currentCategory);
 
     loadTopicCounts();
 
@@ -391,6 +384,18 @@ if (boardType === "notice") {
     document.getElementById("noticeControls").style.display = "none";
     document.getElementById("topicBtn").style.display = "none";
 }
+}
+
+function changeTopic() {
+
+    currentTopic =
+        document.getElementById("topicSelect").value;
+
+    if (currentTopic) {
+        loadMessage(true);
+    } else {
+        clearMessages();
+    }
 }
 
 function initLanguageButtons() {
@@ -1063,13 +1068,13 @@ function clearTable() {
   .then(res => res.json())
   .then(data => {
 
-    alert(t(data.message));
-
     if (data.success) {
       loadTopicsFromDatabase(currentCategory);
       loadTopicCounts();
       loadMessage(true);
     }
+    alert(t(data.message));
+    
   });
 }
 
@@ -1484,12 +1489,16 @@ function submitTopic() {
 
   const boardName = localStorage.getItem("boardName");
   const category = document.getElementById("cp_category").value;
-  let topic = document.getElementById("cp_topic").value;
+  //let topic = document.getElementById("cp_topic").value;
   const message = document.getElementById("cp_message").value;
   const author = localStorage.getItem("boardUsername");
 
+  let topic;
+
   if (category === "information") {
-    topic = "information";
+    topic = document.getElementById("cp_informationTopic").value;
+  } else {
+    topic = document.getElementById("cp_topic").value;
   }
 
   if (topic.length > 40) {
@@ -1561,16 +1570,7 @@ function changeCategory() {
 
     clearMessages();
 
-    if (currentCategory === "information") {
-
-        loadTopicsFromDatabase(currentCategory, "information");
-
-    } else {
-
-        loadTopicsFromDatabase(currentCategory);
-
-    }
-
+    loadTopicsFromDatabase(currentCategory);
 }
 
 function clearMessages() {
@@ -2033,20 +2033,22 @@ function changeCreateBoardType() {
 
 function createTopicPopupCategoryChanged() {
 
-    console.log("changeCreateCategoryPopup");
-
     const category = document.getElementById("cp_category").value;
-    const topic = document.getElementById("cp_topic");
-    
+
+    const topicInput = document.getElementById("cp_topic");
+    const infoSelect = document.getElementById("cp_informationTopic");
+
     if (category === "information") {
 
-        topic.style.display = "none";
-        topic.value = "information";
+        topicInput.style.display = "none";
+        infoSelect.style.display = "block";
 
     } else {
 
-        topic.style.display = "block";
-        topic.value = "";
-        topic.placeholder = "Topic";
+        topicInput.style.display = "block";
+        infoSelect.style.display = "none";
+
+        topicInput.value = "";
+        topicInput.placeholder = "Topic";
     }
 }

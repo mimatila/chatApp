@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
+
 <div class="board-container">
 
 <h1 id="boardTitle"></h1>
@@ -25,7 +25,7 @@
         <select id="categorySelect" onchange="changeCategory()">
         </select>
 
-        <select id="topicSelect">
+        <select id="topicSelect" onchange="changeTopic()">
             <option value="">select topic</option>
         </select>
 
@@ -137,9 +137,15 @@
     <h3>Create New Topic</h3>
 
     <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
-    </select>
-    <input id="cp_topic" placeholder="Topic" maxlength="40">
-    
+</select>
+
+<input id="cp_topic" placeholder="Topic" maxlength="40">
+
+<select id="cp_informationTopic" style="display:none;">
+    <option value="general information">General information</option>
+    <option value="announcements">Announcements</option>
+</select>
+
 <textarea id="cp_message"
           placeholder="Write your message..."
           rows="5"></textarea>
