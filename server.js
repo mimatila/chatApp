@@ -142,12 +142,13 @@ app.post("/create", async (req, res) => {
     );
 
     if (boards.length > 0) {
-      await connection.rollback();
-      return res.status(400).json({
-        success: false,
-        message: "Taulu on jo olemassa"
-      });
-    }
+  await connection.rollback();
+
+  return res.status(400).json({
+    success: false,
+    message: "BOARD_EXISTS"
+  });
+}
 
     // Luo board
 const [boardResult] = await connection.query(
@@ -205,9 +206,9 @@ const boardId = boardResult.insertId;
     await connection.commit();
 
     res.json({
-      success: true,
-      message: "Board created!"
-    });
+  success: true,
+  message: "BOARD_CREATED"
+});
 
   } catch (err) {
 
@@ -216,9 +217,9 @@ const boardId = boardResult.insertId;
     console.error(err);
 
     res.status(500).json({
-      success: false,
-      message: "Database error"
-    });
+  success: false,
+  message: "DATABASE_ERROR"
+});
 
   } finally {
 
@@ -237,14 +238,14 @@ app.delete("/delete/:boardName", async (req, res) => {
   if (!user) {
     return res.status(401).json({
       success: false,
-      message: "Kirjaudu uudelleen"
+      message: "LOGIN_AGAIN"
     });
   }
 
   if (user.role !== "owner") {
     return res.status(403).json({
       success: false,
-      message: "Not owner"
+      message: "NOT_OWNER"
     });
   }
 
@@ -265,7 +266,7 @@ app.delete("/delete/:boardName", async (req, res) => {
 
       return res.status(404).json({
         success: false,
-        message: "Taulua ei löytynyt"
+        message: "BOARD_NOT_FOUND"
       });
     }
 
@@ -280,7 +281,7 @@ app.delete("/delete/:boardName", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Taulu poistettu"
+      message: "BOARD_DELETED"
     });
 
   } catch (err) {
@@ -291,7 +292,7 @@ app.delete("/delete/:boardName", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Database error"
+      message: "DATABASE_ERROR"
     });
 
   } finally {
@@ -311,7 +312,7 @@ app.delete("/leaveBoard/:boardName", async (req, res) => {
   if (!user) {
     return res.status(401).json({
       success: false,
-      message: "Kirjaudu uudelleen"
+      message: "LOGIN_AGAIN"
     });
   }
 
@@ -330,7 +331,7 @@ app.delete("/leaveBoard/:boardName", async (req, res) => {
 
     res.json({
       success: true,
-      message: "User deleted"
+      message: "USER_REMOVED"
     });
 
   } catch (err) {
@@ -341,7 +342,7 @@ app.delete("/leaveBoard/:boardName", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Database error"
+      message: "DATABASE_ERROR"
     });
 
   } finally {
@@ -381,7 +382,7 @@ app.post("/boardMessage", async (req, res) => {
 if (boards.length === 0) {
     return res.json({
         success: false,
-        message: "Board not found"
+        message: "BOARD_NOT_FOUND"
     });
 }
 
@@ -660,14 +661,14 @@ app.delete("/clear/:boardName", async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Kirjaudu uudelleen"
+        message: "LOGIN_AGAIN"
       });
     }
 
     if (user.role !== "owner") {
       return res.status(403).json({
         success: false,
-        message: "Ei oikeuksia"
+        message: "NO_PERMISSION"
       });
     }
 
@@ -680,7 +681,7 @@ app.delete("/clear/:boardName", async (req, res) => {
     if (boards.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Taulua ei löytynyt"
+        message: "BOARD_NOT_FOUND"
       });
     }
 
@@ -715,7 +716,7 @@ if (boardType === "notice") {
 
     res.json({
       success: true,
-      message: "Viestit tyhjennetty"
+      message: "MESSAGES_CLEARED"
     });
 
   } catch (err) {
@@ -724,7 +725,7 @@ if (boardType === "notice") {
 
     res.status(500).json({
       success: false,
-      message: "Database error"
+      message: "DATABASE_ERROR"
     });
 
   }
@@ -767,7 +768,7 @@ app.post("/quickMessages/saveAll", async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Kirjaudu uudelleen"
+        message: "LOGIN_AGAIN"
       });
     }
 
@@ -778,10 +779,11 @@ app.post("/quickMessages/saveAll", async (req, res) => {
     );
 
     if (boards.length === 0) {
-      return res.status(404).json({
-        success: false
-      });
-    }
+  return res.status(404).json({
+    success: false,
+    message: "BOARD_NOT_FOUND"
+  });
+}
 
     const boardId = boards[0].id;
 
@@ -797,14 +799,14 @@ app.post("/quickMessages/saveAll", async (req, res) => {
 if (!Array.isArray(quickMessages) || quickMessages.length !== 10) {
   return res.status(400).json({
     success: false,
-    message: "Invalid quick messages"
+    message: "INVALID_QUICK_MESSAGES"
   });
 }
 
 if (quickMessages.some(msg => msg.trim() === "")) {
   return res.status(400).json({
     success: false,
-    message: "Pikaviesti ei voi olla tyhjä"
+    message: "QUICK_MESSAGE_EMPTY"
   });
 }
 
@@ -834,7 +836,7 @@ for (let i = 0; i < quickMessages.length; i++) {
 
     res.status(500).json({
       success: false,
-      message: "Database error"
+      message: "DATABASE_ERROR"
     });
 
   }
@@ -1078,11 +1080,11 @@ app.post("/joinRequest", async (req, res) => {
     );
 
     if (boards.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Board not found"
-      });
-    }
+  return res.status(404).json({
+    success: false,
+    message: "BOARD_NOT_FOUND"
+  });
+}
 
     const boardId = boards[0].id;
 
@@ -1096,11 +1098,11 @@ app.post("/joinRequest", async (req, res) => {
     );
 
     if (users.length > 0) {
-      return res.json({
-        success: false,
-        message: "Username already exists."
-      });
-    }
+  return res.json({
+    success: false,
+    message: "USERNAME_EXISTS"
+  });
+}
 
     // Onko liittymispyyntö jo olemassa?
     const [requests] = await pool.query(
@@ -1112,11 +1114,11 @@ app.post("/joinRequest", async (req, res) => {
     );
 
     if (requests.length > 0) {
-      return res.json({
-        success: false,
-        message: "Request already pending"
-      });
-    }
+  return res.json({
+    success: false,
+    message: "REQUEST_PENDING"
+  });
+}
 
     // Lisää liittymispyyntö
     
@@ -1138,18 +1140,18 @@ await pool.query(
 );
 
     res.json({
-      success: true,
-      message: "Request sent"
-    });
+  success: true,
+  message: "REQUEST_SENT"
+});
 
   } catch (err) {
 
     console.error(err);
 
     res.status(500).json({
-      success: false,
-      message: "Database error"
-    });
+  success: false,
+  message: "DATABASE_ERROR"
+});
 
   }
 
@@ -1364,7 +1366,7 @@ app.post("/removeMember", async (req, res) => {
     if (!owner || owner.role !== "owner") {
       return res.status(403).json({
         success: false,
-        message: "Only owner can remove members"
+        message: "ONLY_OWNER_REMOVE"
       });
     }
 
@@ -1376,7 +1378,7 @@ app.post("/removeMember", async (req, res) => {
     if (boards.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Board not found"
+        message: "BOARD_NOT_FOUND"
       });
     }
 
@@ -1395,13 +1397,14 @@ app.post("/removeMember", async (req, res) => {
     if (result.affectedRows === 0) {
       return res.json({
         success: false,
-        message: "Member not found"
+        message: "MEMBER_NOT_FOUND"
       });
     }
 
 
     res.json({
-      success: true
+      success: true,
+      message: "MEMBER_REMOVED"
     });
 
 
@@ -1411,7 +1414,7 @@ app.post("/removeMember", async (req, res) => {
 
     res.status(500).json({
       success:false,
-      message:"Database error"
+      message:"DATABASE_ERROR"
     });
 
   }
@@ -1432,7 +1435,7 @@ app.post("/createTopic", async (req, res) => {
   if (topic.length > 40) {
     return res.json({
       success: false,
-      message: "Topic too long"
+      message: "TOPIC_TOO_LONG"
     });
   }
 
@@ -1447,7 +1450,7 @@ app.post("/createTopic", async (req, res) => {
     if (boards.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Board not found"
+        message: "BOARD_NOT_FOUND"
       });
     }
 
@@ -1465,7 +1468,7 @@ app.post("/createTopic", async (req, res) => {
     if (users.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "USER_NOT_FOUND"
       });
     }
 
@@ -1475,7 +1478,7 @@ app.post("/createTopic", async (req, res) => {
     if (category === "information" && user.role !== "owner") {
       return res.status(403).json({
         success: false,
-        message: "Only owner can add Information"
+        message: "ONLY_OWNER_INFORMATION"
       });
     }
 
@@ -1496,7 +1499,7 @@ app.post("/createTopic", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Topic created"
+      message: "TOPIC_CREATED"
     });
 
   } catch (err) {
@@ -1505,7 +1508,7 @@ app.post("/createTopic", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Database error"
+      message: "DATABASE_ERROR"
     });
 
   }
