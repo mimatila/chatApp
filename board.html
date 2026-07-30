@@ -134,28 +134,31 @@
 
 <div id="createTopicPopup" class="popup">
   <div class="popup-content">
-    <h3>Create New Topic</h3>
+    <h3 id="createTopicTitle">Create New Topic</h3>
 
     <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
 </select>
 
-<input id="cp_topic" placeholder="Topic" maxlength="40">
+<input id="cp_topic" placeholder="topic" maxlength="40">
 
 <select id="cp_informationTopic" style="display:none;">
-    <option value="general information">General information</option>
-    <option value="announcements">Announcements</option>
+    <option value="general information">
+        General information
+    </option>
+    <option value="announcements">
+        Announcements
+    </option>
 </select>
 
 <textarea id="cp_message"
-          placeholder="Write your message..."
-          rows="5"></textarea>
-
-    <button onclick="submitTopic()">Create</button>
-    <button onclick="closeTopicPopup()">Cancel</button>
+placeholder="Write your message..."
+rows="5"></textarea>
+   <button id="cp_createBtn" onclick="submitTopic()">Create</button>
+   <button id="cp_cancelBtn" onclick="closeTopicPopup()">Cancel</button>
   </div>
 </div>
 
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6></script>
 
 </body>
 </html>

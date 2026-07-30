@@ -28,82 +28,118 @@ const boardDescriptions = {
 
 const messages = {
     fi: {   
-        BOARD_NOT_FOUND: "Taulua ei löytynyt",
+        BOARD_NOT_FOUND: "Taulua ei löytynyt.",
         onlyOwnerCanWrite: "Vain omistaja voi kirjoittaa tähän ketjuun.",
         PleaseSelectTopicFirst: "Valitse aihe ensin.",
-        LOGIN_FAILED: "Kirjautuminen epäonnistui",
-        BOARD_EXISTS: "Taulu on jo olemassa",
+        confirmRemoveMessage: "Haluatko poistaa tämän viestin?",
+        confirmRemoveMessages: "Haluatko poistaa tämän viestiketjun?",
+        LOGIN_FAILED: "Kirjautuminen epäonnistui.",
+        BOARD_EXISTS: "Taulu on jo olemassa.",
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
-        BOARD_CREATED: "Taulu luotu!",
-        DATABASE_ERROR: "Tietokantavirhe",
-        LOGIN_AGAIN: "Kirjaudu uudelleen",
-        NO_PERMISSION: "Ei oikeuksia",
-        MESSAGES_CLEARED: "Viestit tyhjennetty",
-        USERNAME_EXISTS: "Käyttäjänimi on jo käytössä",
-        REQUEST_PENDING: "Liittymispyyntö on jo lähetetty",
-        REQUEST_SENT: "Liittymispyyntö lähetetty",
-        JOIN_REQUEST_FAILED: "Liittymispyyntö epäonnistui",
-        TOPIC_TOO_LONG: "Aihe saa sisältää enintään 40 merkkiä",
-        TOPIC_MISSING: "Aihe puuttuu",
-        MESSAGE_MISSING: "Viesti puuttuu",
-        USER_NOT_FOUND: "Käyttäjää ei löytynyt",
-        ONLY_OWNER_INFORMATION: "Vain omistaja voi lisätä tiedotteen",
-        TOPIC_CREATED: "Aihe luotu",
-        REMOVE_FAILED: "Poisto epäonnistui",
-        ONLY_OWNER_REMOVE: "Vain omistaja voi poistaa jäseniä",
-        MEMBER_REMOVED: "Jäsen poistettu",
-        MEMBER_NOT_FOUND: "Jäsentä ei löytynyt",
-        QUICK_MESSAGE_EMPTY: "Pikaviesti ei voi olla tyhjä",
-        SAVE_FAILED: "Tallennus epäonnistui",
-        SAVE_ERROR: "Virhe tallennuksessa",
-        INVALID_QUICK_MESSAGES: "Virheelliset pikaviestit",
-        NOT_OWNER: "Vain omistaja voi tehdä tämän",
-        BOARD_DELETED: "Taulu poistettu",
+        BOARD_CREATED: "Taulu luotu.",
+        DATABASE_ERROR: "Tietokantavirhe.",
+        SAVE: "Tallennettu.",
+        LOGIN_AGAIN: "Kirjaudu uudelleen.",
+        NO_PERMISSION: "Ei oikeuksia.",
+        MESSAGES_CLEARED: "Viestit poistettu.",
+        USERNAME_EXISTS: "Käyttäjänimi on jo käytössä.",
+        REQUEST_PENDING: "Liittymispyyntö on jo lähetetty.",
+        REQUEST_SENT: "Liittymispyyntö lähetetty.",
+        JOIN_REQUEST_FAILED: "Liittymispyyntö epäonnistui.",
+        TOPIC_TOO_LONG: "Aihe saa sisältää enintään 40 merkkiä.",
+        TOPIC_MISSING: "Aihe puuttuu.",
+        MESSAGE_MISSING: "Viesti puuttuu.",
+        USER_NOT_FOUND: "Käyttäjää ei löytynyt.",
+        ONLY_OWNER_INFORMATION: "Vain omistaja voi lähettää tänne.",
+        TOPIC_CREATED: "Aihe luotu.",
+        REMOVE_FAILED: "Poisto epäonnistui.",
+        ONLY_OWNER_REMOVE: "Vain omistaja voi poistaa jäseniä.",
+        MEMBER_REMOVED: "Jäsen poistettu.",
+        MEMBER_NOT_FOUND: "Jäsentä ei löytynyt.",
+        QUICK_MESSAGE_EMPTY: "Pikaviesti ei voi olla tyhjä.",
+        SAVE_FAILED: "Tallennus epäonnistui.",
+        SAVE_ERROR: "Virhe tallennuksessa.",
+        INVALID_QUICK_MESSAGES: "Virheelliset pikaviestit.",
+        NOT_OWNER: "Vain omistaja voi tehdä.",
+        BOARD_DELETED: "Taulu poistettu.",
         LEAVE_BOARD_CONFIRM: "Haluatko varmasti poistua tältä taululta?\n\nKäyttäjätilisi poistetaan tältä taululta.",
-        USER_REMOVED: "Käyttäjä poistettu",
-        DELETE_FAILED: "Delete failed (no permission or server error)",
-        NETWORK_ERROR: "Verkkovirhe",
+        USER_REMOVED: "Käyttäjä poistettu.",
+        DELETE_FAILED: "poisto epäonnistui. (ei oikeuksia tai virhe serverillä).",
+        NETWORK_ERROR: "Verkkovirhe.",
         BOARD_TYPE_FAMILY: "Perhe",
-        BOARD_TYPE_NOTICE: "Ilmoitustaulu"
+        BOARD_TYPE_NOTICE: "Ilmoitustaulu",
+        confirmDeleteBoard: "Oletko varma että haluat poistaa taulun?",
+        information: "info",
+        general: "yleinen",
+        maintenance: "huolto",
+        events: "tapahtumat",
+        announcement: "ilmoitukset",
+        recommendations: "suositukset",
+        topic: "Aihe",
+        topics: "Aiheet",
+        writeMessage: "Kirjoita viesti...",
+        training: "harjoitukset",
+        meetings: "kokoukset",
+        "select topic": "valitse aihe",
+        "general information": "yleiset tiedot",
+        announcements: "tiedotteet"
         },
     en: {
-        BOARD_NOT_FOUND: "Board not found",
+        BOARD_NOT_FOUND: "Board not found.",
         onlyOwnerCanWrite: "Only the owner can write to this chain.",
         PleaseSelectTopicFirst: "Select topic first.",
-        LOGIN_FAILED: "Login failed",
-        BOARD_EXISTS: "Board already exists",
-        BOARD_CREATED: "Board created!",
+        confirmRemoveMessage: "You want to remove this message?",
+        confirmRemoveMessages: "You want to remove this message chain?",
+        LOGIN_FAILED: "Login failed.",
+        BOARD_EXISTS: "Board already exists.",
+        BOARD_CREATED: "Board created.",
         REMOVE_USER_CONFIRM: "Remove user?",
-        DATABASE_ERROR: "Database error",
-        LOGIN_AGAIN: "Please login again",
-        NO_PERMISSION: "No permission",
-        MESSAGES_CLEARED: "Messages cleared",
-        USERNAME_EXISTS: "Username already exists",
-        REQUEST_PENDING: "Request already pending",
-        REQUEST_SENT: "Join request sent",
-        JOIN_REQUEST_FAILED: "Join request failed",
-        TOPIC_TOO_LONG: "Topic can contain a maximum of 40 characters",
-        TOPIC_MISSING: "Topic is missing",
-        MESSAGE_MISSING: "Message is missing",
-        USER_NOT_FOUND: "User not found",
-        ONLY_OWNER_INFORMATION: "Only owner can add Information",
-        TOPIC_CREATED: "Topic created",
-        REMOVE_FAILED: "Remove failed",
-        ONLY_OWNER_REMOVE: "Only owner can remove members",
-        MEMBER_REMOVED: "Member removed",
-        MEMBER_NOT_FOUND: "Member not found",
-        QUICK_MESSAGE_EMPTY: "Quick message cannot be empty",
-        SAVE_FAILED: "Save failed",
-        SAVE_ERROR: "Error saving",
-        INVALID_QUICK_MESSAGES: "Invalid quick messages",
-        NOT_OWNER: "Only owner can do this",
-        BOARD_DELETED: "Board deleted",
+        DATABASE_ERROR: "Database error.",
+        LOGIN_AGAIN: "Please login again.",
+        NO_PERMISSION: "No permission.",
+        SAVE: "Save done.",
+        MESSAGES_CLEARED: "Messages cleared.",
+        USERNAME_EXISTS: "Username already exists.",
+        REQUEST_PENDING: "Request already pending.",
+        REQUEST_SENT: "Join request sent.",
+        JOIN_REQUEST_FAILED: "Join request failed.",
+        confirmDeleteBoard: "Are you sure you want to remove table?",
+        TOPIC_TOO_LONG: "Topic can contain a maximum of 40 characters.",
+        TOPIC_MISSING: "Topic is missing.",
+        MESSAGE_MISSING: "Message is missing.",
+        USER_NOT_FOUND: "User not found.",
+        ONLY_OWNER_INFORMATION: "Only owner can add Information.",
+        TOPIC_CREATED: "Topic created.",
+        REMOVE_FAILED: "Remove failed.",
+        ONLY_OWNER_REMOVE: "Only owner can remove members.",
+        MEMBER_REMOVED: "Member removed.",
+        MEMBER_NOT_FOUND: "Member not found.",
+        QUICK_MESSAGE_EMPTY: "Quick message cannot be empty.",
+        SAVE_FAILED: "Save failed.",
+        SAVE_ERROR: "Error saving.",
+        INVALID_QUICK_MESSAGES: "Invalid quick messages.",
+        NOT_OWNER: "Only owner can do this.",
+        BOARD_DELETED: "Board deleted.",
         LEAVE_BOARD_CONFIRM: "Are you sure you want to leave this board?\n\nYour user account will be removed from this board.",
-        USER_REMOVED: "User removed",
-        DELETE_FAILED: "Delete failed (no permission or server error)",
-        NETWORK_ERROR: "Network error",
+        USER_REMOVED: "User removed.",
+        DELETE_FAILED: "Delete failed (no permission or server error).",
+        NETWORK_ERROR: "Network error.",
         BOARD_TYPE_FAMILY: "Family",
-        BOARD_TYPE_NOTICE: "Notice Board"
+        BOARD_TYPE_NOTICE: "Notice Board",
+        information: "information",
+        general: "general",
+        maintenance: "maintenance",
+        events: "events",
+        topic: "Topic",
+        topics: "Topics",
+        writeMessage: "Write message...",
+        announcement: "announcements",
+        recommendations: "recommendations",
+        training: "training",
+        meetings: "meetings",
+        "select topic": "select topic",
+        "general information": "general information",
+        announcements: "announcements"
         }
     };
 
@@ -341,27 +377,9 @@ if (leaveBtn) {
 
 updateEditModeUI();
 
-/*
-const topicSelect = document.getElementById("topicSelect");
-
-topicSelect.onchange = function () {
-
-    currentTopic = this.value;
-
-    if (currentTopic) {
-        loadMessage(true);
-    } else {
-        clearMessages();
-    }
-};*/
-
-
-
 if (refreshInterval) clearInterval(refreshInterval);
 
 const refreshTime = boardType === "notice" ? 60000 : 15000;
-
-console.log("START REFRESH", refreshTime);
 
 refreshInterval = setInterval(() => {
   
@@ -528,14 +546,14 @@ function loadCategories() {
 
         categories.forEach(category => {
 
-            const option = document.createElement("option");
+    const option = document.createElement("option");
 
-            option.value = category;
-            option.textContent = category;
+    option.value = category;
+    option.textContent = t(category);
 
-            select.appendChild(option);
+    select.appendChild(option);
 
-        });
+});
 
     });
 }
@@ -551,6 +569,7 @@ function loadIndexLanguage(lang) {
         document.getElementById("boardName").placeholder = "Taulun nimi";
         document.getElementById("boardUsername").placeholder = "Käyttäjänimi";
         document.getElementById("boardPassword").placeholder = "Salasana";
+        
     } else {
         document.getElementById("loginTitle").textContent = "Login Board";
         document.getElementById("openJoinBtn").textContent = "Join Board";
@@ -559,15 +578,25 @@ function loadIndexLanguage(lang) {
         document.getElementById("boardName").placeholder = "Board Name";
         document.getElementById("boardUsername").placeholder = "Username";
         document.getElementById("boardPassword").placeholder = "Password";
+        
     }
-
-
 } 
 
 function loadBoardLanguage(lang) {
 
+  document.getElementById("cp_topic").placeholder = t("topic");
+  document.getElementById("cp_message").placeholder = t("writeMessage");
+   document.getElementById("createTopicTitle").textContent = "Luo uusi aihe";
+
   if (lang === "fi") {
 
+        document.querySelector("#cp_informationTopic option[value='general information']").textContent =
+            "Yleiset tiedot";
+        document.querySelector("#cp_informationTopic option[value='announcements']").textContent =
+            "Tiedotteet";
+        
+        document.getElementById("cp_createBtn").textContent = "Luo";
+        document.getElementById("cp_cancelBtn").textContent = "Peruuta";
         document.getElementById("topicBtn").textContent = "Uusi aihe";
         document.getElementById("sendBtn").textContent = "Lähetä";
         document.getElementById("clearBtn").textContent = "Tyhjennä";
@@ -583,9 +612,18 @@ function loadBoardLanguage(lang) {
         document.getElementById("deleteBoardBtn").textContent = "Poista taulu";
         document.getElementById("requestsBtn").textContent = "Pyynnöt";
         document.getElementById("boardNewMsg").placeholder = "Kirjoita viesti...";
-
+        document.getElementById("requestsBtn").textContent = "Pyynnöt";
+        document.getElementById("boardNewMsg").placeholder = "kirjoita viesti...";
+       
     } else {
 
+        document.querySelector("#cp_informationTopic option[value='general information']").textContent =
+            "General information";
+        document.querySelector("#cp_informationTopic option[value='announcements']").textContent =
+            "Announcements";
+        document.getElementById("createTopicTitle").textContent = "Create New Topic";
+        document.getElementById("cp_createBtn").textContent = "Create";
+        document.getElementById("cp_cancelBtn").textContent = "Cancel";
         document.getElementById("topicBtn").textContent = "New Topic";
         document.getElementById("sendBtn").textContent = "Send";
         document.getElementById("clearBtn").textContent = "Clear";
@@ -599,57 +637,9 @@ function loadBoardLanguage(lang) {
         document.getElementById("topicBtn").textContent = "New Topic";
         document.getElementById("settingsBtn").textContent = "Settings";
         document.getElementById("deleteBoardBtn").textContent = "Delete Board";
-        document.getElementById("requestsBtn").textContent = "Requests";
-        document.getElementById("boardNewMsg").placeholder = "Write message...";
+        
     }
 } 
-
-/*
-function loadLanguage(lang) {
-
-    if (lang === "fi") {
-
-        document.getElementById("openJoinBtn").textContent = "Liity Taululle";
-        document.getElementById("openCreateBtn").textContent = "Luo Taulu";
-        document.getElementById("openBoardBtn").textContent = "Avaa Taulu";
-        document.getElementById("topicBtn").textContent = "Uusi aihe";
-        document.getElementById("sendBtn").textContent = "Lähetä";
-        document.getElementById("clearBtn").textContent = "Tyhjennä";
-        document.getElementById("settingsBtn").textContent = "Asetukset";
-        document.getElementById("members").textContent = "Jäsenet";
-        document.getElementById("todayModeText").textContent = "tänään";
-        document.getElementById("editModeText").textContent = "muuta";
-        document.getElementById("importantModeText").textContent = "tärkeä";
-        document.getElementById("infoModeText").textContent = "tiedoksi";
-        document.getElementById("logout").textContent = "Kirjaudu ulos";
-        topicBtn.textContent = "Uusi aihe";
-        settingsBtn.textContent = "Asetukset";
-        deleteBoardBtn.textContent = "Poista taulu";
-        requestsBtn.textContent = "Pyynnöt";
-        document.getElementById("boardNewMsg").placeholder = "Kirjoita viesti...";
-
-    } else {
-
-        document.getElementById("openJoinBtn").textContent = "Join Board";
-        document.getElementById("openCreateBtn").textContent = "Create Board";
-        document.getElementById("openBoardBtn").textContent = "Open Board";
-        document.getElementById("topicBtn").textContent = "New Topic";
-        document.getElementById("sendBtn").textContent = "Send";
-        document.getElementById("clearBtn").textContent = "Clear";
-        document.getElementById("settingsBtn").textContent = "Settings";
-        document.getElementById("members").textContent = "Members";
-        document.getElementById("todayModeText").textContent = "today";
-        document.getElementById("editModeText").textContent = "edit";
-        document.getElementById("importantModeText").textContent = "important";
-        document.getElementById("infoModeText").textContent = "info";
-        document.getElementById("logout").textContent = "Logout";
-        topicBtn.textContent = "New Topic";
-        settingsBtn.textContent = "Settings";
-        deleteBoardBtn.textContent = "Delete Board";
-        requestsBtn.textContent = "Requests";
-        document.getElementById("boardNewMsg").placeholder = "Write message...";
-    }
-}*/
 
 // =====================
 // LOAD MESSAGES
@@ -658,9 +648,7 @@ function loadLanguage(lang) {
 function loadMessage(forceScroll = false) {
 
   console.log("loadMessage START");
-  console.log("LOAD MESSAGE FROM:", new Error().stack);
- 
-
+  
   const box = document.getElementById("boardMessagesDiv");
   if (!box) return;
 
@@ -714,8 +702,6 @@ if (quickBtn) {
     }
   }
 
-    //currentButtonsCache = data.quickMessages ?? [];
-   
     updateQuickUI(data);
 
     const isAtBottom =
@@ -914,7 +900,7 @@ if (boardType === "notice") {
   .then(data => {
      
     if (!data.success) {
-    return alert(translate(data.message));
+    return alert(t(data.message));
 }
 
     messageEl.value = "";
@@ -950,7 +936,7 @@ function loginWithPassword() {
   .then(async data => {
 
     if (!data.success) {
-      return alert("Login failed");
+      return alert(t("LOGIN_FAILED"));
     }
 
     // ✔ token talteen
@@ -981,40 +967,41 @@ function loginWithPassword() {
 // =====================
 
 function deleteBoard() {
-  const boardName = localStorage.getItem("boardName");
-  const token = localStorage.getItem("token");
 
-  fetch(`http://localhost:3000/delete/${boardName}`, {
-    method: "DELETE",
-    headers: {
-      "Authorization": token
-    }
-  })
-  .then(async (res) => {
-    const data = await res.json().catch(() => null);
-
-    if (res.ok || data?.success) {
-      alert(t(data?.message || "DELETE_SUCCESS"));
+    if (!confirm(t("confirmDeleteBoard"))) {
+        return;
     }
 
-    if (!res.ok || !data?.success) {
-      alert(t(data?.message || "DELETE_FAILED"));
-      return;
-    }
+    const boardName = localStorage.getItem("boardName");
+    const token = localStorage.getItem("token");
 
-    const lang = localStorage.getItem("language");
+    fetch(`http://localhost:3000/delete/${boardName}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": token
+        }
+    })
+    .then(async (res) => {
 
-    localStorage.clear();
+        const data = await res.json().catch(() => null);
 
-    if (lang) {
-     localStorage.setItem("language", lang);
-    }
-    window.location.href = "index.html";
-  })
-  .catch(err => {
-    console.error(err);
-    alert(t("NETWORK_ERROR"));
-  });
+        if (!res.ok || !data?.success) {
+            alert(t(data?.message || "DELETE_FAILED"));
+            return;
+        }
+
+        alert(t(data.message || "DELETE_SUCCESS"));
+
+        const lang = localStorage.getItem("language");
+
+        localStorage.clear();
+
+        if (lang) {
+            localStorage.setItem("language", lang);
+        }
+
+        window.location.href = "index.html";
+    });
 }
 
 function leaveBoard() {
@@ -1074,16 +1061,16 @@ async function clearTable() {
 
   if (boardType === "family") {
 
-  if (!confirm("Are you sure, want to clear all messages?")) return;
-
-} else if (boardType === "notice") {
-
-  if (!confirm("Are you sure, clear this message chain?")) return;
-
+  if (!confirm(t("confirmRemoveMessage"))) {
+    return;
 }
 
-  console.log("CLEAR CATEGORY:", currentCategory);
-console.log("CLEAR TOPIC:", currentTopic);
+} else if (boardType === "notice") {
+   if (!confirm(t("confirmRemoveMessages"))) {
+    return;
+}
+
+}
 
   await fetch(`http://localhost:3000/clear/${boardName}`, {
     method: "DELETE",
@@ -1105,11 +1092,8 @@ console.log("CLEAR TOPIC:", currentTopic);
      loadTopicCounts();
      loadMessage(true);
     }
-    //alert(t(data.message));
-    setTimeout(() => {
-        alert(t(data.message));
-    }, 200);
-   
+    //setTimeout(() => alert(t(data.message)), 100);
+    setTimeout(() => alert(t(data.message)), 200);
   });
 }
 
@@ -1161,14 +1145,13 @@ function loadBoardCount() {
       } else {
         el.innerText = "Cannot get Boards";
       }
-
     });
 }
 
 function deleteMessage(id) {
-  if (!confirm("Are you sure, want to remove message?")) {
+  if (!confirm(t("confirmRemoveMessage"))) {
     return;
-  }
+}
 
   const boardName = localStorage.getItem("boardName");
   const token = localStorage.getItem("token");
@@ -1277,19 +1260,11 @@ function saveSettings() {
   .then(data => {
 
     if (data.success) {
-      alert("Tallennettu!");
+      alert(t("SAVE"));
       closeSettings();
     }
   });
 }
-
-
-/*
-function getCurrentUsername() {
-  
-  return document.getElementById("boardUsername")?.value
-    || localStorage.getItem("boardUsername");
-}*/
 
 const importantMode = document.getElementById("importantMode");
 
@@ -1443,7 +1418,7 @@ function sendJoinRequest() {
 })
   .catch(err => {
     console.error(err);
-    alert("Server error");
+    alert(t("NETWORK_ERROR"));
   });
 
 }
@@ -1537,17 +1512,17 @@ function submitTopic() {
   }
 
   if (topic.length > 40) {
-    alert("Topic can contain a maximum of 40 characters.");
+    alert(t("TOPIC_TOO_LONG"));
     return;
   }
 
    if (category !== "information" && !topic.trim()) {
-    alert("Topic is missing");
+    alert(t("TOPIC_MISSING"));
     return;
   }
 
 if (!message.trim()) {
-    alert("Message is missing");
+    alert(t("MESSAGE_MISSING"));
     return;
   }
 
@@ -1636,17 +1611,23 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
         const topicSelect = document.getElementById("topicSelect");
 
         topicSelect.innerHTML = "";
-        topicSelect.appendChild(new Option("select topic", ""));
+        topicSelect.appendChild(new Option(t("select topic", "")));
 
         data.topics.forEach(topic => {
 
-            const option = document.createElement("option");
+    const option = document.createElement("option");
 
-            option.value = topic;
-            option.textContent = topic;
+    option.value = topic;
 
-            topicSelect.appendChild(option);
-        });
+    if (currentCategory === "information") {
+        option.textContent = t(topic);
+    } else {
+        option.textContent = topic;
+    }
+
+    topicSelect.appendChild(option);
+
+});
 
         // ← TÄHÄN
         if (selectedTopic) {
@@ -2044,14 +2025,14 @@ function loadTopicCounts() {
 
 const visibleCategories = order.filter(c => c !== "information");
 
-let text = "Topics: ";
+let text = t("topics") + ": ";
 
 visibleCategories.forEach(category => {
 
     const c = data.counts.find(item => item.category === category);
 
     if (c) {
-        text += `${c.category} (${c.count})  `;
+        text += `${t(c.category)} (${c.count})  `;
     }
 });
 
@@ -2086,6 +2067,6 @@ function createTopicPopupCategoryChanged() {
         infoSelect.style.display = "none";
 
         topicInput.value = "";
-        topicInput.placeholder = "Topic";
+        topicInput.placeholder = t("topic");
     }
 }
