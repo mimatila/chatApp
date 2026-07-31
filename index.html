@@ -33,12 +33,12 @@
 
 <div id="createPopup" class="popup">
   <div class="popup-content">
-    <h3>Create Board</h3>
+    <h3 id="createBoardPopupTitle">Create Board</h3>
 
     <label for="cp_boardType">Board Type</label>
     <select id="cp_boardType" onchange="changeCreateBoardType()">
-      <option value="family">Family</option>
-      <option value="notice">Notice</option>
+      <option value="family">family</option>
+      <option value="notice">notice</option>
     </select>
 
     <div id="noticeTemplateDiv" style="display:none;">
@@ -58,14 +58,14 @@
     <input id="cp_username" placeholder="Username">
     <input id="cp_password" placeholder="Password" type="password">
     <input id="cp_email" placeholder="Email">
-    <button onclick="submitCreateBoard()">Create</button>
-    <button onclick="closeCreatePopup()">Cancel</button>
+    <button id="submitCreatePopupBtn" onclick="submitCreateBoard()">Create</button>
+    <button id="closeCreatePopupBtn" onclick="closeCreatePopup()">Cancel</button>
   </div>
 </div>
 
 <div id="joinBoardPopup" class="popup">
   <div class="popup-content">
-    <h3>Join Board</h3>
+    <h3 id="joinTitle">Join Board</h3>
   <input id="joinBoardName" placeholder="Board Name">
 
 <input id="joinUsername" placeholder="Username">
@@ -74,9 +74,9 @@
 
 <input id="joinEmail" type="email" placeholder="Email">
     <br>
-    <button onclick="sendJoinRequest()"> Send Request </button>
+    <button id="sendJoinBtn" onclick="sendJoinRequest()"> Send Request </button>
 
-    <button onclick="closeJoinBoard()"> Cancel </button>
+    <button id="joinCancelBtn" onclick="closeJoinBoard()"> Cancel </button>
   </div>
 </div>
 

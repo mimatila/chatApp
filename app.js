@@ -561,23 +561,64 @@ function loadCategories() {
 function loadIndexLanguage(lang) {
 
   if (lang === "fi") {
+      
+        document.querySelector("#cp_boardType option[value='family']").textContent =
+        "perhe"; 
+        document.querySelector("#cp_boardType option[value='notice']").textContent =
+            "ilmoitustaulu";
 
         document.getElementById("loginTitle").textContent = "Kirjaudu Taululle";
+        document.getElementById("joinTitle").textContent = "Liity Taululle";
+        document.getElementById("createBoardPopupTitle").textContent = "Luo Taulu";
         document.getElementById("openJoinBtn").textContent = "Liity Taululle";
         document.getElementById("openCreateBtn").textContent = "Luo Taulu";
         document.getElementById("openBoardBtn").textContent = "Avaa Taulu";
         document.getElementById("boardName").placeholder = "Taulun nimi";
         document.getElementById("boardUsername").placeholder = "Käyttäjänimi";
         document.getElementById("boardPassword").placeholder = "Salasana";
+        document.getElementById("joinBoardName").placeholder = "Taulun nimi";
+        document.getElementById("joinUsername").placeholder = "Käyttäjänimi";
+        document.getElementById("joinPassword").placeholder = "Salasana";
+        document.getElementById("joinEmail").placeholder = "Sähköposti";
+        document.getElementById("sendJoinBtn").textContent = "Lähetä Pyyntö";
+        document.getElementById("joinCancelBtn").textContent = "Peru";
+        document.getElementById("cp_boardName").placeholder = "Taulun nimi";
+        document.getElementById("cp_username").placeholder = "Käyttäjänimi";
+        document.getElementById("cp_password").placeholder = "Salasana";
+        document.getElementById("cp_email").placeholder = "Sähköposti";
+        document.getElementById("submitCreatePopupBtn").textContent = "Luo Taulu";
+        document.getElementById("closeCreatePopupBtn").textContent = "Peru";
+        
+       
         
     } else {
+     
+        document.querySelector("#cp_boardType option[value='family']").textContent =
+            "family";
+        document.querySelector("#cp_boardType option[value='notice']").textContent =
+            "notice";
+        
         document.getElementById("loginTitle").textContent = "Login Board";
         document.getElementById("openJoinBtn").textContent = "Join Board";
+        document.getElementById("joinTitle").textContent = "Join Board";
+        document.getElementById("createBoardPopupTitle").textContent = "Create Board";
         document.getElementById("openCreateBtn").textContent = "Create Board";
         document.getElementById("openBoardBtn").textContent = "Open Board";
         document.getElementById("boardName").placeholder = "Board Name";
         document.getElementById("boardUsername").placeholder = "Username";
         document.getElementById("boardPassword").placeholder = "Password";
+        document.getElementById("joinBoardName").placeholder = "Board Name";
+        document.getElementById("joinUsername").placeholder = "Username";
+        document.getElementById("joinPassword").placeholder = "";
+        document.getElementById("joinEmail").placeholder = "Email";
+        document.getElementById("sendJoinBtn").textContent = "Send Request";
+        document.getElementById("joinCancelBtn").textContent = "Cancel";
+        document.getElementById("cp_boardName").placeholder = "Board Name";
+        document.getElementById("cp_username").placeholder = "Username";
+        document.getElementById("cp_password").placeholder = "Password";
+        document.getElementById("cp_email").placeholder = "Email";
+        document.getElementById("submitCreatePopupBtn").textContent = "Create Board";
+        document.getElementById("closeCreatePopupBtn").textContent = "Peru";
         
     }
 } 
