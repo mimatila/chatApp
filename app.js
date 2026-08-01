@@ -28,6 +28,7 @@ const boardDescriptions = {
 
 const messages = {
     fi: {   
+        ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
         BOARD_NOT_FOUND: "Taulua ei löytynyt.",
         onlyOwnerCanWrite: "Vain omistaja voi kirjoittaa tähän ketjuun.",
         PleaseSelectTopicFirst: "Valitse aihe ensin.",
@@ -66,8 +67,9 @@ const messages = {
         USER_REMOVED: "Käyttäjä poistettu.",
         DELETE_FAILED: "poisto epäonnistui. (ei oikeuksia tai virhe serverillä).",
         NETWORK_ERROR: "Verkkovirhe.",
-        BOARD_TYPE_FAMILY: "Perhe",
-        BOARD_TYPE_NOTICE: "Ilmoitustaulu",
+        BOARD_TYPE_FAMILY: "perhe",
+        BOARD_TYPE_NOTICE: "ilmoitus",
+        BOARD_NAME_RESERVED: "Taulun nimi on varattu.",
         confirmDeleteBoard: "Oletko varma että haluat poistaa taulun?",
         information: "info",
         general: "yleinen",
@@ -82,9 +84,40 @@ const messages = {
         meetings: "kokoukset",
         "select topic": "valitse aihe",
         "general information": "yleiset tiedot",
-        announcements: "tiedotteet"
+        announcements: "tiedotteet",
+        LOGIN_TITLE: "Kirjaudu Taululle",
+        JOIN_TITLE: "Liity Taululle",
+        CREATE_BOARD_TITLE: "Luo Taulu",
+        OPEN_BOARD: "Avaa Taulu",
+        JOIN_BOARD: "Liity Taululle",
+        CREATE_BOARD: "Luo Taulu",
+        BOARD_NAME: "Taulun nimi",
+        USERNAME: "Käyttäjänimi",
+        PASSWORD: "Salasana",
+        EMAIL: "Sähköposti",
+        SEND_REQUEST: "Lähetä Pyyntö",
+        CANCEL: "Peru",
+        CREATE_TOPIC_TITLE: "Luo uusi aihe",
+        CREATE: "Luo",
+        NEW_TOPIC: "Uusi aihe",
+        SEND: "Lähetä",
+        CLEAR: "Tyhjennä",
+        SETTINGS: "Asetukset",
+        MEMBERS: "Jäsenet",
+        TODAY: "tänään",
+        EDIT: "muokkaa",
+        IMPORTANT: "tärkeä",
+        INFO: "tiedoksi",
+        LOGOUT: "Kirjaudu ulos",
+        DELETE_BOARD: "Poista taulu",
+        REQUESTS: "Pyynnöt",
+        NOTICE_TALOYHTIO: "taloyhtiö",
+        NOTICE_TYOPAIKKA: "työpaikka",
+        NOTICE_URHEILUSEURA: "urheiluseura",
+        NOTICE_YHDISTYS: "yhdistys"
         },
     en: {
+        ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
         onlyOwnerCanWrite: "Only the owner can write to this chain.",
         PleaseSelectTopicFirst: "Select topic first.",
@@ -112,6 +145,7 @@ const messages = {
         TOPIC_CREATED: "Topic created.",
         REMOVE_FAILED: "Remove failed.",
         ONLY_OWNER_REMOVE: "Only owner can remove members.",
+        BOARD_NAME_RESERVED: "Board name is reserved.",
         MEMBER_REMOVED: "Member removed.",
         MEMBER_NOT_FOUND: "Member not found.",
         QUICK_MESSAGE_EMPTY: "Quick message cannot be empty.",
@@ -124,8 +158,8 @@ const messages = {
         USER_REMOVED: "User removed.",
         DELETE_FAILED: "Delete failed (no permission or server error).",
         NETWORK_ERROR: "Network error.",
-        BOARD_TYPE_FAMILY: "Family",
-        BOARD_TYPE_NOTICE: "Notice Board",
+        BOARD_TYPE_FAMILY: "family",
+        BOARD_TYPE_NOTICE: "notice",
         information: "information",
         general: "general",
         maintenance: "maintenance",
@@ -139,7 +173,37 @@ const messages = {
         meetings: "meetings",
         "select topic": "select topic",
         "general information": "general information",
-        announcements: "announcements"
+        announcements: "announcements",
+        LOGIN_TITLE: "Login Board",
+        JOIN_TITLE: "Join Board",
+        CREATE_BOARD_TITLE: "Create Board",
+        OPEN_BOARD: "Open Board",
+        JOIN_BOARD: "Join Board",
+        CREATE_BOARD: "Create Board",
+        BOARD_NAME: "Board Name",
+        USERNAME: "Username",
+        PASSWORD: "Password",
+        EMAIL: "Email",
+        SEND_REQUEST: "Send Request",
+        CANCEL: "Cancel",
+        CREATE_TOPIC_TITLE: "Create New Topic",
+        CREATE: "Create",
+        NEW_TOPIC: "New Topic",
+        SEND: "Send",
+        CLEAR: "Clear",
+        SETTINGS: "Settings",
+        MEMBERS: "Members",
+        TODAY: "today",
+        EDIT: "edit",
+        IMPORTANT: "important",
+        INFO: "info",
+        LOGOUT: "Logout",
+        DELETE_BOARD: "Delete Board",
+        REQUESTS: "Requests",
+        NOTICE_TALOYHTIO: "housing company",
+        NOTICE_TYOPAIKKA: "workplace",
+        NOTICE_URHEILUSEURA: "sports club",
+        NOTICE_YHDISTYS: "association"
         }
     };
 
@@ -190,6 +254,26 @@ function t(key) {
     const lang = localStorage.getItem("language") || "fi";
 
     return messages[lang][key] || key;
+}
+
+function setText(id, key) {
+
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.textContent = t(key);
+    }
+
+}
+
+function setPlaceholder(id, key) {
+
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.placeholder = t(key);
+    }
+
 }
 
 // =====================
@@ -558,128 +642,87 @@ function loadCategories() {
     });
 }
 
-function loadIndexLanguage(lang) {
+function loadIndexLanguage() {
 
-  if (lang === "fi") {
-      
-        document.querySelector("#cp_boardType option[value='family']").textContent =
-        "perhe"; 
-        document.querySelector("#cp_boardType option[value='notice']").textContent =
-            "ilmoitustaulu";
+    document.querySelector("#cp_boardType option[value='family']").textContent =
+        t("BOARD_TYPE_FAMILY");
 
-        document.getElementById("loginTitle").textContent = "Kirjaudu Taululle";
-        document.getElementById("joinTitle").textContent = "Liity Taululle";
-        document.getElementById("createBoardPopupTitle").textContent = "Luo Taulu";
-        document.getElementById("openJoinBtn").textContent = "Liity Taululle";
-        document.getElementById("openCreateBtn").textContent = "Luo Taulu";
-        document.getElementById("openBoardBtn").textContent = "Avaa Taulu";
-        document.getElementById("boardName").placeholder = "Taulun nimi";
-        document.getElementById("boardUsername").placeholder = "Käyttäjänimi";
-        document.getElementById("boardPassword").placeholder = "Salasana";
-        document.getElementById("joinBoardName").placeholder = "Taulun nimi";
-        document.getElementById("joinUsername").placeholder = "Käyttäjänimi";
-        document.getElementById("joinPassword").placeholder = "Salasana";
-        document.getElementById("joinEmail").placeholder = "Sähköposti";
-        document.getElementById("sendJoinBtn").textContent = "Lähetä Pyyntö";
-        document.getElementById("joinCancelBtn").textContent = "Peru";
-        document.getElementById("cp_boardName").placeholder = "Taulun nimi";
-        document.getElementById("cp_username").placeholder = "Käyttäjänimi";
-        document.getElementById("cp_password").placeholder = "Salasana";
-        document.getElementById("cp_email").placeholder = "Sähköposti";
-        document.getElementById("submitCreatePopupBtn").textContent = "Luo Taulu";
-        document.getElementById("closeCreatePopupBtn").textContent = "Peru";
-        
-       
-        
-    } else {
-     
-        document.querySelector("#cp_boardType option[value='family']").textContent =
-            "family";
-        document.querySelector("#cp_boardType option[value='notice']").textContent =
-            "notice";
-        
-        document.getElementById("loginTitle").textContent = "Login Board";
-        document.getElementById("openJoinBtn").textContent = "Join Board";
-        document.getElementById("joinTitle").textContent = "Join Board";
-        document.getElementById("createBoardPopupTitle").textContent = "Create Board";
-        document.getElementById("openCreateBtn").textContent = "Create Board";
-        document.getElementById("openBoardBtn").textContent = "Open Board";
-        document.getElementById("boardName").placeholder = "Board Name";
-        document.getElementById("boardUsername").placeholder = "Username";
-        document.getElementById("boardPassword").placeholder = "Password";
-        document.getElementById("joinBoardName").placeholder = "Board Name";
-        document.getElementById("joinUsername").placeholder = "Username";
-        document.getElementById("joinPassword").placeholder = "";
-        document.getElementById("joinEmail").placeholder = "Email";
-        document.getElementById("sendJoinBtn").textContent = "Send Request";
-        document.getElementById("joinCancelBtn").textContent = "Cancel";
-        document.getElementById("cp_boardName").placeholder = "Board Name";
-        document.getElementById("cp_username").placeholder = "Username";
-        document.getElementById("cp_password").placeholder = "Password";
-        document.getElementById("cp_email").placeholder = "Email";
-        document.getElementById("submitCreatePopupBtn").textContent = "Create Board";
-        document.getElementById("closeCreatePopupBtn").textContent = "Peru";
-        
-    }
+    document.querySelector("#cp_boardType option[value='notice']").textContent =
+        t("BOARD_TYPE_NOTICE");
+
+    document.querySelector("#cp_noticeTemplate option[value='taloyhtio']").textContent =
+    t("NOTICE_TALOYHTIO");
+
+    document.querySelector("#cp_noticeTemplate option[value='tyopaikka']").textContent =
+        t("NOTICE_TYOPAIKKA");
+
+    document.querySelector("#cp_noticeTemplate option[value='urheiluseura']").textContent =
+        t("NOTICE_URHEILUSEURA");
+
+    document.querySelector("#cp_noticeTemplate option[value='yhdistys']").textContent =
+        t("NOTICE_YHDISTYS");
+
+    setText("loginTitle", "LOGIN_TITLE");
+    setText("joinTitle", "JOIN_TITLE");
+    setText("createBoardPopupTitle", "CREATE_BOARD_TITLE");
+
+    setText("openJoinBtn", "JOIN_BOARD");
+    setText("openCreateBtn", "CREATE_BOARD");
+    setText("openBoardBtn", "OPEN_BOARD");
+
+    setPlaceholder("boardName", "BOARD_NAME");
+    setPlaceholder("boardUsername", "USERNAME");
+    setPlaceholder("boardPassword", "PASSWORD");
+
+    setPlaceholder("joinBoardName", "BOARD_NAME");
+    setPlaceholder("joinUsername", "USERNAME");
+    setPlaceholder("joinPassword", "PASSWORD");
+    setPlaceholder("joinEmail", "EMAIL");
+
+    setText("sendJoinBtn", "SEND_REQUEST");
+    setText("joinCancelBtn", "CANCEL");
+
+    setPlaceholder("cp_boardName", "BOARD_NAME");
+    setPlaceholder("cp_username", "USERNAME");
+    setPlaceholder("cp_password", "PASSWORD");
+    setPlaceholder("cp_email", "EMAIL");
+
+    setText("submitCreatePopupBtn", "CREATE_BOARD");
+    setText("closeCreatePopupBtn", "CANCEL");
 } 
 
-function loadBoardLanguage(lang) {
+function loadBoardLanguage() {
 
-  document.getElementById("cp_topic").placeholder = t("topic");
-  document.getElementById("cp_message").placeholder = t("writeMessage");
-   document.getElementById("createTopicTitle").textContent = "Luo uusi aihe";
+    setPlaceholder("cp_topic", "topic");
+    setPlaceholder("cp_message", "writeMessage");
 
-  if (lang === "fi") {
+    setText("createTopicTitle", "CREATE_TOPIC_TITLE");
 
-        document.querySelector("#cp_informationTopic option[value='general information']").textContent =
-            "Yleiset tiedot";
-        document.querySelector("#cp_informationTopic option[value='announcements']").textContent =
-            "Tiedotteet";
-        
-        document.getElementById("cp_createBtn").textContent = "Luo";
-        document.getElementById("cp_cancelBtn").textContent = "Peruuta";
-        document.getElementById("topicBtn").textContent = "Uusi aihe";
-        document.getElementById("sendBtn").textContent = "Lähetä";
-        document.getElementById("clearBtn").textContent = "Tyhjennä";
-        document.getElementById("settingsBtn").textContent = "Asetukset";
-        document.getElementById("members").textContent = "Jäsenet";
-        document.getElementById("todayModeText").textContent = "tänään";
-        document.getElementById("editModeText").textContent = "muokkaa";
-        document.getElementById("importantModeText").textContent = "tärkeä";
-        document.getElementById("infoModeText").textContent = "tiedoksi";
-        document.getElementById("logout").textContent = "Kirjaudu ulos";
-        document.getElementById("topicBtn").textContent = "Uusi aihe";
-        document.getElementById("settingsBtn").textContent = "Asetukset";
-        document.getElementById("deleteBoardBtn").textContent = "Poista taulu";
-        document.getElementById("requestsBtn").textContent = "Pyynnöt";
-        document.getElementById("boardNewMsg").placeholder = "Kirjoita viesti...";
-        document.getElementById("requestsBtn").textContent = "Pyynnöt";
-        document.getElementById("boardNewMsg").placeholder = "kirjoita viesti...";
-       
-    } else {
+    document.querySelector("#cp_informationTopic option[value='general information']").textContent =
+        t("general information");
 
-        document.querySelector("#cp_informationTopic option[value='general information']").textContent =
-            "General information";
-        document.querySelector("#cp_informationTopic option[value='announcements']").textContent =
-            "Announcements";
-        document.getElementById("createTopicTitle").textContent = "Create New Topic";
-        document.getElementById("cp_createBtn").textContent = "Create";
-        document.getElementById("cp_cancelBtn").textContent = "Cancel";
-        document.getElementById("topicBtn").textContent = "New Topic";
-        document.getElementById("sendBtn").textContent = "Send";
-        document.getElementById("clearBtn").textContent = "Clear";
-        document.getElementById("settingsBtn").textContent = "Settings";
-        document.getElementById("members").textContent = "Members";
-        document.getElementById("todayModeText").textContent = "today";
-        document.getElementById("editModeText").textContent = "edit";
-        document.getElementById("importantModeText").textContent = "important";
-        document.getElementById("infoModeText").textContent = "info";
-        document.getElementById("logout").textContent = "Logout";
-        document.getElementById("topicBtn").textContent = "New Topic";
-        document.getElementById("settingsBtn").textContent = "Settings";
-        document.getElementById("deleteBoardBtn").textContent = "Delete Board";
-        
-    }
+    document.querySelector("#cp_informationTopic option[value='announcements']").textContent =
+        t("announcements");
+
+    setText("cp_createBtn", "CREATE");
+    setText("cp_cancelBtn", "CANCEL");
+
+    setText("topicBtn", "NEW_TOPIC");
+    setText("sendBtn", "SEND");
+    setText("clearBtn", "CLEAR");
+    setText("settingsBtn", "SETTINGS");
+    setText("members", "MEMBERS");
+
+    setText("todayModeText", "TODAY");
+    setText("editModeText", "EDIT");
+    setText("importantModeText", "IMPORTANT");
+    setText("infoModeText", "INFO");
+
+    setText("logout", "LOGOUT");
+    setText("deleteBoardBtn", "DELETE_BOARD");
+    setText("requestsBtn", "REQUESTS");
+
+    setPlaceholder("boardNewMsg", "writeMessage");
 } 
 
 // =====================
@@ -961,6 +1004,40 @@ function loginWithPassword() {
   const boardName = document.getElementById("boardName").value;
   const boardPassword = document.getElementById("boardPassword").value;
   const boardUsername = document.getElementById("boardUsername").value;
+
+   console.log("boardName =", boardName);
+console.log("username =", boardUsername);
+console.log("password =", boardPassword);
+console.log("'" + boardName + "'");
+
+  if (boardName.toLowerCase() === "admin") {
+
+    console.log("ADMIN LOGIN");
+
+    fetch("http://localhost:3000/admin/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: boardUsername,
+            password: boardPassword
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (!data.success) {
+            alert(t(data.message));
+            return;
+        }
+
+        window.location.href = "admin.html";
+
+    });
+
+    return;
+}
 
   fetch("http://localhost:3000/login", {
     method: "POST",
@@ -2111,3 +2188,4 @@ function createTopicPopupCategoryChanged() {
         topicInput.placeholder = t("topic");
     }
 }
+

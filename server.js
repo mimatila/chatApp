@@ -129,6 +129,15 @@ app.post("/create", async (req, res) => {
     "Kuntosalilla"
   ];
 
+  const reservedNames = ["admin"];
+
+  if (reservedNames.includes(boardName.toLowerCase())) {
+    return res.json({
+        success: false,
+        message: "BOARD_NAME_RESERVED"
+    });
+  }
+
   const connection = await pool.getConnection();
 
   try {
@@ -300,6 +309,55 @@ app.delete("/delete/:boardName", async (req, res) => {
     connection.release();
 
   }
+
+});
+
+app.delete("/admin/boards", async (req,res)=>{
+
+    try {
+
+        await pool.query(
+            "DELETE FROM boards"
+        );
+
+        res.json({
+            success:true
+        });
+
+    } catch(err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success:false
+        });
+    }
+
+});
+
+app.delete("/admin/board/:id", async (req, res) => {
+
+    try {
+
+        const id = req.params.id;
+
+        await pool.query(
+            "DELETE FROM boards WHERE id = ?",
+            [id]
+        );
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success:false
+        });
+    }
 
 });
 
@@ -1571,6 +1629,109 @@ app.post("/topicCounts", async (req, res) => {
             success: false
         });
     }
+});
+
+app.get("/admin/boards", async (req, res) => {
+
+    try {
+
+        const [rows] = await pool.query(`
+            SELECT
+    b.id,
+    b.name,
+
+    u.username,
+    u.email,
+
+    (
+        SELECT COUNT(*)
+        FROM users
+        WHERE board_id = b.id
+    ) AS userCount
+
+FROM boards b
+
+LEFT JOIN users u
+    ON b.id = u.board_id
+   AND u.role = 'owner'
+
+ORDER BY b.name
+        `);
+
+        res.json({
+            success: true,
+            boards: rows
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: "DATABASE_ERROR"
+        });
+
+    }
+
+});
+
+app.post("/admin/login", async (req, res) => {
+
+    try {
+
+        const { username, password } = req.body;
+
+        console.log("REQ BODY:", req.body);
+
+        const [rows] = await pool.query(
+            "SELECT * FROM users WHERE username = ?",
+            [username]
+        );
+
+        if (rows.length === 0) {
+            return res.json({
+                success: false,
+                message: "ADMIN_LOGIN_FAILED"
+            });
+        }
+
+        const user = rows[0];
+
+        // Varmistetaan että käyttäjä on admin
+        if (user.role !== "admin") {
+            return res.json({
+                success: false,
+                message: "ADMIN_LOGIN_FAILED"
+            });
+        }
+
+        const ok = await bcrypt.compare(password, user.password);
+
+        console.log("BCRYPT RESULT:", ok);
+
+        if (!ok) {
+            return res.json({
+                success: false,
+                message: "ADMIN_LOGIN_FAILED"
+            });
+        }
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: "DATABASE_ERROR"
+        });
+
+    }
+
 });
 
 app.listen(3000, () => {
