@@ -40,6 +40,70 @@ body {
     font-size: 0.95rem;
 }
 
+#boardTopicsView,
+#boardMessagesDiv,
+#boardMessagesView {
+    display: none;
+}
+
+#backToCategoriesBtn {
+    display: none;
+    position: static;
+  height:34px;
+  margin-left: auto;
+  grid-column: 3;
+  justify-self: end;
+  background-color: red;
+}
+
+#boardCategoriesView {
+    display: grid;
+    grid-template-columns: repeat(2, 150px);
+    gap: 30px;
+    justify-content: center;
+    align-content: center;
+}
+
+.category-card {
+    background: greenyellow;
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 8px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.category-card:hover {
+    transform: scale(1.03);
+}
+
+#boardTopicsView {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.topic-card {
+    background-color: greenyellow;
+    border-radius: 10px;
+    padding: 5px;
+    cursor: pointer;
+    text-align: center;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topic-card:hover {
+    transform: scale(1.03);
+}
+
 .lang-flag {
     width: 28px;
     height: 20px;
@@ -63,7 +127,7 @@ body {
   background-color: #eef2f7;
   margin: 0 auto;
   max-width: 600px;
-  min-height: 150px;
+  height: 200px;
   padding: 10px;
 }
 
@@ -658,7 +722,8 @@ input::placeholder {
 }
 
 #topicSelect {
-    width: 270px;
+    /*270px alkuperäinen*/
+    width: 170px;
     text-align: center;
     text-align-last: center;
     height: 34px;

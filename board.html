@@ -30,13 +30,36 @@
         </select>
 
     </div>
+    <button id="backToCategoriesBtn" onclick="backToCategories()">
+        Categories
+    </button>
   <button id="clearBtn" class="clearBtn" onclick="clearTable()">Clear</button>
 </div>
 
 <!-- viestit -->
 <div class="board">
-  <div id="boardMessagesDiv"></div>
+
+  <div id="boardCategoriesView">
+    <!-- kategoriat / gridit -->
 </div>
+
+<div id="boardTopicsHeader">
+    
+</div>
+
+<div id="boardTopicsView">
+  
+    <!-- topicit -->
+</div>
+
+<div id="boardMessagesView"></div>
+
+  <div id="boardMessagesDiv">
+
+ 
+  </div>
+</div>
+
   <div class="message-options">
     <label>
       <input type="checkbox" id="importantMode">
@@ -78,6 +101,7 @@
   <button id="deleteBoardBtn" onclick="deleteBoard()">Delete Board</button>
   <button id="leaveBoardBtn" onclick="leaveBoard()"> Leave Board </button>
   <button id="settingsBtn" onclick="openSettings()"> Settings </button>
+  <button id="homeBtn" onclick="home()">Home</button>
   <button id="logout" onclick="logout()"> Logout </button>
 </div>
 

@@ -69,6 +69,7 @@ const messages = {
         NETWORK_ERROR: "Verkkovirhe.",
         BOARD_TYPE_FAMILY: "perhe",
         BOARD_TYPE_NOTICE: "ilmoitus",
+        NO_TOPICS_IN_CATEGORY: "Ei aiheita tässä kategoriassa",
         BOARD_NAME_RESERVED: "Taulun nimi on varattu.",
         confirmDeleteBoard: "Oletko varma että haluat poistaa taulun?",
         information: "info",
@@ -144,6 +145,7 @@ const messages = {
         ONLY_OWNER_INFORMATION: "Only owner can add Information.",
         TOPIC_CREATED: "Topic created.",
         REMOVE_FAILED: "Remove failed.",
+        NO_TOPICS_IN_CATEGORY: "No topics in this category",
         ONLY_OWNER_REMOVE: "Only owner can remove members.",
         BOARD_NAME_RESERVED: "Board name is reserved.",
         MEMBER_REMOVED: "Member removed.",
@@ -249,6 +251,74 @@ document.addEventListener("DOMContentLoaded", () => {
   initApp();
 });
 
+function showCategories() {
+
+    const el = document.getElementById("boardCategoriesView");
+
+    el.style.display = "grid";
+    el.style.height = "100%";
+
+    document.getElementById("boardTopicsView").style.display = "none";
+    document.getElementById("boardMessagesDiv").style.display = "none";
+    document.getElementById("backToCategoriesBtn").style.display = "none";
+}
+
+function showTopics() {
+
+    document.getElementById("boardCategoriesView").style.display = "none";
+    document.getElementById("boardTopicsView").style.display = "grid";
+    document.getElementById("boardMessagesDiv").style.display = "none";
+    document.getElementById("backToCategoriesBtn").style.display = "block";
+    
+}
+
+function showMessages() {
+       
+    document.getElementById("boardCategoriesView").style.display = "none";
+    document.getElementById("boardTopicsView").style.display = "none";
+    document.getElementById("boardMessagesDiv").style.display = "block";
+    
+}
+
+function renderCategories() {
+
+    const el = document.getElementById("boardCategoriesView");
+
+    const categories = [
+        "Info",
+        "Yleinen",
+        "Huolto",
+        "Tapahtumat"
+    ];
+
+    el.innerHTML = categories.map(category => {
+
+        return `
+            <div class="category-card"
+                 onclick="selectCategory('${category}')">
+                ${category}
+            </div>
+        `;
+
+    }).join("");
+}
+
+function selectCategory(category) {
+
+    console.log("Selected category:", category);
+
+    showTopics();
+
+}
+/*
+@media(max-width: 600px) {
+
+    #boardCategoriesView {
+        grid-template-columns: 1fr;
+    }
+
+}*/
+
 function t(key) {
 
     const lang = localStorage.getItem("language") || "fi";
@@ -331,6 +401,11 @@ function getBoardName() {
   return localStorage.getItem("boardName");
 }
 
+function home() {
+    sessionStorage.setItem("skipAutoLogin", "true");
+    window.location.href = "index.html";
+}
+
 
 // =====================
 // AUTO LOGIN FILL
@@ -407,10 +482,13 @@ function initBoard() {
 
   categories = selectCategories(boardType, noticeTemplate);
 
+  if (boardType === "notice") {
+  renderCategoriesGrid();
+  } 
+
   const savedCategory = localStorage.getItem("currentCategory") || "information";
-
   currentCategory = savedCategory;
-
+  
   loadCategories();
 
   document.getElementById("categorySelect").value = savedCategory;
@@ -478,17 +556,20 @@ if (boardType === "notice") {
 
     clearMessages();
 
-    loadTopicsFromDatabase(currentCategory);
+    if (boardType === "notice") {
+    showCategories();
+}
+
+    //loadTopicsFromDatabase(currentCategory);
 
     loadTopicCounts();
 
 } else {
 
     topicSummary.style.display = "none";
+    loadMessage(true);
 
 }
-
-loadMessage(true);
 
 if (boardType === "notice") {
     document.getElementById("noticeControls").style.display = "flex";
@@ -578,6 +659,98 @@ function selectCategories(boardType, noticeTemplate) {
     }
 
     return categories_family;
+}
+
+function renderCategoriesGrid() {
+
+    const grid = document.getElementById("boardCategoriesView");
+
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    categories.forEach(category => {
+
+        const card = document.createElement("div");
+
+        card.className = "category-card";
+        card.textContent = t(category);
+
+        card.onclick = () => {
+        openCategory(category);
+        };
+        grid.appendChild(card);
+
+    });
+
+}
+
+function renderTopicsGrid(topics) {
+
+    const el = document.getElementById("boardTopicsView");
+
+    if (!el) return;
+
+    el.innerHTML = "";
+
+    topics.forEach(topic => {
+
+        const card = document.createElement("div");
+
+        card.className = "topic-card";
+        card.textContent = topic;
+
+        card.onclick = () => {
+
+            currentTopic = topic;
+
+            localStorage.setItem(
+                "currentTopic",
+                topic
+            );
+
+            showMessages();
+
+            loadMessage(true);
+        };
+
+        el.appendChild(card);
+
+    });
+}
+
+function backToCategories() {
+
+    console.log("BACK CLICKED");
+
+    const msg = document.getElementById("boardMessagesDiv");
+
+    if (msg) {
+        msg.style.display = "none";
+        msg.innerHTML = "";
+    }
+
+    document.getElementById("boardCategoriesView").style.display = "grid";
+    document.getElementById("boardTopicsView").style.display = "none";
+
+    document.getElementById("boardTopicsView").innerHTML = "";
+
+    currentTopic = "";
+    localStorage.removeItem("currentTopic");
+}
+
+function openCategory(category) {
+
+    currentCategory = category;
+
+    localStorage.setItem(
+        "currentCategory",
+        category
+    );
+
+    showTopics();
+
+    loadTopicsFromDatabase(category);
 }
 
 function initLanguage() {
@@ -735,6 +908,10 @@ function loadMessage(forceScroll = false) {
   
   const box = document.getElementById("boardMessagesDiv");
   if (!box) return;
+
+  if (!box) return;
+
+  if (box.style.display === "none") return;
 
   if (loading) return;
   loading = true;
@@ -945,9 +1122,12 @@ let category = "";
 let topic = "";
 
 if (boardType === "notice") {
-
+    /*
     category = document.getElementById("categorySelect").value;
     topic = document.getElementById("topicSelect").value;
+    */
+    category = currentCategory;
+    topic = currentTopic;
 
     if (
     boardType === "notice" &&
@@ -1707,7 +1887,10 @@ function clearMessages() {
 
 function loadTopicsFromDatabase(category, selectedTopic = "") {
 
-  console.log("loadTopicsFromDatabase");
+    console.log("loadTopicsFromDatabase");
+
+    console.log("CATEGORY:", category);
+console.log("CURRENT CATEGORY:", currentCategory);
 
     const boardName = localStorage.getItem("boardName");
 
@@ -1724,41 +1907,30 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
     .then(r => r.json())
     .then(data => {
 
-      console.log("TOPICS END");
+        console.log("TOPICS END");
 
-        const topicSelect = document.getElementById("topicSelect");
+        if (data.topics.length === 0) {
 
-        topicSelect.innerHTML = "";
-        topicSelect.appendChild(new Option(t("select topic", "")));
+            document.getElementById("boardTopicsView").innerHTML = "";
 
-        data.topics.forEach(topic => {
+            alert(t("NO_TOPICS_IN_CATEGORY"));
 
-    const option = document.createElement("option");
+            backToCategories();
 
-    option.value = topic;
+            return;
+        }
 
-    if (currentCategory === "information") {
-        option.textContent = t(topic);
-    } else {
-        option.textContent = topic;
-    }
+        renderTopicsGrid(data.topics);
 
-    topicSelect.appendChild(option);
 
-});
-
-        // ← TÄHÄN
         if (selectedTopic) {
 
+            currentTopic = selectedTopic;
 
-    topicSelect.value = selectedTopic;
+            loadTopicCounts();
 
-    currentTopic = selectedTopic;
-
-    loadTopicCounts();
-
-    loadMessage(true);
-    }
+            loadMessage(true);
+        }
 
     });
 }
@@ -1995,23 +2167,24 @@ function renderQuickPopup(){
       if (editMode) {
 
   el.innerHTML =
-    quickMessages.map((msg, index) => `
+    quickMessages.map((msg) => `
       <input class="quick-input" value="${msg}">
     `).join("");
 
 } else {
 
   el.innerHTML =
-    quickMessages.map((msg, index) => {
+    quickMessages.map((msg) => {
 
       const shortMsg = msg.length > 39 
         ? msg.substring(0, 39) + "..."
         : msg;
 
       return `
-        <div class="quick-row" onclick="sendQuickMessage(this, '${msg}')">
+      <div class="quick-row"
+          onclick="sendQuickMessage(this)">
           ${shortMsg}
-        </div>
+      </div>
       `;
 
     }).join("");
@@ -2021,12 +2194,14 @@ function renderQuickPopup(){
     });
 } 
 
-function sendQuickMessage(el, msg) {
+function sendQuickMessage(el) {
+
+    const msg = el.textContent.trim();
 
     el.classList.add("pressed");
 
     setTimeout(() => {
-        el.classList.remove("pressed");   // <-- tämä puuttuu
+        el.classList.remove("pressed");
     }, 400);
 
     setTimeout(() => {
@@ -2141,7 +2316,7 @@ function loadTopicCounts() {
 
     const order = categories;
 
-const visibleCategories = order.filter(c => c !== "information");
+    const visibleCategories = order;
 
 let text = t("topics") + ": ";
 
