@@ -687,6 +687,8 @@ function renderCategoriesGrid() {
 
 function renderTopicsGrid(topics) {
 
+    console.log("RENDER TOPICS:", topics);
+
     const el = document.getElementById("boardTopicsView");
 
     if (!el) return;
@@ -704,6 +706,8 @@ function renderTopicsGrid(topics) {
 
             currentTopic = topic;
 
+            updateCurrentLocation();
+
             localStorage.setItem(
                 "currentTopic",
                 topic
@@ -717,6 +721,10 @@ function renderTopicsGrid(topics) {
         el.appendChild(card);
 
     });
+    console.log(
+    "TOPICS HTML:",
+    document.getElementById("boardTopicsView").innerHTML
+);
 }
 
 function backToCategories() {
@@ -732,11 +740,15 @@ function backToCategories() {
 
     document.getElementById("boardCategoriesView").style.display = "grid";
     document.getElementById("boardTopicsView").style.display = "none";
-
     document.getElementById("boardTopicsView").innerHTML = "";
 
+    currentCategory = "";
     currentTopic = "";
+    
+    localStorage.removeItem("currentCategory");
     localStorage.removeItem("currentTopic");
+
+    updateCurrentLocation();
 }
 
 function openCategory(category) {
@@ -748,9 +760,24 @@ function openCategory(category) {
         category
     );
 
-    showTopics();
+    loadTopicsFromDatabase(category)
+    .then(data => {
 
-    loadTopicsFromDatabase(category);
+        if (data.topics.length === 0) {
+
+            alert(t("NO_TOPICS_IN_CATEGORY"));
+
+            document.getElementById("boardTopicsView").innerHTML = "";
+
+            return;
+        }
+
+        //updateCurrentLocation();
+        
+        showTopics();
+
+    });
+
 }
 
 function initLanguage() {
@@ -1393,6 +1420,31 @@ async function clearTable() {
     //setTimeout(() => alert(t(data.message)), 100);
     setTimeout(() => alert(t(data.message)), 200);
   });
+
+  backToCategories();
+}
+
+function updateCurrentLocation() {
+
+    console.log("UPDATE LOCATION CALLED");
+    console.log("CATEGORY:", currentCategory);
+    console.log("TOPIC:", currentTopic);
+
+    const el = document.getElementById("currentLocation");
+
+    if (!el) return;
+
+    let text = "";
+
+    if (currentCategory) {
+        text = currentCategory;
+    }
+
+    if (currentTopic) {
+        text += " > " + currentTopic;
+    }
+
+    el.innerText = text;
 }
 
 // =====================
@@ -1824,6 +1876,13 @@ if (!message.trim()) {
     return;
   }
 
+  console.log("CREATE TOPIC DATA:", {
+    category,
+    topic,
+    message,
+    author
+});
+
   fetch("http://localhost:3000/createTopic", {
     method: "POST",
     headers: {
@@ -1840,7 +1899,7 @@ if (!message.trim()) {
   })
   .then(r => r.json())
   .then(data => {
-
+     console.log("CREATE TOPIC RESPONSE:", data);
     alert(t(data.message));
 
 if (data.success) {
@@ -1890,11 +1949,11 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
     console.log("loadTopicsFromDatabase");
 
     console.log("CATEGORY:", category);
-console.log("CURRENT CATEGORY:", currentCategory);
+    console.log("CURRENT CATEGORY:", currentCategory);
 
     const boardName = localStorage.getItem("boardName");
 
-    fetch("http://localhost:3000/topics", {
+    return fetch("http://localhost:3000/topics", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -1913,11 +1972,9 @@ console.log("CURRENT CATEGORY:", currentCategory);
 
             document.getElementById("boardTopicsView").innerHTML = "";
 
-            alert(t("NO_TOPICS_IN_CATEGORY"));
+            //backToCategories();
 
-            backToCategories();
-
-            return;
+            return data;
         }
 
         renderTopicsGrid(data.topics);
@@ -1931,6 +1988,8 @@ console.log("CURRENT CATEGORY:", currentCategory);
 
             loadMessage(true);
         }
+
+        return data;
 
     });
 }

@@ -64,6 +64,13 @@ body {
     align-content: center;
 }
 
+#currentLocation {
+    min-height: 20px;
+    text-align: center;
+    font-weight: bold;
+    margin: 5px;
+}
+
 .category-card {
     background: greenyellow;
     border: 2px solid black;
