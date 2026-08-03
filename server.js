@@ -411,6 +411,46 @@ app.delete("/leaveBoard/:boardName", async (req, res) => {
 
 });
 
+app.put("/boardMessage/:id", async (req, res) => {
+
+    const { id } = req.params;
+
+    const {
+        topic,
+        message
+    } = req.body;
+
+    try {
+
+        const sql = `
+            UPDATE boardMessages
+            SET topic = ?, text = ?
+            WHERE id = ?
+        `;
+
+        const [result] = await pool.query(
+            sql,
+            [topic, message, id]
+        );
+
+        console.log("UPDATE RESULT:", result);
+
+        res.json({
+            success: true,
+            message: "Updated"
+        });
+
+    } catch (error) {
+
+        console.error("UPDATE ERROR:", error);
+
+        res.status(500).json({
+            success: false
+        });
+    }
+
+});
+
 app.post("/boardMessage", async (req, res) => {
 
   const {

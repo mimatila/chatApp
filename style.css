@@ -212,6 +212,31 @@ body {
     line-height: 1.5;
 }
 
+.owner-message .msg-content {
+    padding-bottom: 20px;
+}
+
+.edit-btn {
+    all: unset;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+}
+
+.trash-btn {
+  all: unset;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  font-size: 12px;
+}
+
 .msg-row {
   display: flex;
   justify-content: space-between;
@@ -346,15 +371,6 @@ button {
 
 #saveBtn {
   background-color: yellow;
-}
-
-.trash-btn {
-  all: unset;
-  position: absolute;
-  top: 0;
-  right: 0;
-  cursor: pointer;
-  font-size: 12px;
 }
 
 .message-area {

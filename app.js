@@ -3,6 +3,7 @@ let refreshInterval = null;
 let categories = [];
 let currentCategory = "";
 let currentTopic = "";
+let editingTopicId = null;
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
@@ -281,6 +282,19 @@ function showMessages() {
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "block";
     
+}
+
+function editMessage(msg) {
+
+    editingTopicId = msg.id;
+
+    document.getElementById("cp_category").value = msg.category;
+    document.getElementById("cp_topic").value = msg.topic;
+    document.getElementById("cp_message").value = msg.text;
+
+    document.getElementById("cp_createBtn").innerText = "Save";
+
+    openTopicPopup();
 }
 
 function renderCategories() {
@@ -1146,7 +1160,6 @@ if (ownerCategories.includes(currentCategory)) {
     text.appendChild(body);
 }
 
-  
   const time = document.createElement("div");
   time.className = "msg-time";
 
@@ -1179,6 +1192,24 @@ if (ownerCategories.includes(currentCategory)) {
 
   const user = data.users.find(u => u.username === username);
   const owner = user?.role === "owner";
+
+  const showEdit =
+    editMode &&
+    owner &&
+    ownerCategories.includes(currentCategory);
+
+  if (showEdit) {
+
+    const editBtn = document.createElement("button");
+    editBtn.innerText = "✏️";
+    editBtn.className = "edit-btn";
+
+    editBtn.onclick = () => {
+        editMessage(msg);
+    };
+
+    wrapper.appendChild(editBtn);
+}
 
   const showTrash =
     editMode && (owner || msg.author === username);
@@ -1938,6 +1969,13 @@ function submitCreateBoard() {
 }
 
 function openTopicPopup() {
+
+  if (!editingTopicId) {
+      document.getElementById("cp_topic").value = "";
+      document.getElementById("cp_message").value = "";
+      document.getElementById("cp_createBtn").innerText = "Create";
+  }
+
   document.getElementById("createTopicPopup").style.display = "flex";
   createTopicPopupCategoryChanged();
 }
@@ -1946,7 +1984,62 @@ function closeTopicPopup() {
     document.getElementById("createTopicPopup").style.display = "none";
 }
 
+async function updateTopic(id) {
+
+    console.log("UPDATE START:", id);
+
+    const topic = document.getElementById("cp_topic").value;
+    const message = document.getElementById("cp_message").value;
+    const category = document.getElementById("cp_category").value;
+
+    const response = await fetch(
+        `http://localhost:3000/boardMessage/${id}`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                topic,
+                message
+            })
+        }
+    );
+
+    console.log("RESPONSE:", response.status);
+
+    const result = await response.json();
+
+    console.log("RESULT:", result);
+
+    if (result.success) {
+
+        currentCategory = category;
+        currentTopic = topic;
+
+        editingTopicId = null;
+
+        const editBox = document.getElementById("editMode");
+
+        if (editBox) {
+            editBox.checked = false;
+        }
+
+        closeTopicPopup();
+
+        console.log("AFTER CLOSE");
+
+        await loadTopicsFromDatabase(category);
+        loadMessage(true);
+    }
+}
+
 function submitTopic() {
+
+   if (editingTopicId) {
+    updateTopic(editingTopicId);
+    return;
+   }
 
   let type="normal";
 
@@ -1959,7 +2052,6 @@ function submitTopic() {
   let topic;
 
     topic = document.getElementById("cp_topic").value;
-
 
   if (topic.length > 40) {
     alert(t("TOPIC_TOO_LONG"));
