@@ -58,10 +58,26 @@ body {
 
 #boardCategoriesView {
     display: grid;
-    grid-template-columns: repeat(2, 150px);
-    gap: 30px;
-    justify-content: center;
+    height: 100%;
     align-content: center;
+    justify-items: center;
+    row-gap: 30px;
+}
+
+#mainCategories {
+    display: grid;
+    grid-template-columns: repeat(2, 150px);
+    column-gap: 30px;
+}
+
+#otherCategories {
+    display: grid;
+    grid-template-columns: repeat(3, 150px);
+    column-gap: 30px;
+}
+
+.main-category {
+    grid-column: span 3;
 }
 
 #currentLocation {

@@ -13,7 +13,7 @@ const boardDescriptions = {
         family: "🏠 Perhetaulu",
         taloyhtio: "🏢 Taloyhtiön ilmoitustaulu",
         urheiluseura: "⚽ Urheiluseuran ilmoitustaulu",
-        tyopaikka: "💼 Työpaikan ilmoitustaulu",
+        yhteiso: "💼 Yhteisön ilmoitustaulu",
         yhdistys: "🤝 Yhdistyksen ilmoitustaulu"
     },
 
@@ -21,7 +21,7 @@ const boardDescriptions = {
         family: "🏠 Family board",
         taloyhtio: "🏢 Housing company board",
         urheiluseura: "⚽ Sports club board",
-        tyopaikka: "💼 Workplace board",
+        yheiso: "💼 Community board",
         yhdistys: "🤝 Association board"
     }
 };
@@ -113,7 +113,7 @@ const messages = {
         DELETE_BOARD: "Poista taulu",
         REQUESTS: "Pyynnöt",
         NOTICE_TALOYHTIO: "taloyhtiö",
-        NOTICE_TYOPAIKKA: "työpaikka",
+        NOTICE_YHTEISO: "yhteisö",
         NOTICE_URHEILUSEURA: "urheiluseura",
         NOTICE_YHDISTYS: "yhdistys"
         },
@@ -203,7 +203,7 @@ const messages = {
         DELETE_BOARD: "Delete Board",
         REQUESTS: "Requests",
         NOTICE_TALOYHTIO: "housing company",
-        NOTICE_TYOPAIKKA: "workplace",
+        NOTICE_YHTEISO: "community",
         NOTICE_URHEILUSEURA: "sports club",
         NOTICE_YHDISTYS: "association"
         }
@@ -212,7 +212,8 @@ const messages = {
 const categories_family = [];
 
 const categories_taloyhtio = [
-    "information",
+    "general information",
+    "announcements",
     "general",
     "maintenance",
     "events"
@@ -220,23 +221,25 @@ const categories_taloyhtio = [
 
 /*yleiset tiedot, tiedotteet*/
 
-const categories_tyopaikka = [
-    "information",
+const categories_yhteiso = [
+    "general information",
+    "announcements",
     "general",
     "recommendations",
     "events"
 ];
 
 const categories_urheiluseura = [
-    "information",
+    "general information",
+    "announcements",
     "general",
     "training",
     "events"
 ];
 
 const categories_yhdistys = [
-    "information",
-    "announcement",
+    "general information",
+    "announcements",
     "general",
     "meetings",
     "events"
@@ -563,6 +566,7 @@ if (boardType === "notice") {
     //loadTopicsFromDatabase(currentCategory);
 
     loadTopicCounts();
+    updateRequestBadge();
 
 } else {
 
@@ -643,7 +647,7 @@ function selectCategories(boardType, noticeTemplate) {
             case "taloyhtio":
                 return categories_taloyhtio;
 
-            case "tyopaikka":
+            case "yhteiso":
                 return categories_tyopaikka;
 
             case "urheiluseura":
@@ -667,21 +671,33 @@ function renderCategoriesGrid() {
 
     if (!grid) return;
 
-    grid.innerHTML = "";
+    //grid.innerHTML = "";
 
-    categories.forEach(category => {
+    const mainGrid = document.getElementById("mainCategories");
+    const otherGrid = document.getElementById("otherCategories");
 
-        const card = document.createElement("div");
+    mainGrid.innerHTML = "";
+    otherGrid.innerHTML = "";
 
-        card.className = "category-card";
-        card.textContent = t(category);
+categories.forEach(category => {
 
-        card.onclick = () => {
+    const card = document.createElement("div");
+
+    card.className = "category-card";
+    card.textContent = t(category);
+
+    card.onclick = () => {
         openCategory(category);
-        };
-        grid.appendChild(card);
+    };
 
-    });
+
+    if (category === "general information" || category === "announcements") {
+        mainGrid.appendChild(card);
+    } else {
+        otherGrid.appendChild(card);
+    }
+
+});
 
 }
 
@@ -820,6 +836,13 @@ function loadCategories() {
         "cp_category"
     ];
 
+    const role = localStorage.getItem("role");
+
+    const ownerOnlyCategories = [
+        "general information",
+        "announcements"
+    ];
+
     selects.forEach(id => {
 
         const select = document.getElementById(id);
@@ -830,16 +853,26 @@ function loadCategories() {
 
         categories.forEach(category => {
 
-    const option = document.createElement("option");
+            // Piilotetaan jäseneltä vain topicin luonti-popupissa
+            if (
+                id === "cp_category" &&
+                role !== "owner" &&
+                ownerOnlyCategories.includes(category)
+            ) {
+                return;
+            }
 
-    option.value = category;
-    option.textContent = t(category);
+            const option = document.createElement("option");
 
-    select.appendChild(option);
+            option.value = category;
+            option.textContent = t(category);
 
-});
+            select.appendChild(option);
+
+        });
 
     });
+
 }
 
 function loadIndexLanguage() {
@@ -853,8 +886,8 @@ function loadIndexLanguage() {
     document.querySelector("#cp_noticeTemplate option[value='taloyhtio']").textContent =
     t("NOTICE_TALOYHTIO");
 
-    document.querySelector("#cp_noticeTemplate option[value='tyopaikka']").textContent =
-        t("NOTICE_TYOPAIKKA");
+    document.querySelector("#cp_noticeTemplate option[value='yhteiso']").textContent =
+        t("NOTICE_YHTEISO");
 
     document.querySelector("#cp_noticeTemplate option[value='urheiluseura']").textContent =
         t("NOTICE_URHEILUSEURA");
@@ -925,6 +958,31 @@ function loadBoardLanguage() {
     setPlaceholder("boardNewMsg", "writeMessage");
 } 
 
+function updateRequestBadge() {
+
+    const requestButton = document.getElementById("requestsBtn");
+
+    if (!requestButton) return;
+
+    const boardName = localStorage.getItem("boardName");
+
+    if (!boardName) return;
+
+    fetch(`http://localhost:3000/board/${boardName}`)
+    .then(res => res.json())
+    .then(data => {
+
+        const pendingCount = data.pendingRequests?.length || 0;
+
+        if (pendingCount > 0) {
+            requestButton.classList.add("pending");
+        } else {
+            requestButton.classList.remove("pending");
+        }
+
+    });
+}
+
 // =====================
 // LOAD MESSAGES
 // =====================
@@ -957,6 +1015,11 @@ function loadMessage(forceScroll = false) {
   .then(data => {
 
    console.log("MESSAGES FROM DB:", data.boardMessages.length);
+
+   console.log("BOARD DATA:", data);
+    console.log("PENDING:", data.pendingRequests);
+    console.log("BOARD RESPONSE RECEIVED");
+
   const boardType = data.boardType;
   const noticeTemplate = data.noticeTemplate;
   localStorage.setItem("boardType", boardType);
@@ -982,13 +1045,17 @@ if (quickBtn) {
     }
 }
 
+/*
   if (requestButton) {
-    if (data.pendingRequests.length > 0) {
-      requestButton.classList.add("pending");
+
+    const pendingCount = data.pendingRequests?.length || 0;
+
+    if (pendingCount > 0) {
+        requestButton.classList.add("pending");
     } else {
-    requestButton.classList.remove("pending");
+        requestButton.classList.remove("pending");
     }
-  }
+}*/
 
     updateQuickUI(data);
 
@@ -1056,8 +1123,12 @@ messages.forEach(msg => {
   body.className = "msg-body";
   body.innerText = msg.text;
 
-  text.appendChild(author);
-  text.appendChild(body);
+  if (currentCategory === "information") {
+    text.appendChild(body);
+  } else {
+    text.appendChild(author);
+    text.appendChild(body);
+  }
 
   const time = document.createElement("div");
   time.className = "msg-time";
@@ -1855,33 +1926,23 @@ function submitTopic() {
 
   let topic;
 
-  if (category === "information") {
-    topic = document.getElementById("cp_informationTopic").value;
-  } else {
     topic = document.getElementById("cp_topic").value;
-  }
+
 
   if (topic.length > 40) {
     alert(t("TOPIC_TOO_LONG"));
     return;
   }
 
-   if (category !== "information" && !topic.trim()) {
+    if (!topic.trim()) {
     alert(t("TOPIC_MISSING"));
     return;
-  }
+}
 
 if (!message.trim()) {
     alert(t("MESSAGE_MISSING"));
     return;
   }
-
-  console.log("CREATE TOPIC DATA:", {
-    category,
-    topic,
-    message,
-    author
-});
 
   fetch("http://localhost:3000/createTopic", {
     method: "POST",
@@ -1919,6 +1980,7 @@ if (data.success) {
     document.getElementById("cp_category").value = "general";
     document.getElementById("cp_topic").value = "";
     document.getElementById("cp_message").value = "";
+    document.getElementById("cp_informationTopic").value = "";
 }
   });
  
@@ -2015,7 +2077,7 @@ function loadRequests() {
 
   fetch(`http://localhost:3000/board/${boardName}`)
     .then(res => res.json())
-    .then(board => {
+    .then(board => {     
 
   const list = document.getElementById("requestsList");
   list.innerHTML = "";
@@ -2080,8 +2142,12 @@ function acceptRequest(id, event) {
   })
   .then(() => {
     
-    loadRequests(); 
-    loadMessage(false);
+    loadRequests();
+    updateRequestBadge();
+
+    if (currentTopic) {
+        loadMessage(false);
+    }
 });
 }
 
@@ -2221,6 +2287,7 @@ function renderQuickPopup(){
   fetch(`http://localhost:3000/board/${boardName}`)
     .then(res => res.json())
     .then(board => {
+
       const quickMessages = board.quickMessages || [];
 
       if (editMode) {
@@ -2377,18 +2444,19 @@ function loadTopicCounts() {
 
     const visibleCategories = order;
 
-let text = t("topics") + ": ";
+    let text = t("topics") + ": ";
 
 visibleCategories.forEach(category => {
 
     const c = data.counts.find(item => item.category === category);
 
-    if (c) {
-        text += `${t(c.category)} (${c.count})  `;
-    }
+    const count = c ? c.count : 0;
+
+    text += `${t(category)} (${count})  `;
+
 });
 
-    document.getElementById("topicSummary").textContent = text;
+document.getElementById("topicSummary").textContent = text;
 });
 }
 
@@ -2400,7 +2468,7 @@ function changeCreateBoardType() {
     document.getElementById("noticeTemplateDiv").style.display =
         boardType === "notice" ? "block" : "none";
 }
-
+/*
 function createTopicPopupCategoryChanged() {
 
     const category = document.getElementById("cp_category").value;
@@ -2421,5 +2489,14 @@ function createTopicPopupCategoryChanged() {
         topicInput.value = "";
         topicInput.placeholder = t("topic");
     }
+}*/
+
+function createTopicPopupCategoryChanged() {
+
+    const topicInput = document.getElementById("cp_topic");
+
+    topicInput.style.display = "block";
+    topicInput.placeholder = t("topic");
+
 }
 

@@ -1536,12 +1536,20 @@ app.post("/createTopic", async (req, res) => {
     const user = users[0];
 
     // Informationia saa lisätä vain owner
-    if (category === "information" && user.role !== "owner") {
-      return res.status(403).json({
+    const ownerOnlyCategories = [
+    "general information",
+    "announcements"
+];
+
+if (
+    ownerOnlyCategories.includes(category) &&
+    user.role !== "owner"
+) {
+    return res.status(403).json({
         success: false,
         message: "ONLY_OWNER_INFORMATION"
-      });
-    }
+    });
+}
 
     // Lisää viesti
     await pool.query(
