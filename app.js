@@ -489,7 +489,7 @@ function initBoard() {
   renderCategoriesGrid();
   } 
 
-  const savedCategory = localStorage.getItem("currentCategory") || "information";
+  const savedCategory = localStorage.getItem("currentCategory") || "general information";
   currentCategory = savedCategory;
   
   loadCategories();
@@ -1123,12 +1123,17 @@ messages.forEach(msg => {
   body.className = "msg-body";
   body.innerText = msg.text;
 
-  if (currentCategory === "information") {
+  const officialCategories = [
+    "general information",
+    "announcements"
+];
+
+if (officialCategories.includes(currentCategory)) {
     text.appendChild(body);
-  } else {
+} else {
     text.appendChild(author);
     text.appendChild(body);
-  }
+}
 
   const time = document.createElement("div");
   time.className = "msg-time";
@@ -1227,9 +1232,14 @@ if (boardType === "notice") {
     category = currentCategory;
     topic = currentTopic;
 
-    if (
+    const ownerOnlyCategories = [
+    "general information",
+    "announcements"
+];
+
+if (
     boardType === "notice" &&
-    currentCategory === "information" &&
+    ownerOnlyCategories.includes(currentCategory) &&
     role !== "owner"
 ) {
     alert(t("onlyOwnerCanWrite"));
