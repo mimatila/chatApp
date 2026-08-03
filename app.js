@@ -108,7 +108,7 @@ const messages = {
         TODAY: "tänään",
         EDIT: "muokkaa",
         IMPORTANT: "tärkeä",
-        INFO: "tiedoksi",
+        INFO: "info",
         LOGOUT: "Kirjaudu ulos",
         DELETE_BOARD: "Poista taulu",
         REQUESTS: "Pyynnöt",
@@ -1091,6 +1091,13 @@ if (quickBtn) {
   });
 }
 
+const ownerCategories = [
+    "general information",
+    "announcements"
+];
+
+let showTopicInsideMessage = ownerCategories.includes(currentCategory);
+
 messages.forEach(msg => {
 
   const div = document.createElement("div");
@@ -1123,18 +1130,23 @@ messages.forEach(msg => {
   body.className = "msg-body";
   body.innerText = msg.text;
 
-  const officialCategories = [
-    "general information",
-    "announcements"
-];
+if (ownerCategories.includes(currentCategory)) {
+    div.classList.add("owner-message");
 
-if (officialCategories.includes(currentCategory)) {
+    if (showTopicInsideMessage) {
+
+    const title = document.createElement("div");
+    title.className = "owner-topic-title";
+    title.innerText = msg.topic;
+    text.appendChild(title);
+}
     text.appendChild(body);
 } else {
     text.appendChild(author);
     text.appendChild(body);
 }
 
+  
   const time = document.createElement("div");
   time.className = "msg-time";
 
@@ -1200,6 +1212,16 @@ if (officialCategories.includes(currentCategory)) {
 // =====================
 
 function updateMessage() {
+
+  const ownerCategories = [
+    "general information",
+    "announcements"
+];
+
+  if (ownerCategories.includes(currentCategory)) {
+    alert(t("OWNER_CATEGORY_NO_MESSAGES"));
+    return;
+}
 
   const messageEl = document.getElementById("boardNewMsg");
 

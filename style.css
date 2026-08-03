@@ -173,6 +173,45 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.owner-topic-title {
+    display: block;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.owner-message .msg-text {
+    display: block;
+    width: 100%;
+}
+
+.owner-topic-title {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.owner-message .msg-body {
+    display: block;
+}
+
+.owner-message {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.owner-message .msg-body {
+    width: fit-content;
+    max-width: 80%;
+    margin: 0 auto;
+    text-align: left;
+    line-height: 1.5;
+}
+
 .msg-row {
   display: flex;
   justify-content: space-between;
