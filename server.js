@@ -84,13 +84,13 @@ if (!ok) {
     );
 
     res.json({
-  success: true,
-  token,
-  username: user.username,
-  role: user.role,
-  boardType: user.boardType,
-  noticeTemplate: user.noticeTemplate
-});
+    success: true,
+    token,
+    username: user.username,
+    role: user.role,
+    boardType: user.boardType,
+    noticeTemplate: user.noticeTemplate
+  });
 
   } catch (err) {
 
@@ -181,7 +181,6 @@ const boardId = boardResult.insertId;
     [boardId, autoDays]
     );
 
-
     const hash = await bcrypt.hash(boardPassword, 10);
     
     // Luo owner
@@ -215,9 +214,9 @@ const boardId = boardResult.insertId;
     await connection.commit();
 
     res.json({
-  success: true,
-  message: "BOARD_CREATED"
-});
+    success: true,
+    message: "BOARD_CREATED"
+  });
 
   } catch (err) {
 
@@ -226,16 +225,15 @@ const boardId = boardResult.insertId;
     console.error(err);
 
     res.status(500).json({
-  success: false,
-  message: "DATABASE_ERROR"
-});
+    success: false,
+    message: "DATABASE_ERROR"
+  });
 
   } finally {
 
     connection.release();
 
   }
-
 });
 
 app.delete("/delete/:boardName", async (req, res) => {
@@ -406,9 +404,7 @@ app.delete("/leaveBoard/:boardName", async (req, res) => {
   } finally {
 
     connection.release();
-
   }
-
 });
 
 app.put("/boardMessage/:id", async (req, res) => {
@@ -448,7 +444,6 @@ app.put("/boardMessage/:id", async (req, res) => {
             success: false
         });
     }
-
 });
 
 app.post("/boardMessage", async (req, res) => {
@@ -462,16 +457,6 @@ app.post("/boardMessage", async (req, res) => {
     type
   } = req.body;
 
-  console.log("BOARD MESSAGE DATA:", {
-    boardName,
-    author,
-    category,
-    topic,
-    message,
-    type
-  });
-
-
  const [boards] = await pool.query(
     "SELECT id, boardType FROM boards WHERE name = ?",
     [boardName]
@@ -484,8 +469,17 @@ if (boards.length === 0) {
     });
 }
 
-  const boardId = boards[0].id;
-  const boardType = boards[0].boardType;
+const boardId = boards[0].id;
+const boardType = boards[0].boardType;
+
+const [settings] = await pool.query(
+    "SELECT autoDeleteDays FROM settings WHERE board_id = ?",
+    [boardId]
+);
+
+const autoDeleteDays = settings[0]?.autoDeleteDays ?? 30;
+
+await cleanup(boardId, autoDeleteDays);
 
   // TÄHÄN TOPIC-TARKISTUS
 
@@ -515,7 +509,6 @@ if (boards.length === 0) {
     });
   }
   }
-
 
   // vasta nyt tallennetaan viesti
 
@@ -568,6 +561,17 @@ app.get("/board/:boardName", async (req, res) => {
 
     const boardId = boards[0].id;
 
+ 
+    const [settings] = await pool.query(
+      "SELECT autoDeleteDays FROM settings WHERE board_id = ?",
+      [boardId]
+    );
+
+const autoDeleteDays = settings[0]?.autoDeleteDays ?? 30;
+
+//await cleanup(boardId, autoDeleteDays);
+
+
     // Hae käyttäjät
     const [users] = await pool.query(
       `SELECT username, email, role, token
@@ -589,14 +593,6 @@ app.get("/board/:boardName", async (req, res) => {
     const [pendingRequests] = await pool.query(
       `SELECT id, username, password, email, status, time
        FROM pendingRequests
-       WHERE board_id = ?`,
-      [boardId]
-    );
-
-    // Hae asetukset
-    const [settings] = await pool.query(
-      `SELECT autoDeleteDays
-       FROM settings
        WHERE board_id = ?`,
       [boardId]
     );
@@ -626,21 +622,15 @@ app.get("/board/:boardName", async (req, res) => {
       noticeTemplate: boards[0].noticeTemplate,
 
       users,
-
       boardMessages,
-
       pendingRequests,
-
       autoDeleteDays:
-        settings.length > 0
-          ? settings[0].autoDeleteDays
-          : 10,
-
+      settings.length > 0
+      ? settings[0].autoDeleteDays
+      : 10,
       quickMessages:
-        quickMessages.map(q => q.message),
-
+      quickMessages.map(q => q.message),
       visitedUsers
-
     };
 
     res.json(board);
@@ -653,9 +643,7 @@ app.get("/board/:boardName", async (req, res) => {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 app.post("/loadMessages", async (req, res) => {
@@ -719,34 +707,8 @@ app.post("/loadMessages", async (req, res) => {
             success: false,
             message: "Database error"
         });
-
     }
-
 });
-
-/*
-app.get("/boards", async (req, res) => {
-
-  try {
-
-    const [boards] = await pool.query(
-      "SELECT name FROM boards ORDER BY name"
-    );
-
-    res.json(boards);
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: "Database error"
-    });
-
-  }
-
-});*/
 
 app.delete("/clear/:boardName", async (req, res) => {
 
@@ -789,9 +751,6 @@ app.delete("/clear/:boardName", async (req, res) => {
     // Poista kaikki viestit
     const { category, topic } = req.body;
 
-    console.log("DELETE CATEGORY:", category);
-console.log("DELETE TOPIC:", topic);
-
 if (boardType === "notice") {
 
   await pool.query(
@@ -828,9 +787,7 @@ if (boardType === "notice") {
       success: false,
       message: "DATABASE_ERROR"
     });
-
   }
-
 });
 
 app.get("/boards/count", async (req, res) => {
@@ -853,9 +810,7 @@ app.get("/boards/count", async (req, res) => {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 app.post("/quickMessages/saveAll", async (req, res) => {
@@ -928,7 +883,7 @@ for (let i = 0; i < quickMessages.length; i++) {
 }
 
     res.json({
-      success: true
+    success: true
     });
 
   } catch (err) {
@@ -939,9 +894,7 @@ for (let i = 0; i < quickMessages.length; i++) {
       success: false,
       message: "DATABASE_ERROR"
     });
-
   }
-
 });
 
 app.delete("/message/:boardName/:id", async (req, res) => {
@@ -961,13 +914,13 @@ app.delete("/message/:boardName/:id", async (req, res) => {
     // Hae viesti
     const [rows] = await pool.query(
       `SELECT
-          boardMessages.author,
-          boardMessages.board_id
-       FROM boardMessages
-       JOIN boards
-         ON boardMessages.board_id = boards.id
-       WHERE boards.name = ?
-         AND boardMessages.id = ?`,
+      boardMessages.author,
+      boardMessages.board_id
+      FROM boardMessages
+      JOIN boards
+        ON boardMessages.board_id = boards.id
+      WHERE boards.name = ?
+      AND boardMessages.id = ?`,
       [boardName, id]
     );
 
@@ -1010,9 +963,7 @@ app.delete("/message/:boardName/:id", async (req, res) => {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 app.post("/visit", async (req, res) => {
@@ -1096,9 +1047,7 @@ app.post("/visit", async (req, res) => {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 app.post("/settings", async (req, res) => {
@@ -1163,9 +1112,7 @@ app.post("/settings", async (req, res) => {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 app.post("/joinRequest", async (req, res) => {
@@ -1252,10 +1199,8 @@ await pool.query(
     res.status(500).json({
   success: false,
   message: "DATABASE_ERROR"
-});
-
+  });
   }
-
 });
 
 app.post("/acceptRequest", async (req, res) => {
@@ -1331,9 +1276,7 @@ app.post("/acceptRequest", async (req, res) => {
   } finally {
 
     connection.release();
-
   }
-
 });
 
 app.post("/rejectRequest", async (req, res) => {
@@ -1391,9 +1334,7 @@ app.post("/rejectRequest", async (req, res) => {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 app.post("/authCheck", async (req, res) => {
@@ -1426,9 +1367,7 @@ app.post("/authCheck", async (req, res) => {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 async function authUser(req, boardName) {
@@ -1485,7 +1424,6 @@ app.post("/removeMember", async (req, res) => {
 
     const boardId = boards[0].id;
 
-
     const [result] = await pool.query(
       `DELETE FROM users
        WHERE board_id = ?
@@ -1517,9 +1455,7 @@ app.post("/removeMember", async (req, res) => {
       success:false,
       message:"DATABASE_ERROR"
     });
-
   }
-
 });
 
 app.post("/createTopic", async (req, res) => {
@@ -1619,9 +1555,7 @@ if (
       success: false,
       message: "DATABASE_ERROR"
     });
-
   }
-
 });
 
 app.post("/topics", async (req,res)=>{
@@ -1644,7 +1578,6 @@ app.post("/topics", async (req,res)=>{
   res.json({
     topics: rows.map(r => r.topic)
   });
-
 });
 
 app.post("/topicCounts", async (req, res) => {
@@ -1719,9 +1652,7 @@ ORDER BY b.name
             success: false,
             message: "DATABASE_ERROR"
         });
-
     }
-
 });
 
 app.post("/admin/login", async (req, res) => {
@@ -1777,10 +1708,33 @@ app.post("/admin/login", async (req, res) => {
             success: false,
             message: "DATABASE_ERROR"
         });
-
     }
-
 });
+
+/*
+function cleanup(board) {
+  const days = board.autoDeleteDays ?? 10;
+  const cutoff = Date.now() - days * 86400000;
+
+  board.boardMessages =
+    board.boardMessages.filter(m =>
+      new Date(m.time).getTime() > cutoff
+    );
+}*/
+
+async function cleanup(boardId, autoDeleteDays) {
+
+    await pool.query(
+        `
+        DELETE FROM boardMessages
+        WHERE board_id = ?
+        AND category NOT IN ('general information', 'announcements')
+        AND time < DATE_SUB(NOW(), INTERVAL ? DAY)
+        `,
+        [boardId, autoDeleteDays]
+    );
+
+}
 
 app.listen(3000, () => {
   console.log("Serveri käynnissä portissa 3000");
