@@ -53,7 +53,7 @@ body {
     align-content: center;
     justify-items: center;
     row-gap: 30px;
-}*/
+}
 
 #boardCategoriesView {
     display: grid;
@@ -61,6 +61,14 @@ body {
     align-content: center;
     justify-items: center;
     row-gap: 30px;
+}*/
+
+.notice-board #boardCategoriesView {
+    display: grid;
+    justify-items: center;
+    row-gap: 30px;
+    height: 100%;
+    align-content: center;
 }
 
 #mainCategories {
@@ -714,12 +722,13 @@ input::placeholder {
     padding: 4px 8px;
 }
 
+/*
 .topic-summary {
     padding: 8px;
     font-size: 14px;
     margin-bottom: 8px;
     font-weight: bold;
-}
+}*/
 
 #cp_message {
     width: 100%;

@@ -41,6 +41,7 @@ const messages = {
         BOARD_CREATED: "Taulu luotu.",
         DATABASE_ERROR: "Tietokantavirhe.",
         SAVE: "Tallennettu.",
+        HOME: "Koti",
         LOGIN_AGAIN: "Kirjaudu uudelleen.",
         NO_PERMISSION: "Ei oikeuksia.",
         MESSAGES_CLEARED: "Viestit poistettu.",
@@ -68,25 +69,27 @@ const messages = {
         USER_REMOVED: "Käyttäjä poistettu.",
         DELETE_FAILED: "poisto epäonnistui. (ei oikeuksia tai virhe serverillä).",
         NETWORK_ERROR: "Verkkovirhe.",
+        BACK_CATEGORIES: "Kategoriat",
         BOARD_TYPE_FAMILY: "perhe",
         BOARD_TYPE_NOTICE: "ilmoitus",
         NO_TOPICS_IN_CATEGORY: "Ei aiheita tässä kategoriassa",
         BOARD_NAME_RESERVED: "Taulun nimi on varattu.",
+        TOPIC_ALREADY_EXISTS: "Aihe on jo olemassa.",
         confirmDeleteBoard: "Oletko varma että haluat poistaa taulun?",
-        information: "info",
-        general: "yleinen",
-        maintenance: "huolto",
-        events: "tapahtumat",
-        announcement: "ilmoitukset",
-        recommendations: "suositukset",
+        information: "Info",
+        general: "Yleinen",
+        maintenance: "Huolto",
+        events: "Tapahtumat",
+        announcement: "Ilmoitukset",
+        recommendations: "Suositukset",
         topic: "Aihe",
         topics: "Aiheet",
         writeMessage: "Kirjoita viesti...",
-        training: "harjoitukset",
-        meetings: "kokoukset",
+        training: "Harjoitukset",
+        meetings: "Kokoukset",
         "select topic": "valitse aihe",
-        "general information": "yleiset tiedot",
-        announcements: "tiedotteet",
+        "general information": "Yleiset tiedot",
+        announcements: "Tiedotteet",
         LOGIN_TITLE: "Kirjaudu Taululle",
         JOIN_TITLE: "Liity Taululle",
         CREATE_BOARD_TITLE: "Luo Taulu",
@@ -99,9 +102,9 @@ const messages = {
         EMAIL: "Sähköposti",
         SEND_REQUEST: "Lähetä Pyyntö",
         CANCEL: "Peru",
-        CREATE_TOPIC_TITLE: "Uusi aihe",
+        CREATE_TOPIC_TITLE: "Uusi Info",
         CREATE: "Luo",
-        NEW_TOPIC: "Uusi aihe",
+        NEW_TOPIC: "Uusi Info",
         SEND: "Lähetä",
         CLEAR: "Tyhjennä",
         SETTINGS: "Asetukset",
@@ -129,10 +132,13 @@ const messages = {
         BOARD_EXISTS: "Board already exists.",
         BOARD_CREATED: "Board created.",
         REMOVE_USER_CONFIRM: "Remove user?",
+        BACK_CATEGORIES: "Categories",
         DATABASE_ERROR: "Database error.",
         LOGIN_AGAIN: "Please login again.",
         NO_PERMISSION: "No permission.",
+        TOPIC_ALREADY_EXISTS: "Topic already exists",
         SAVE: "Save done.",
+        HOME: "Home",
         MESSAGES_CLEARED: "Messages cleared.",
         USERNAME_EXISTS: "Username already exists.",
         REQUEST_PENDING: "Request already pending.",
@@ -609,7 +615,7 @@ function initBoard() {
     }
   }, refreshTime);
 
-  const topicSummary = document.getElementById("topicSummary");
+  //const topicSummary = document.getElementById("topicSummary");
 
   if (boardType === "notice") {
     initNoticeBoard();
@@ -629,7 +635,7 @@ function initBoard() {
 
 function initFamilyBoard() {
 
-    topicSummary.style.display = "none";
+    //topicSummary.style.display = "none";
 
     loadMessage(true);
 }
@@ -965,6 +971,7 @@ function loadIndexLanguage() {
 
     setText("submitCreatePopupBtn", "CREATE_BOARD");
     setText("closeCreatePopupBtn", "CANCEL");
+    
 } 
 
 function loadBoardLanguage() {
@@ -982,23 +989,21 @@ function loadBoardLanguage() {
 
     setText("cp_createBtn", "CREATE");
     setText("cp_cancelBtn", "CANCEL");
-
+    setText("homeBtn", "HOME");
     setText("topicBtn", "NEW_TOPIC");
     setText("sendBtn", "SEND");
     setText("clearBtn", "CLEAR");
     setText("settingsBtn", "SETTINGS");
     setText("members", "MEMBERS");
-
     setText("todayModeText", "TODAY");
     setText("editModeText", "EDIT");
     setText("importantModeText", "IMPORTANT");
     setText("infoModeText", "INFO");
-
     setText("logout", "LOGOUT");
     setText("deleteBoardBtn", "DELETE_BOARD");
     setText("requestsBtn", "REQUESTS");
-
     setPlaceholder("boardNewMsg", "writeMessage");
+    setText("backToCategoriesBtn", "BACK_CATEGORIES");
 } 
 
 function updateRequestBadge() {
@@ -1093,19 +1098,6 @@ function loadMessage(forceScroll = false) {
 
     if (boardType === "notice") {
 
-      console.log("FILTER:", currentCategory, currentTopic);
-console.log("MESSAGES BEFORE:", messages);
-
-messages.forEach(msg => {
-    console.log(
-        "MSG:",
-        msg.category,
-        msg.topic,
-        msg.header,
-        msg.text
-    );
-});
-
     messages = messages.filter(msg =>
         msg.category === currentCategory &&
         msg.topic === currentTopic
@@ -1184,9 +1176,6 @@ if (
     ownerCategories.includes(currentCategory)
 ) {
     div.classList.add("owner-message");
-
-    console.log("TOPIC:", msg.topic);
-console.log("HEADER:", msg.header);
 
     if (showTopicInsideMessage) {
 
@@ -1626,6 +1615,8 @@ async function clearTable() {
   backToCategories();
 }
 
+//UCF
+
 function updateCurrentLocation() {
 
     console.log("UPDATE LOCATION CALLED");
@@ -1637,11 +1628,11 @@ function updateCurrentLocation() {
     let text = "";
 
     if (currentCategory) {
-        text = currentCategory;
+        text = t(currentCategory);
     }
 
     if (currentTopic) {
-        text += " > " + currentTopic;
+      text += " > " + currentTopic;
     }
 
     el.innerText = text;
