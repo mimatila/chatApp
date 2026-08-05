@@ -19,22 +19,22 @@
 <div id="currentLocation"></div>
 <div id="topicSummary" class="topic-summary"></div>
 
+
 <div class="board-actions">
-   <button id="topicBtn" onclick="openTopicPopup()"> New Topic </button>
-   <div id="noticeControls" class="topic-selects">
-     
-        <select id="categorySelect" onchange="changeCategory()" style="display:none;">
-        </select>
 
-        <select id="topicSelect" onchange="changeTopic()" style="display:none;">
-            <option value="">select topic</option>
-        </select>
+    <div class="left-actions">
+      <button id="topicBtn" onclick="openTopicPopup()"> New Topic
+      </button>
 
+      <button id="backToCategoriesBtn" onclick="backToCategories()">
+      Categories
+      </button>
     </div>
-    <button id="backToCategoriesBtn" onclick="backToCategories()">
-        Categories
+
+    <button id="clearBtn" class="clearBtn" onclick="clearTable()">
+        Clear
     </button>
-  <button id="clearBtn" class="clearBtn" onclick="clearTable()">Clear</button>
+
 </div>
 
 <!-- viestit -->

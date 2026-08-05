@@ -46,16 +46,6 @@ body {
     display: none;
 }
 
-#backToCategoriesBtn {
-    display: none;
-    position: static;
-  height:34px;
-  margin-left: auto;
-  grid-column: 3;
-  justify-self: end;
-  background-color: red;
-}
-
 /*
 #boardCategoriesView {
     display: grid;
@@ -267,6 +257,7 @@ body {
   background: #eaf2ff;
 }
 
+/*
 .board-actions {
   position: relative;
   max-width: 600px;
@@ -274,12 +265,7 @@ body {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-}
-
-.board-actions button {
-  font-size: 12px;
-  padding: 4px 10px;
-}
+}*/
 
 .login-box {
   display: inline-block;
@@ -337,15 +323,6 @@ button {
 #topMenu button {
   background-color: greenyellow;
   border-radius: 10px;
-}
-
-.clearBtn {
-  position: static;
-  height:34px;
-  margin-left: auto;
-  grid-column: 3;
-  justify-self: end;
-  background-color: red;
 }
 
 #requestsBtn.pending::after {
@@ -776,44 +753,53 @@ input::placeholder {
     background-color: #d9ecff;
 }
 
-#topicBtn {
-    width: 90px;
-    height:34px;
-    background-color: yellow;
-}
-
 .board-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    max-width: 600px;
+    margin: 4px auto 6px auto;
+    box-sizing: border-box;
 }
 
+.left-actions {
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+}
+
+.left-actions button {
+    display:flex;
+    height:34px;
+    flex-shrink:1;
+    white-space:nowrap;
+    align-items:center;
+    justify-content:center;
+    padding:0 10px;
+    line-height:1;
+}
+
+#topicBtn {
+    background-color:yellow;
+}
+
+#backToCategoriesBtn {
+    display:none;
+    height:34px;
+    background-color:lightgreen;
+}
+
+.clearBtn {
+    display:flex;
+    height:34px;
+    align-items:center;
+    justify-content:center;
+    background-color:red;
+}
+
+/*
 .topic-selects {
     display: flex;
     gap: 10px;
-}
-
-.topic-selects {
-    display: flex;
-    gap: 10px;
-}
-
-#categorySelect {
-    width: 120px;
-    text-align: center;
-    text-align-last: center;
-    height: 34px;
-    padding-left: 0;
-    background-color: #d9ecff;
-}
-
-#topicSelect {
-    /*270px alkuperäinen*/
-    width: 170px;
-    text-align: center;
-    text-align-last: center;
-    height: 34px;
-    padding-left: 0;
-    background-color: #d9ecff;
-}
+}*/
