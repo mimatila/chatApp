@@ -55,12 +55,12 @@ body {
     row-gap: 30px;
 }*/
 
-.notice-board #boardCategoriesView {
+#boardCategoriesView {
     display: grid;
-    justify-items: center;
-    row-gap: 30px;
     height: 100%;
     align-content: center;
+    justify-items: center;
+    row-gap: 30px;
 }
 
 #mainCategories {

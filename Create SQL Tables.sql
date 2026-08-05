@@ -32,6 +32,7 @@ CREATE TABLE boardMessages (
     type VARCHAR(20),
     category VARCHAR(50) NOT NULL DEFAULT 'general',
     topic VARCHAR(100) DEFAULT NULL,
+    header VARCHAR(255) DEFAULT NULL,
 
     FOREIGN KEY (board_id)
         REFERENCES boards(id)
@@ -82,3 +83,41 @@ CREATE TABLE visitedUsers (
         REFERENCES boards(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE defaultSaunaSlots (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    day VARCHAR(10) NOT NULL,
+    time VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE saunaSlots (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    board_id INT,
+    day VARCHAR(10) NOT NULL,
+    time VARCHAR(20) NOT NULL,
+    familyName VARCHAR(100) DEFAULT NULL,
+
+    FOREIGN KEY (board_id)
+        REFERENCES boards(id)
+        ON DELETE CASCADE
+);
+
+INSERT INTO defaultSaunaSlots (day, time)
+VALUES
+('Ke','15:00-16:00'),
+('Ke','16:00-17:00'),
+('Ke','17:00-18:00'),
+('Ke','18:00-19:00'),
+('Ke','19:00-20:00'),
+('Ke','20:00-21:00'),
+
+('To','15:00-16:00'),
+('To','16:00-17:00'),
+('To','17:00-18:00'),
+('To','18:00-19:00'),
+('To','19:00-20:00'),
+('To','20:00-21:00'),
+
+('Pe','15:00-16:00'),
+...
+('La','20:00-21:00');

@@ -255,18 +255,24 @@ document.addEventListener("DOMContentLoaded", () => {
     initApp();
 });
 
+//SCF
+
 function showCategories() {
 
     console.log("SHOW CATEGORIES CALLED");
-    
+
     const el = document.getElementById("boardCategoriesView");
 
     el.style.display = "grid";
-    el.style.height = "100%";    
+    el.style.height = "100%";
 
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "none";
-    document.getElementById("backToCategoriesBtn").style.display = "none";     
+    document.getElementById("backToCategoriesBtn").style.display = "none";
+
+    renderCategories();
+
+    loadTopicCounts();
 }
 
 function showTopics() {
@@ -300,42 +306,63 @@ function editMessage(msg) {
     openTopicPopup();
 }
 
+// RCF
+
 function renderCategories() {
 
-    const el = document.getElementById("boardCategoriesView");
+const el = document.getElementById("boardCategoriesView");
 
-    const categories = [
-        "Info",
-        "Yleinen",
-        "Huolto",
-        "Tapahtumat"
-    ];
+const main = [
+    "general information",
+    "announcements"
+];
 
-    el.innerHTML = categories.map(category => {
+const other = categories.filter(
+    c => !main.includes(c)
+);
 
-        return `
-            <div class="category-card"
-                 onclick="selectCategory('${category}')">
-                ${category}
-            </div>
-        `;
 
-    }).join("");
+el.innerHTML = `
+
+<div id="mainCategories">
+    ${main.map(category => `
+        <div class="category-card"
+             data-category="${category}"
+             onclick="selectCategory('${category}')">
+             ${t(category)}
+        </div>
+    `).join("")}
+</div>
+
+
+<div id="otherCategories">
+    ${other.map(category => `
+        <div class="category-card"
+             data-category="${category}"
+             onclick="selectCategory('${category}')">
+             ${t(category)}
+        </div>
+    `).join("")}
+</div>
+
+`;
+
 }
 
 function selectCategory(category) {
 
     console.log("Selected category:", category);
+
+    currentCategory = category;
+    currentTopic = "";
+
+    localStorage.setItem("currentCategory", category);
+    localStorage.removeItem("currentTopic");
+
     showTopics();
+
+    loadTopicsFromDatabase(category);
 }
-/*
-@media(max-width: 600px) {
-
-    #boardCategoriesView {
-        grid-template-columns: 1fr;
-    }
-
-}*/
 
 function t(key) {
 
@@ -2617,22 +2644,32 @@ function loadTopicCounts() {
     })
     .then(r => r.json())
     .then(data => {
-  
+
     if (!data.success) return;
 
-    const order = categories;
-    const visibleCategories = order;
-    let text = t("topics") + ": ";
+    categories.forEach(category => {
 
-visibleCategories.forEach(category => {
+        const c = data.counts.find(
+            item => item.category === category
+        );
 
-    const c = data.counts.find(item => item.category === category);
-    const count = c ? c.count : 0;
-    text += `${t(category)} (${count})  `;
+        const count = c ? c.count : 0;
 
-});
+        console.log("COUNT CATEGORY:", category, count);
+console.log(
+    document.querySelector(`[data-category="${category}"]`)
+);
 
-document.getElementById("topicSummary").textContent = text;
+        const card = document.querySelector(
+            `[data-category="${category}"]`
+        );
+
+        if (card) {
+            card.innerHTML = `${t(category)} (${count})`;
+        }
+
+    });
+
 });
 }
 
