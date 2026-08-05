@@ -256,6 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showCategories() {
+
+    console.log("SHOW CATEGORIES CALLED");
     
     const el = document.getElementById("boardCategoriesView");
 
@@ -281,6 +283,7 @@ function showMessages() {
     document.getElementById("boardCategoriesView").style.display = "none";
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "block";
+    backToCategoriesBtn.style.display = "block";
     
 }
 
@@ -1063,11 +1066,33 @@ function loadMessage(forceScroll = false) {
 
     if (boardType === "notice") {
 
+      console.log("FILTER:", currentCategory, currentTopic);
+console.log("MESSAGES BEFORE:", messages);
+
+messages.forEach(msg => {
+    console.log(
+        "MSG:",
+        msg.category,
+        msg.topic,
+        msg.header,
+        msg.text
+    );
+});
+
     messages = messages.filter(msg =>
         msg.category === currentCategory &&
         msg.topic === currentTopic
     );
-}
+    }
+
+    console.log("MESSAGES AFTER:", messages);
+/*
+    if (
+    currentCategory === "general information" ||
+    currentCategory === "announcements"
+) {
+    messages.reverse();
+}*/
 
     if (todayMode) {
     const now = new Date();
@@ -1133,14 +1158,29 @@ if (
 ) {
     div.classList.add("owner-message");
 
+    console.log("TOPIC:", msg.topic);
+console.log("HEADER:", msg.header);
+
     if (showTopicInsideMessage) {
 
-      const title = document.createElement("div");
-      title.className = "owner-topic-title";
-      title.innerText = msg.topic;
-      text.appendChild(title);
+    const title = document.createElement("div");
+    title.className = "owner-topic-title";
+
+    if (
+        (msg.category === "general information" ||
+         msg.category === "announcements") &&
+        msg.header
+    ) {
+        title.innerText = msg.header;
+    } else {
+        title.innerText = msg.topic;
     }
-      text.appendChild(body);
+
+    text.appendChild(title);
+}
+
+    text.appendChild(body);
+    
     } else {
       text.appendChild(author);
       text.appendChild(body);
@@ -1214,9 +1254,15 @@ if (
   box.appendChild(div);
   });
 
-    if (forceScroll || isAtBottom) {
+    if (
+      currentCategory === "general information" ||
+      currentCategory === "announcements"
+    ) {
+      box.scrollTop = 0;
+    } else if (forceScroll || isAtBottom) {
       box.scrollTop = box.scrollHeight;
     }
+
   })
   .catch(console.error)
   .finally(() => {
@@ -2047,8 +2093,12 @@ function submitTopic() {
   const boardName = localStorage.getItem("boardName");
   const category = document.getElementById("cp_category").value;
   //let topic = document.getElementById("cp_topic").value;
+  const header = document.getElementById("cp_header").value;
   const message = document.getElementById("cp_message").value;
   const author = localStorage.getItem("boardUsername");
+  const showHeader =
+    category === "general information" ||
+    category === "announcements";
 
   let topic;
 
@@ -2061,6 +2111,11 @@ function submitTopic() {
 
     if (!topic.trim()) {
     alert(t("TOPIC_MISSING"));
+    return;
+}
+
+if (showHeader && !header.trim()) {
+    alert(t("HEADER_MISSING"));
     return;
 }
 
@@ -2079,6 +2134,7 @@ if (!message.trim()) {
     author,
     category,
     topic,
+    header,
     message,
     type
 })
@@ -2099,8 +2155,11 @@ if (data.success) {
         loadTopicCounts();
     }
 
+    closeTopicPopup();
+
     document.getElementById("cp_category").value = "general";
     document.getElementById("cp_topic").value = "";
+    document.getElementById("cp_header").value = "";
     document.getElementById("cp_message").value = "";
     document.getElementById("cp_informationTopic").value = "";
 }
@@ -2160,10 +2219,18 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
 
         if (selectedTopic) {
 
-            currentTopic = selectedTopic;
+        currentCategory = category;
+        currentTopic = selectedTopic;
 
-            loadTopicCounts();
-            loadMessage(true);
+        localStorage.setItem("currentCategory", category);
+        localStorage.setItem("currentTopic", selectedTopic);
+
+        updateCurrentLocation();
+
+        showMessages();
+
+        loadTopicCounts();
+        loadMessage(true);
         }
 
         return data;
@@ -2580,9 +2647,18 @@ function changeCreateBoardType() {
 
 function createTopicPopupCategoryChanged() {
 
+    const category = document.getElementById("cp_category").value;
+    console.log(category);
     const topicInput = document.getElementById("cp_topic");
 
     topicInput.style.display = "block";
     topicInput.placeholder = t("topic");
+
+    const showHeader =
+    category === "general information" ||
+    category === "announcements";
+
+    document.getElementById("cp_header").style.display =
+    showHeader ? "block" : "none";
 }
 

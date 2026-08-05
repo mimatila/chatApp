@@ -581,8 +581,8 @@ const autoDeleteDays = settings[0]?.autoDeleteDays ?? 30;
     );
 
     // Hae viestit
-    const [boardMessages] = await pool.query(
-  `SELECT id, author, time, text, type, category, topic
+   const [boardMessages] = await pool.query(
+  `SELECT id, author, time, text, type, category, topic, header
    FROM boardMessages
    WHERE board_id = ?
    ORDER BY time`,
@@ -1465,9 +1465,14 @@ app.post("/createTopic", async (req, res) => {
     author,
     category,
     topic,
+    header,
     message,
     type
   } = req.body;
+
+  const allowSameTopic =
+    category === "general information" ||
+    category === "announcements";
 
   if (topic.length > 40) {
     return res.json({
@@ -1492,6 +1497,33 @@ app.post("/createTopic", async (req, res) => {
     }
 
     const boardId = boards[0].id;
+
+    if (!allowSameTopic) {
+
+    const [existing] = await pool.query(
+        `
+        SELECT id
+        FROM boardMessages
+        WHERE board_id = ?
+        AND category = ?
+        AND topic = ?
+        LIMIT 1
+        `,
+        [
+            boardId,
+            category,
+            topic
+        ]
+    );
+
+    if (existing.length > 0) {
+        return res.json({
+            success: false,
+            message: "TOPIC_ALREADY_EXISTS"
+        });
+    }
+}
+
 
     // Hae käyttäjän rooli
     const [users] = await pool.query(
@@ -1530,15 +1562,16 @@ if (
     // Lisää viesti
     await pool.query(
       `INSERT INTO boardMessages
-      (id, board_id, author, time, text, type, category, topic)
-      VALUES (UUID(), ?, ?, NOW(), ?, ?, ?, ?)`,
+      (id, board_id, author, time, text, type, category, topic,header)
+      VALUES (UUID(), ?, ?, NOW(), ?, ?, ?, ?, ?)`,
       [
         boardId,
         author,
         message,
         type,
         category,
-        topic
+        topic,
+        header
       ]
     );
 
