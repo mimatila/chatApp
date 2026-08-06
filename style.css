@@ -339,9 +339,29 @@ input:not([type="checkbox"]) {
   padding: 8px;
 }
 
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 button {
   padding: 8px 15px;
   cursor: pointer;
+}
+
+#saunaTable input {
+    width: 70px;
+    height: 15px;
+}
+
+#saunaTable {
+    font-size: 12px;
+}
+
+#saunaBtn {
+  width: 120px;
+  background-color:  #d9ecff;
 }
 
 #openJoinBtn {
@@ -505,6 +525,35 @@ input::placeholder {
   width: 300px;
   margin: 100px auto;
   border-radius: 10px;
+}
+
+#saunaPopup .popup-content {
+    width: 450px;
+    max-width: 90vw;
+}
+
+/*
+#saunaTable input {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    width: 100%;
+    font: inherit;
+}*/
+
+#saunaTable td {
+    white-space: nowrap;
+    padding: 2px 12px;
+}
+
+#saunaTable input {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    width: 100%;
+    font: inherit;
 }
 
 .popup-content select,

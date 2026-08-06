@@ -26,6 +26,8 @@
       <button id="backToCategoriesBtn" onclick="backToCategories()">
       Categories
       </button>
+      <button id="saunaBtn" onclick="openSauna()"> Sauna List
+      </button>
     </div>
     <button id="clearBtn" class="clearBtn" onclick="clearTable()">
         Clear
@@ -90,6 +92,90 @@
   <button id="settingsBtn" onclick="openSettings()"> Settings </button>
   <button id="homeBtn" onclick="home()">Home</button>
   <button id="logout" onclick="logout()"> Logout </button>
+</div>
+
+<div id="saunaPopup" class="popup">
+
+    <div class="popup-content">
+
+        <h3 class="h3" id="saunaTitle">
+            Sauna List
+        </h3>
+
+        <table id="saunaTable">
+
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Ke</th>
+                    <th>To</th>
+                    <th>Pe</th>
+                    <th>La</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>15:00-16:00</td>
+                    <td>Möttönen</td>    
+                    <td>Miettinen</td>
+                    <td>Savolainen</td>
+                    <td>Liljalahti</td>
+                </tr>
+
+                <tr>
+                    <td>16:00-17:00</td>
+                    <td>Leppänen</td>    
+                    <td>Liukkonen</td>
+                    <td>Pentti Reinikainen</td>
+                    <td>Turhapuro</td>
+                </tr>
+
+                <tr>
+                    <td>17:00-18:00</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+
+                <tr>
+                    <td>18:00-19:00</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+
+                <tr>
+                    <td>19:00-20:00</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+
+                <tr>
+                    <td>20:00-21:00</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <br>
+
+        <button id="closeSaunaBtn" onclick="closeSauna()">
+            Close
+        </button>
+
+    </div>
+
 </div>
 
 <div id="membersPopup" class="popup">

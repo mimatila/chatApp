@@ -275,6 +275,7 @@ function showCategories() {
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "none";
+    document.getElementById("saunaBtn").style.display = "block";
 
     renderCategories();
 
@@ -287,6 +288,7 @@ function showTopics() {
     document.getElementById("boardTopicsView").style.display = "grid";
     document.getElementById("boardMessagesDiv").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("saunaBtn").style.display = "none";
     
 }
 
@@ -797,6 +799,8 @@ function renderTopicsGrid(topics) {
     });
 }
 
+//BCF
+
 function backToCategories() {
 
     //console.log("BACK TO CATEGORY CALLED");
@@ -812,6 +816,7 @@ function backToCategories() {
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardTopicsView").innerHTML = "";
     backToCategoriesBtn.style.display = "none";
+    document.getElementById("saunaBtn").style.display = "block";
 
     currentCategory = "";
     currentTopic = "";
@@ -821,6 +826,14 @@ function backToCategories() {
 
     updateCurrentLocation();
 }
+
+function openSauna() {
+
+    document.getElementById("saunaPopup").style.display = "flex";
+
+}
+
+//OCF
 
 function openCategory(category) {
 
@@ -1770,6 +1783,11 @@ function openSettings() {
         "settingsPopup"
       ).style.display = "block";
     });
+}
+
+function closeSauna() {
+
+  document.getElementById("saunaPopup").style.display = "none";
 }
 
 function closeSettings() {
