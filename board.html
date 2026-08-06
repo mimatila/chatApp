@@ -23,69 +23,60 @@
     <div class="left-actions">
       <button id="topicBtn" onclick="openTopicPopup()"> New Topic
       </button>
-
       <button id="backToCategoriesBtn" onclick="backToCategories()">
       Categories
       </button>
     </div>
-
     <button id="clearBtn" class="clearBtn" onclick="clearTable()">
         Clear
     </button>
-
 </div>
 
 <!-- viestit -->
 <div class="board">
-
   <div id="boardCategoriesView">
-
     <div id="mainCategories"></div>
-
     <div id="otherCategories"></div>
+  </div>
 
-</div>
+  <div id="boardTopicsView">
+   <!-- topicit -->
+  </div>
 
-<div id="boardTopicsView">
-  
-    <!-- topicit -->
-</div>
-
-<div id="boardMessagesView"></div>
+  <div id="boardMessagesView"></div>
 
   <div id="boardMessagesDiv"></div>
 </div>
 
-  <div class="message-options">
-    <label>
-      <input type="checkbox" id="importantMode">
-      <span id="importantModeText">important</span>
-    </label>
-    <label>
-      <input type="checkbox" id="infoMode">
-      <span id="infoModeText">info</span>
-    </label>
-    <label>
-      <input type="checkbox" id="todayMode">
-      <span id="todayModeText">today</span>
-    </label>
-    <label>
-      <input type="checkbox" id="editMode">
-      <span id="editModeText">edit</span>
-    </label>
-  </div>
+<div class="message-options">
+  <label>
+  <input type="checkbox" id="importantMode">
+  <span id="importantModeText">important</span>
+  </label>
+  <label>
+  <input type="checkbox" id="infoMode">
+  <span id="infoModeText">info</span>
+  </label>
+  <label>
+  <input type="checkbox" id="todayMode">
+  <span id="todayModeText">today</span>
+  </label>
+  <label>
+  <input type="checkbox" id="editMode">
+  <span id="editModeText">edit</span>
+  </label>
+</div>
 
   <!-- viesti -->
   <div class="message-area">
-
-  <span id="quickMessagesBtn" onclick="openQuickMessages()">
+    <span id="quickMessagesBtn" onclick="openQuickMessages()">
     💬
-  </span>
+    </span>
     <div class="input-row">
-      <input id="boardNewMsg" placeholder="Write message...">
-     <button id="sendBtn" class="send-btn" onclick="updateMessage()">
-      Send
-     </button>
+    <input id="boardNewMsg" placeholder="Write message...">
+    <button id="sendBtn" class="send-btn" onclick="updateMessage()">
+    Send
+    </button>
     </div>
   </div>
 </div>
@@ -103,80 +94,75 @@
 
 <div id="membersPopup" class="popup">
   <div class="popup-content">
-    <h3>Members:</h3>
-    <div id="membersList"></div>
-    <br>
-    <button onclick="closeMembers()">Sulje</button>
+  <h3 class="h3">Members</h3>
+  <div id="membersList"></div>
+  <br>
+  <button id="closeMembersBtn" onclick="closeMembers()">Sulje</button>
   </div>
 </div>
 
 <div id="settingsPopup" class="popup">
   <div class="popup-content">
-    <h3>Asetukset</h3>
+    <h3 class="h3">Asetukset</h3>
     <label>
-      Poista viestit vanhempina kuin
+    Poista viestit vanhempina kuin
     </label>
     <input
-      id="autoDeleteDays"
-      type="number"
-      min="1"
-      max="365"
+    id="autoDeleteDays"
+    type="number"
+    min="1"
+    max="365"
     >
     <span>päivää</span>
     <br><br>
-    <button onclick="saveSettings()">
-      Tallenna
+    <button id="saveSettingsBtn" onclick="saveSettings()">
+    Tallenna
     </button>
-    <button onclick="closeSettings()">
-      Sulje
+    <button id="closeSettingsBtn" onclick="closeSettings()">
+    Sulje
     </button>
   </div>
 </div>
 
 <div id="requestsPopup" class="popup">
   <div class="popup-content">
-    <h3>Join Requests</h3>
+    <h3 class="h3">Join Requests</h3>
     <div id="requestsList"></div>
     <br>
-    <button onclick="closeRequests()">Sulje</button>
+    <button id="closeRequestsBtn" onclick="closeRequests()">Sulje</button>
   </div>
 </div>
 
 <div id="quickMessagesPopup" class="popup">
   <div class="popup-content">
-    <h3>Quick Messages</h3>
+    <h3 >Quick Messages</h3>
     <div id="quickMessagesList"></div>
     <br>
     <button id="saveQuickBtn" onclick="saveQuickMessages()"> Save </button>
-    <button onclick="closeQuickMessages()"> Close </button>
+    <button id="closeQuickBtn" onclick="closeQuickMessages()"> Close </button>
   </div>
 </div>
 
 <div id="createTopicPopup" class="popup">
   <div class="popup-content">
     <h3 id="createTopicTitle">Create New Topic</h3>
-
     <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
-</select>
-
-<input id="cp_topic" placeholder="topic" maxlength="40">
-
-<select id="cp_informationTopic" style="display:none;">
+    </select>
+    <input id="cp_topic" placeholder="topic" maxlength="40">
+    <select id="cp_informationTopic" style="display:none;">
     <option value="general information">
-        General information
+    General information
     </option>
     <option value="announcements">
-        Announcements
+    Announcements
     </option>
-</select>
-
-<input id="cp_header" type="text" placeholder="Header">
-
-<textarea id="cp_message"
-placeholder="Write your message..."
-rows="5"></textarea>
-   <button id="cp_createBtn" onclick="submitTopic()">Create</button>
-   <button id="cp_cancelBtn" onclick="closeTopicPopup()">Cancel</button>
+    </select>
+    <input id="cp_header" type="text" placeholder="Header">
+    <textarea id="cp_message"
+    placeholder="Write your message..."
+    rows="5"></textarea>
+    <button id="cp_createBtn" onclick="submitTopic()">Create</button>
+    <button id="cp_cancelBtn" onclick="closeTopicPopup()">Cancel</button>
   </div>
 </div>
 
