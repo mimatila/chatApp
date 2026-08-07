@@ -26,12 +26,12 @@
       <button id="backToCategoriesBtn" onclick="backToCategories()">
       Categories
       </button>
-      <button id="saunaBtn" onclick="openSauna()"> Sauna List
-      </button>
+      <button id="saunaBtn" onclick="openSauna()"> Sauna Slots</button>
+      <button id="autoBtn" onclick="openAuto()"> Parking Spaces</button>
     </div>
-    <button id="clearBtn" class="clearBtn" onclick="clearTable()">
+      <button id="clearBtn" class="clearBtn" onclick="clearTable()">
         Clear
-    </button>
+      </button>
 </div>
 
 <!-- viestit -->
@@ -41,9 +41,8 @@
     <div id="otherCategories"></div>
   </div>
 
-  <div id="boardTopicsView">
-   <!-- topicit -->
-  </div>
+  <!-- topicit -->
+  <div id="boardTopicsView"></div>
 
   <div id="boardMessagesView"></div>
 
@@ -95,15 +94,11 @@
 </div>
 
 <div id="saunaPopup" class="popup">
-
     <div class="popup-content">
-
         <h3 class="h3" id="saunaTitle">
             Sauna List
         </h3>
-
         <table id="saunaTable">
-
             <thead>
                 <tr>
                     <th></th>
@@ -113,9 +108,7 @@
                     <th>La</th>
                 </tr>
             </thead>
-
             <tbody>
-
                 <tr>
                     <td>15:00-16:00</td>
                     <td>-</td>
@@ -123,7 +116,6 @@
                     <td>-</td>
                     <td>-</td>
                 </tr>
-
                 <tr>
                     <td>16:00-17:00</td>
                     <td>-</td>
@@ -131,7 +123,6 @@
                     <td>-</td>
                     <td>-</td>
                 </tr>
-
                 <tr>
                     <td>17:00-18:00</td>
                     <td>-</td>
@@ -139,7 +130,6 @@
                     <td>-</td>
                     <td>-</td>
                 </tr>
-
                 <tr>
                     <td>18:00-19:00</td>
                     <td>-</td>
@@ -147,7 +137,6 @@
                     <td>-</td>
                     <td>-</td>
                 </tr>
-
                 <tr>
                     <td>19:00-20:00</td>
                     <td>-</td>
@@ -155,7 +144,6 @@
                     <td>-</td>
                     <td>-</td>
                 </tr>
-
                 <tr>
                     <td>20:00-21:00</td>
                     <td>-</td>
@@ -163,28 +151,40 @@
                     <td>-</td>
                     <td>-</td>
                 </tr>
-
             </tbody>
-
         </table>
-
         <br>
-       
         <div id="saunaButtons">
-
     <button id="saveSaunaBtn" onclick="saveSauna()" style="display:none;">
         Save
     </button>
-
     <button id="editSaunaBtn" onclick="editSauna()">
         Edit
     </button>
-
     <button id="closeSaunaBtn" onclick="closeSauna()">
         Close
     </button>
-
 </div>
+    </div>
+</div>
+
+<div id="autoPopup" class="popup">
+
+    <div id="autoPopupContent" class="popup-content">
+
+        <h3 class="h3" id="autoTitle">
+            Parking Spaces
+        </h3>
+
+        <input id="autoCountInput" type="number" value="5">
+
+        <button id="createAutoPopupBtn" onclick="createAutoSlots()">
+            Create
+        </button>
+
+        <button id="closeAutoPopupBtn" onclick="closeAutoPopup()">
+            Cancel
+        </button>
 
     </div>
 

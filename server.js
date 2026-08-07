@@ -1396,21 +1396,18 @@ async function authUser(req, boardName) {
     }
 
     const [rows] = await pool.query(
-        `SELECT 
-        users.id,
-        users.username,
-        users.role,
-        users.board_id
+        `
+        SELECT 
+            users.id,
+            users.username,
+            users.role,
+            users.board_id
         FROM users
         JOIN boards
-        ON users.board_id = boards.id
+            ON users.board_id = boards.id
         WHERE boards.name = ?
-        AND users.token = ?
-         FROM users
-         JOIN boards
-           ON users.board_id = boards.id
-         WHERE boards.name = ?
-           AND users.token = ?`,
+          AND users.token = ?
+        `,
         [boardName, token]
     );
 
@@ -1986,6 +1983,167 @@ app.post("/updateSaunaSlots", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Server error"
+        });
+
+    }
+
+});
+
+app.post("/createAutoSlots", async (req, res) => {
+
+    const { boardName, count } = req.body;
+
+    try {
+
+        const user = await authUser(req, boardName);
+
+        if (!user || user.role !== "owner") {
+            return res.status(403).json({
+                success:false,
+                message:"ONLY_OWNER"
+            });
+        }
+
+
+        const [boards] = await pool.query(
+            "SELECT id FROM boards WHERE name = ?",
+            [boardName]
+        );
+
+
+        if (boards.length === 0) {
+            return res.json({
+                success:false,
+                message:"BOARD_NOT_FOUND"
+            });
+        }
+
+
+        const boardId = boards[0].id;
+
+        const [existing] = await pool.query(
+    "SELECT COUNT(*) AS count FROM autoSlots WHERE board_id = ?",
+    [boardId]
+);
+
+if (existing[0].count > 0) {
+    return res.json({
+        success:false,
+        message:"ALREADY_CREATED"
+    });
+}
+
+
+        for (let i = 1; i <= count; i++) {
+
+            await pool.query(
+                `INSERT INTO autoSlots
+                 (board_id, slot_name, info)
+                 VALUES (?, ?, NULL)`,
+                [
+                    boardId,
+                    String(i)
+                ]
+            );
+
+        }
+
+
+        res.json({
+            success:true
+        });
+
+
+    } catch(err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success:false,
+            message:"DATABASE_ERROR"
+        });
+
+    }
+
+});
+
+app.get("/autoSlots/:boardName", async (req, res) => {
+
+    const { boardName } = req.params;
+
+    try {
+
+        const [boards] = await pool.query(
+            "SELECT id FROM boards WHERE name = ?",
+            [boardName]
+        );
+
+        if (boards.length === 0) {
+            return res.json({
+                success:false,
+                message:"BOARD_NOT_FOUND"
+            });
+        }
+
+        const boardId = boards[0].id;
+
+        const [slots] = await pool.query(
+            `SELECT id, slot_name, info
+             FROM autoSlots
+             WHERE board_id = ?
+             ORDER BY id`,
+            [boardId]
+        );
+
+        res.json({
+            success:true,
+            slots
+        });
+
+    } catch(err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success:false
+        });
+
+    }
+});
+
+app.put("/autoSlots", async (req, res) => {
+
+    const slots = req.body;
+
+    try {
+
+        for (const slot of slots) {
+
+            await pool.query(
+                `
+                UPDATE autoSlots
+                SET slot_name = ?, info = ?
+                WHERE id = ?
+                `,
+                [
+                    slot.slot_name,
+                    slot.info,
+                    slot.id
+                ]
+            );
+
+        }
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false
         });
 
     }

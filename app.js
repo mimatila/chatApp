@@ -6,6 +6,7 @@ let currentTopic = "";
 let editingTopicId = null;
 let saunaEditMode = false;
 let saunaSlots = [];
+let autoSlots = [];
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
@@ -123,6 +124,7 @@ const messages = {
         NOTICE_TALOYHTIO: "taloyhtiö",
         NOTICE_YHTEISO: "yhteisö",
         NOTICE_URHEILUSEURA: "urheiluseura",
+        OWNER_CATEGORY_NO_MESSAGES: "Omistajan kategoria, ei viestejä.",
         NOTICE_YHDISTYS: "yhdistys"
         },
     en: {
@@ -138,6 +140,7 @@ const messages = {
         BOARD_CREATED: "Board created.",
         REMOVE_USER_CONFIRM: "Remove user?",
         ONLY_OWNER_EDIT: "Only owner can edit.",
+        OWNER_CATEGORY_NO_MESSAGES: "Owner category no messages.",
         BACK_CATEGORIES: "Categories",
         DATABASE_ERROR: "Database error.",
         LOGIN_AGAIN: "Please login again.",
@@ -282,6 +285,7 @@ function showCategories() {
     document.getElementById("boardMessagesDiv").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "none";
     document.getElementById("saunaBtn").style.display = "block";
+    document.getElementById("autoBtn").style.display = "block";
 
     renderCategories();
 
@@ -295,6 +299,7 @@ function showTopics() {
     document.getElementById("boardMessagesDiv").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "block";
     document.getElementById("saunaBtn").style.display = "none";
+    document.getElementById("autoBtn").style.display = "none";
     
 }
 
@@ -639,16 +644,19 @@ function initBoard() {
     if (noticeTemplate === "taloyhtio") {
 
         document.getElementById("saunaBtn").style.display = "block";
+        document.getElementById("autoBtn").style.display = "block";
 
     } else {
 
         document.getElementById("saunaBtn").style.display = "none";
+        document.getElementById("autoBtn").style.display = "none";
     }
 
 } else {
 
     document.getElementById("topicBtn").style.display = "none";
     document.getElementById("saunaBtn").style.display = "none";
+    document.getElementById("autoBtn").style.display = "none";
 }
 }
 
@@ -823,6 +831,8 @@ function backToCategories() {
     //console.log("BACK TO CATEGORY CALLED");
 
     const msg = document.getElementById("boardMessagesDiv");
+    const boardType = localStorage.getItem("boardType");
+    const noticeTemplate = localStorage.getItem("noticeTemplate");
 
     if (msg) {
         msg.style.display = "none";
@@ -834,12 +844,14 @@ function backToCategories() {
     document.getElementById("boardTopicsView").innerHTML = "";
     backToCategoriesBtn.style.display = "none";
     document.getElementById("saunaBtn").style.display = "none";
+    document.getElementById("autoBtn").style.display = "none";
 
     if (
         boardType === "notice" &&
         noticeTemplate === "taloyhtio"
     ) {
         document.getElementById("saunaBtn").style.display = "block";
+        document.getElementById("autoBtn").style.display = "block";
     }
 
     currentCategory = "";
@@ -1048,6 +1060,227 @@ function editSauna() {
     document.getElementById("saveSaunaBtn").style.display = "block";
 
     renderSaunaTable();
+}
+
+async function createAutoSlots() {
+
+    const boardName = localStorage.getItem("boardName");
+    const count = Number(document.getElementById("autoCountInput").value);
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        "http://localhost:3000/createAutoSlots",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token
+            },
+            body: JSON.stringify({
+                boardName,
+                count
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+
+        document.getElementById("autoPopup").style.display = "none";
+
+        alert("Parking spaces created");
+
+    } else {
+
+        alert(data.message || "Create failed");
+
+    }
+}
+
+async function openAuto() {
+
+    console.log("OPEN AUTO CALLED");
+
+    const boardName = localStorage.getItem("boardName");
+
+    const response = await fetch(
+        `http://localhost:3000/autoSlots/${boardName}`
+    );
+
+    const data = await response.json();
+
+    console.log("AUTO DATA:", data);
+
+    if (data.slots.length === 0) {
+
+        document.getElementById("autoPopup").style.display = "flex";
+
+    } else {
+
+        renderAutoSlots(data.slots);
+
+    }
+}
+
+function renderAutoSlots(slots) {
+
+    const userRole = localStorage.getItem("role");
+    const boardType = localStorage.getItem("boardType");
+    const noticeTemplate = localStorage.getItem("noticeTemplate");
+
+    autoSlots = slots;
+
+    const content = document.getElementById("autoPopupContent");
+
+    content.innerHTML = "";
+
+    let html = `
+        <h3 class="h3">
+            Parking Spaces
+        </h3>
+    `;
+
+
+    slots.forEach(slot => {
+
+        html += `
+            <div class="auto-row">
+                <span class="slot-name">
+                    ${slot.slot_name}
+                </span>
+
+                <span class="slot-info">
+                    ${slot.info || "-"}
+                </span>
+            </div>
+        `;
+
+    });
+
+
+    html += `
+        <div class="popup-buttons">
+            <button id="editAutoPopupBtn" onclick="editAutoSlots()">
+                Edit
+            </button>
+
+            <button id="closeAutoPopupBtn" onclick="closeAutoPopup()">
+                Close
+            </button>
+        </div>
+    `;
+
+
+    content.innerHTML = html;
+
+const editBtn = document.getElementById("editAutoPopupBtn");
+
+if (
+    boardType === "notice" &&
+    noticeTemplate === "taloyhtio" &&
+    userRole === "owner"
+) {
+    editBtn.style.display = "block";
+} else {
+    editBtn.style.display = "none";
+}
+
+    document.getElementById("autoPopup").style.display = "flex";
+}
+
+function editAutoSlots() {
+
+    const content = document.getElementById("autoPopupContent");
+
+    let html = `
+        <h3 class="h3">
+            Parking Spaces
+        </h3>
+    `;
+
+    autoSlots.forEach(slot => {
+
+        html += `
+        <div class="auto-edit-row">
+
+            <input 
+                value="${slot.slot_name || ""}"
+                data-id="${slot.id}"
+                class="slot-input">
+
+            <input 
+                value="${slot.info || ""}"
+                data-id="${slot.id}"
+                class="info-input">
+
+        </div>
+        `;
+
+    });
+
+    html += `
+        <button onclick="saveAutoSlots()">
+            Save
+        </button>
+
+        <button onclick="renderAutoSlots(autoSlots)">
+            Cancel
+        </button>
+    `;
+
+    content.innerHTML = html;
+}
+
+async function saveAutoSlots() {
+
+    const rows = document.querySelectorAll(".auto-edit-row");
+
+    const slots = [];
+
+    rows.forEach(row => {
+
+        const name = row.querySelector(".slot-input");
+        const info = row.querySelector(".info-input");
+
+        slots.push({
+            id: name.dataset.id,
+            slot_name: name.value,
+            info: info.value
+        });
+
+    });
+
+    console.log("SAVE AUTO:", slots);
+
+    const response = await fetch("http://localhost:3000/autoSlots", {
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(slots)
+});
+
+const result = await response.json();
+
+console.log("SAVE RESULT:", result);
+
+if (result.success) {
+    openAuto();
+}
+
+}
+
+function openAutoPopup() {
+
+    document.getElementById("autoPopup").style.display = "block";
+
+}
+
+function closeAutoPopup() {
+
+    document.getElementById("autoPopup").style.display = "none";
+
 }
 
 //OCF
@@ -2877,11 +3110,6 @@ function loadTopicCounts() {
         );
 
         const count = c ? c.count : 0;
-
-        console.log("COUNT CATEGORY:", category, count);
-console.log(
-    document.querySelector(`[data-category="${category}"]`)
-);
 
         const card = document.querySelector(
             `[data-category="${category}"]`
