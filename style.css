@@ -398,6 +398,18 @@ button {
   background-color:  #d9ecff;
 }
 
+#saveSaunaBtn{
+  background-color:  #d9ecff;
+}
+
+#closeSaunaBtn{
+  background-color:  #d9ecff;
+}
+
+#editSaunaBtn{
+  background-color:  #d9ecff;
+}
+
 #requestsBtn {
   position: relative;
 }

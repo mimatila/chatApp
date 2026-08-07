@@ -429,8 +429,6 @@ app.put("/boardMessage/:id", async (req, res) => {
             [topic, message, id]
         );
 
-        console.log("UPDATE RESULT:", result);
-
         res.json({
             success: true,
             message: "Updated"
@@ -668,8 +666,6 @@ const autoDeleteDays = settings[0]?.autoDeleteDays ?? 30;
 });
 
 app.post("/loadMessages", async (req, res) => {
-
-  console.log("LOAD MESSAGES:", req.body);
 
     const {
         boardName,
@@ -1360,7 +1356,7 @@ app.post("/rejectRequest", async (req, res) => {
 
 app.post("/authCheck", async (req, res) => {
 
-  console.log("authCheck RUN");
+  console.log("AUTHCHECK CALLED");
 
   const { boardName } = req.body;
 
@@ -1400,7 +1396,16 @@ async function authUser(req, boardName) {
     }
 
     const [rows] = await pool.query(
-        `SELECT users.*
+        `SELECT 
+        users.id,
+        users.username,
+        users.role,
+        users.board_id
+        FROM users
+        JOIN boards
+        ON users.board_id = boards.id
+        WHERE boards.name = ?
+        AND users.token = ?
          FROM users
          JOIN boards
            ON users.board_id = boards.id
@@ -1715,8 +1720,6 @@ app.post("/admin/login", async (req, res) => {
 
         const { username, password } = req.body;
 
-        console.log("REQ BODY:", req.body);
-
         const [rows] = await pool.query(
             "SELECT * FROM users WHERE username = ?",
             [username]
@@ -1740,8 +1743,6 @@ app.post("/admin/login", async (req, res) => {
         }
 
         const ok = await bcrypt.compare(password, user.password);
-
-        console.log("BCRYPT RESULT:", ok);
 
         if (!ok) {
             return res.json({
@@ -1796,9 +1797,6 @@ app.post("/saunaSlots", async (req, res) => {
 
         const { boardName } = req.body;
 
-        console.log("SAUNA SLOTS ROUTE");
-        console.log("SAUNA BOARD NAME:", boardName);
-
         const [existing] = await pool.query(
             `SELECT COUNT(*) AS count
              FROM saunaSlots
@@ -1809,8 +1807,6 @@ app.post("/saunaSlots", async (req, res) => {
              )`,
             [boardName]
         );
-
-        console.log("SAUNA EXISTING:", existing[0].count);
 
         if (existing[0].count === 0) {
 
@@ -1842,8 +1838,6 @@ app.post("/saunaSlots", async (req, res) => {
              ORDER BY day, time`,
             [boardName]
         );
-
-        console.log("SAUNA SLOTS:", slots);
 
         res.json({
             success: true,
@@ -1906,7 +1900,7 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
             return res.status(403).json({
                 success: false,
-                message: "Only owner can edit sauna slots"
+                message: "ONLY_OWNER_EDIT"
             });
 
         }

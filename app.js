@@ -42,6 +42,7 @@ const messages = {
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
         BOARD_CREATED: "Taulu luotu.",
         DATABASE_ERROR: "Tietokantavirhe.",
+        ONLY_OWNER_EDIT: "Vain omistaja voi muuttaa.",
         SAVE: "Tallennettu.",
         HOME: "Koti",
         LOGIN_AGAIN: "Kirjaudu uudelleen.",
@@ -106,6 +107,7 @@ const messages = {
         CANCEL: "Peru",
         CREATE_TOPIC_TITLE: "Uusi Info",
         CREATE: "Luo",
+        SAUNA: "Saunavuorot",
         NEW_TOPIC: "Uusi Info",
         SEND: "Lähetä",
         CLEAR: "Tyhjennä",
@@ -131,9 +133,11 @@ const messages = {
         confirmRemoveMessage: "You want to remove this message?",
         confirmRemoveMessages: "You want to remove this message chain?",
         LOGIN_FAILED: "Login failed.",
+        SAUNA: "Sauna List",
         BOARD_EXISTS: "Board already exists.",
         BOARD_CREATED: "Board created.",
         REMOVE_USER_CONFIRM: "Remove user?",
+        ONLY_OWNER_EDIT: "Only owner can edit.",
         BACK_CATEGORIES: "Categories",
         DATABASE_ERROR: "Database error.",
         LOGIN_AGAIN: "Please login again.",
@@ -829,7 +833,14 @@ function backToCategories() {
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardTopicsView").innerHTML = "";
     backToCategoriesBtn.style.display = "none";
-    document.getElementById("saunaBtn").style.display = "block";
+    document.getElementById("saunaBtn").style.display = "none";
+
+    if (
+        boardType === "notice" &&
+        noticeTemplate === "taloyhtio"
+    ) {
+        document.getElementById("saunaBtn").style.display = "block";
+    }
 
     currentCategory = "";
     currentTopic = "";
@@ -882,8 +893,6 @@ async function openSauna() {
     );
 
     const data = await response.json();
-
-    console.log("SAUNA DATA:", data);
 
     if (!data.success) {
         alert("Could not load sauna list");
@@ -997,9 +1006,6 @@ async function saveSauna() {
 
     const data = await response.json();
 
-    console.log("SAVE RESPONSE:", data);
-
-
     if (data.success) {
 
         saunaEditMode = false;
@@ -1010,7 +1016,7 @@ async function saveSauna() {
 
     } else {
 
-        alert(data.message || "Save failed");
+        alert(t(data.message) || "Save failed");
 
     }
 
@@ -1217,6 +1223,7 @@ function loadBoardLanguage() {
     setText("topicBtn", "NEW_TOPIC");
     setText("sendBtn", "SEND");
     setText("clearBtn", "CLEAR");
+    setText("saunaBtn", "SAUNA");
     setText("settingsBtn", "SETTINGS");
     setText("members", "MEMBERS");
     setText("todayModeText", "TODAY");
@@ -1328,7 +1335,6 @@ function loadMessage(forceScroll = false) {
     );
     }
 
-    console.log("MESSAGES AFTER:", messages);
 /*
     if (
     currentCategory === "general information" ||
