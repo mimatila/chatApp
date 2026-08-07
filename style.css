@@ -542,9 +542,19 @@ input::placeholder {
     font: inherit;
 }*/
 
+#saunaButtons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
 #saunaTable td {
     white-space: nowrap;
     padding: 2px 12px;
+}
+
+#saunaTable td:not(:first-child) {
+    min-width: 60px;
 }
 
 #saunaTable input {
@@ -554,6 +564,14 @@ input::placeholder {
     box-shadow: none;
     width: 100%;
     font: inherit;
+}
+
+#saunaTable .saunaInput {
+    background: white;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 4px;
+    text-align: center;
 }
 
 .popup-content select,

@@ -4,6 +4,8 @@ let categories = [];
 let currentCategory = "";
 let currentTopic = "";
 let editingTopicId = null;
+let saunaEditMode = false;
+let saunaSlots = [];
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
@@ -626,19 +628,30 @@ function initBoard() {
 }
 
   // Notice Uusi Aihe 
-  if (boardType === "notice") {
-    //document.getElementById("noticeControls").style.display = "flex";
+ if (boardType === "notice") {
+
     document.getElementById("topicBtn").style.display = "block";
-  } else {
-    //document.getElementById("noticeControls").style.display = "none";
+
+    if (noticeTemplate === "taloyhtio") {
+
+        document.getElementById("saunaBtn").style.display = "block";
+
+    } else {
+
+        document.getElementById("saunaBtn").style.display = "none";
+    }
+
+} else {
+
     document.getElementById("topicBtn").style.display = "none";
-  }
+    document.getElementById("saunaBtn").style.display = "none";
+}
 }
 
 function initFamilyBoard() {
 
     //topicSummary.style.display = "none";
-
+    
     loadMessage(true);
 }
 
@@ -827,10 +840,208 @@ function backToCategories() {
     updateCurrentLocation();
 }
 
-function openSauna() {
+//OSF
+
+async function openSauna() {
+
+    saunaEditMode = false;
+
+    const userRole = localStorage.getItem("role");
+    const boardType = localStorage.getItem("boardType");
+    const noticeTemplate = localStorage.getItem("noticeTemplate");
+
+    document.getElementById("saveSaunaBtn").style.display = "none";
+
+    if (
+        boardType === "notice" &&
+        noticeTemplate === "taloyhtio" &&
+        userRole === "owner"
+    ) {
+
+        document.getElementById("editSaunaBtn").style.display = "block";
+
+    } else {
+
+        document.getElementById("editSaunaBtn").style.display = "none";
+
+    }
+
+    const boardName = localStorage.getItem("boardName");
+
+    const response = await fetch(
+        "http://localhost:3000/saunaSlots",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                boardName
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    console.log("SAUNA DATA:", data);
+
+    if (!data.success) {
+        alert("Could not load sauna list");
+        return;
+    }
+
+    saunaSlots = data.slots;
+
+    saunaEditMode = false;
+
+    renderSaunaTable();
 
     document.getElementById("saunaPopup").style.display = "flex";
+}
 
+function renderSaunaTable() {
+
+    const tableBody = document.querySelector("#saunaTable tbody");
+
+    tableBody.innerHTML = "";
+
+    const rows = {};
+
+    saunaSlots.forEach(slot => {
+
+        if (!rows[slot.time]) {
+
+            rows[slot.time] = {
+                Ke: "-",
+                To: "-",
+                Pe: "-",
+                La: "-"
+            };
+        }
+
+        rows[slot.time][slot.day] =
+            slot.familyName ?? "-";
+
+    });
+
+
+    Object.keys(rows).forEach(time => {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${time}</td>
+            <td>${renderSaunaCell(rows[time].Ke, "Ke", time)}</td>
+            <td>${renderSaunaCell(rows[time].To, "To", time)}</td>
+            <td>${renderSaunaCell(rows[time].Pe, "Pe", time)}</td>
+            <td>${renderSaunaCell(rows[time].La, "La", time)}</td>
+        `;
+
+        tableBody.appendChild(row);
+
+    });
+}
+
+function renderSaunaCell(value, day, time) {
+
+    if (saunaEditMode) {
+
+        return `
+            <input 
+                class="saunaInput"
+                data-day="${day}"
+                data-time="${time}"
+                value="${value === "-" ? "" : value}">
+        `;
+
+    } else {
+
+        return value;
+
+    }
+}
+
+async function saveSauna() {
+
+    const boardName = localStorage.getItem("boardName");
+
+    const slots = [];
+
+    document.querySelectorAll(".saunaInput")
+    .forEach(input => {
+
+        slots.push({
+            day: input.dataset.day,
+            time: input.dataset.time,
+            familyName: input.value
+        });
+
+    });
+
+
+    const response = await fetch(
+        "http://localhost:3000/updateSaunaSlots",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                boardName,
+                slots
+            })
+        }
+    );
+
+
+    const data = await response.json();
+
+    console.log("SAVE RESPONSE:", data);
+
+
+    if (data.success) {
+
+        saunaEditMode = false;
+
+        await openSauna();
+
+        alert("Sauna slots saved");
+
+    } else {
+
+        alert(data.message || "Save failed");
+
+    }
+
+}
+
+function closeSauna() {
+
+    saunaEditMode = false;
+
+    document.getElementById("editSaunaBtn").style.display = "block";
+    document.getElementById("saveSaunaBtn").style.display = "none";
+
+    document.getElementById("saunaPopup").style.display = "none";
+}
+
+//ESF
+
+function editSauna() {
+
+    const userRole = localStorage.getItem("role");
+
+    if (userRole !== "owner") {
+        return;
+    }
+
+    saunaEditMode = true;
+
+    document.getElementById("editSaunaBtn").style.display = "none";
+    document.getElementById("saveSaunaBtn").style.display = "block";
+
+    renderSaunaTable();
 }
 
 //OCF
@@ -1284,13 +1495,16 @@ if (
   });
 
     if (
-      currentCategory === "general information" ||
-      currentCategory === "announcements"
-    ) {
-      box.scrollTop = 0;
-    } else if (forceScroll || isAtBottom) {
-      box.scrollTop = box.scrollHeight;
-    }
+    boardType === "notice" &&
+    (
+        currentCategory === "general information" ||
+        currentCategory === "announcements"
+    )
+) {
+    box.scrollTop = 0;
+} else if (forceScroll || isAtBottom) {
+    box.scrollTop = box.scrollHeight;
+}
 
   })
   .catch(console.error)
@@ -1378,12 +1592,11 @@ if (
   "Authorization": localStorage.getItem("token")
 },
     body: JSON.stringify({
-    boardName,
-    author: boardUsername,
-    message: boardMessage,
-    category,
-    topic,
-    type
+      boardName,
+      message: boardMessage,
+      category,
+      topic,
+      type
 })
   })
   .then(res => res.json())
@@ -1783,11 +1996,6 @@ function openSettings() {
         "settingsPopup"
       ).style.display = "block";
     });
-}
-
-function closeSauna() {
-
-  document.getElementById("saunaPopup").style.display = "none";
 }
 
 function closeSettings() {

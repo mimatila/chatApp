@@ -448,14 +448,35 @@ app.put("/boardMessage/:id", async (req, res) => {
 
 app.post("/boardMessage", async (req, res) => {
 
+  const token = req.headers.authorization;
+
   const {
     boardName,
-    author,
     category,
     topic,
     message,
     type
   } = req.body;
+
+  const [users] = await pool.query(
+    `
+    SELECT id, username, board_id
+    FROM users
+    WHERE token = ?
+    `,
+    [token]
+);
+
+if (users.length === 0) {
+    return res.status(401).json({
+        success:false,
+        message:"Invalid token"
+    });
+}
+
+const user = users[0];
+
+const author = user.username;
 
  const [boards] = await pool.query(
     "SELECT id, boardType FROM boards WHERE name = ?",
@@ -1768,6 +1789,214 @@ async function cleanup(boardId, autoDeleteDays) {
     );
 
 }
+
+app.post("/saunaSlots", async (req, res) => {
+
+    try {
+
+        const { boardName } = req.body;
+
+        console.log("SAUNA SLOTS ROUTE");
+        console.log("SAUNA BOARD NAME:", boardName);
+
+        const [existing] = await pool.query(
+            `SELECT COUNT(*) AS count
+             FROM saunaSlots
+             WHERE board_id = (
+                 SELECT id
+                 FROM boards
+                 WHERE name = ?
+             )`,
+            [boardName]
+        );
+
+        console.log("SAUNA EXISTING:", existing[0].count);
+
+        if (existing[0].count === 0) {
+
+            console.log("COPY DEFAULT SAUNA SLOTS");
+
+            await pool.query(
+                `INSERT INTO saunaSlots
+                    (board_id, day, time, familyName)
+                 SELECT
+                    (SELECT id FROM boards WHERE name = ?),
+                    day,
+                    time,
+                    NULL
+                 FROM defaultSaunaSlots`,
+                [boardName]
+            );
+
+            console.log("DEFAULT SAUNA SLOTS COPIED");
+        }
+
+        const [slots] = await pool.query(
+            `SELECT day, time, familyName
+             FROM saunaSlots
+             WHERE board_id = (
+                 SELECT id
+                 FROM boards
+                 WHERE name = ?
+             )
+             ORDER BY day, time`,
+            [boardName]
+        );
+
+        console.log("SAUNA SLOTS:", slots);
+
+        res.json({
+            success: true,
+            slots
+        });
+
+    } catch (err) {
+
+        console.error("SAUNA SLOTS ERROR:", err);
+
+        res.status(500).json({
+            success: false
+        });
+    }
+});
+
+app.post("/updateSaunaSlots", async (req, res) => {
+
+    try {
+
+        const { boardName, slots } = req.body;
+
+        const token = req.headers.authorization;
+
+
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Missing token"
+            });
+        }
+
+
+        // Haetaan käyttäjä tokenilla
+        const [users] = await pool.query(
+            `
+            SELECT id, board_id, role
+            FROM users
+            WHERE token = ?
+            `,
+            [token]
+        );
+
+
+        if (users.length === 0) {
+
+            return res.status(401).json({
+                success: false,
+                message: "Invalid token"
+            });
+
+        }
+
+
+        const user = users[0];
+
+
+        // Owner tarkistus
+        if (user.role !== "owner") {
+
+            return res.status(403).json({
+                success: false,
+                message: "Only owner can edit sauna slots"
+            });
+
+        }
+
+
+        // Tarkistetaan board
+        const [boards] = await pool.query(
+            `
+            SELECT id
+            FROM boards
+            WHERE name = ?
+            `,
+            [boardName]
+        );
+
+
+        if (boards.length === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Board not found"
+            });
+
+        }
+
+
+        const boardId = boards[0].id;
+
+
+        // Tarkistetaan että käyttäjä kuuluu tähän boardiin
+        if (user.board_id !== boardId) {
+
+            return res.status(403).json({
+                success: false,
+                message: "Wrong board"
+            });
+
+        }
+
+
+        // Tarkistetaan data
+        if (!slots || !Array.isArray(slots)) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Invalid sauna data"
+            });
+
+        }
+
+
+        // Päivitetään sauna-ajat
+        for (const slot of slots) {
+
+            await pool.query(
+                `
+                UPDATE saunaSlots
+                SET familyName = ?
+                WHERE board_id = ?
+                AND day = ?
+                AND time = ?
+                `,
+                [
+                    slot.familyName || null,
+                    boardId,
+                    slot.day,
+                    slot.time
+                ]
+            );
+
+        }
+
+
+        res.json({
+            success: true
+        });
+
+
+    } catch (err) {
+
+        console.error("UPDATE SAUNA ERROR:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+
+    }
+
+});
 
 app.listen(3000, () => {
   console.log("Serveri käynnissä portissa 3000");
