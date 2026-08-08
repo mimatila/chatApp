@@ -1024,6 +1024,16 @@ input::placeholder {
     background-color:red;
 }
 
+@media (max-width: 600px) {
+    #mainCategories {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #otherCategories {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 /*
 .topic-selects {
     display: flex;

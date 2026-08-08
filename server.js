@@ -53,18 +53,18 @@ app.post("/login", async (req, res) => {
   [boardName, boardUsername]
 );
      
-    /*ei käsitelty messagea frontendissä, ei tarvia käännöstä*/
+  /*ei käsitelty messagea frontendissä, ei tarvia käännöstä*/
 
-    if (rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Board or user not found"
-      });
-    }
+  if (rows.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: "Board or user not found"
+    });
+  }
 
-    const user = rows[0];
+  const user = rows[0];
 
-    const ok = await bcrypt.compare(
+  const ok = await bcrypt.compare(
   boardPassword,
   user.password
 );
@@ -76,20 +76,20 @@ if (!ok) {
   });
 }
 
-    const token = crypto.randomUUID();
+  const token = crypto.randomUUID();
 
-    await pool.query(
-      "UPDATE users SET token = ? WHERE id = ?",
-      [token, user.id]
-    );
+  await pool.query(
+    "UPDATE users SET token = ? WHERE id = ?",
+    [token, user.id]
+  );
 
-    res.json({
-    success: true,
-    token,
-    username: user.username,
-    role: user.role,
-    boardType: user.boardType,
-    noticeTemplate: user.noticeTemplate
+  res.json({
+  success: true,
+  token,
+  username: user.username,
+  role: user.role,
+  boardType: user.boardType,
+  noticeTemplate: user.noticeTemplate
   });
 
   } catch (err) {
@@ -100,9 +100,7 @@ if (!ok) {
       success: false,
       message: "Database error"
     });
-
   }
-
 });
 
 app.post("/create", async (req, res) => {
@@ -151,11 +149,11 @@ app.post("/create", async (req, res) => {
     );
 
     if (boards.length > 0) {
-  await connection.rollback();
+      await connection.rollback();
 
-  return res.status(400).json({
-    success: false,
-    message: "BOARD_EXISTS"
+      return res.status(400).json({
+      success: false,
+      message: "BOARD_EXISTS"
   });
 }
 
@@ -171,20 +169,20 @@ const [boardResult] = await connection.query(
 
 const boardId = boardResult.insertId;
 
-    const autoDays = (boardType === "notice") ? 30 : 10;
+  const autoDays = (boardType === "notice") ? 30 : 10;
 
-    // Luo settings oletusarvolla 10 päivää
-    await connection.query(
-    `INSERT INTO settings
-    (board_id, autoDeleteDays)
-    VALUES (?, ?)`,
-    [boardId, autoDays]
-    );
+  // Luo settings oletusarvolla 10 päivää
+  await connection.query(
+  `INSERT INTO settings
+  (board_id, autoDeleteDays)
+  VALUES (?, ?)`,
+  [boardId, autoDays]
+  );
 
-    const hash = await bcrypt.hash(boardPassword, 10);
-    
-    // Luo owner
-    await connection.query(
+  const hash = await bcrypt.hash(boardPassword, 10);
+  
+  // Luo owner
+  await connection.query(
   `INSERT INTO users
    (board_id, username, password, email, role, token)
    VALUES (?, ?, ?, ?, ?, ?)`,
@@ -198,24 +196,24 @@ const boardId = boardResult.insertId;
   ]
 );
 
-    // Lisää quickMessages
-    for (const msg of quickMessages) {
-      await connection.query(
-        `INSERT INTO quickMessages
-        (board_id, message)
-        VALUES (?, ?)`,
-        [
-          boardId,
-          msg
-        ]
-      );
-    }
+  // Lisää quickMessages
+  for (const msg of quickMessages) {
+    await connection.query(
+      `INSERT INTO quickMessages
+      (board_id, message)
+      VALUES (?, ?)`,
+      [
+        boardId,
+        msg
+      ]
+    );
+  }
 
-    await connection.commit();
+  await connection.commit();
 
-    res.json({
-    success: true,
-    message: "BOARD_CREATED"
+  res.json({
+  success: true,
+  message: "BOARD_CREATED"
   });
 
   } catch (err) {
@@ -305,9 +303,7 @@ app.delete("/delete/:boardName", async (req, res) => {
   } finally {
 
     connection.release();
-
   }
-
 });
 
 app.delete("/admin/boards", async (req,res)=>{
