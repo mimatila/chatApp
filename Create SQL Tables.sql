@@ -137,8 +137,8 @@ VALUES
 ('La','17:00-18:00'),
 ('La','18:00-19:00'),
 ('La','19:00-20:00'),
-('La','20:00-21:00');
-('La','21:00-22:00'),
+('La','20:00-21:00'),
+('La','21:00-22:00')
 
 CREATE TABLE autoSlots (
     id INT AUTO_INCREMENT PRIMARY KEY,

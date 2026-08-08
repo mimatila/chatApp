@@ -1794,6 +1794,14 @@ app.post("/saunaSlots", async (req, res) => {
 
         const { boardName } = req.body;
 
+        const user = await authUser(req, boardName);
+
+        if (!user) {
+            return res.status(401).json({
+                success: false
+            });
+        }
+
         const [existing] = await pool.query(
             `SELECT COUNT(*) AS count
              FROM saunaSlots
@@ -1805,7 +1813,7 @@ app.post("/saunaSlots", async (req, res) => {
             [boardName]
         );
 
-        if (existing[0].count === 0) {
+        if (existing[0].count === 0 && user.role === "owner") {
 
             console.log("COPY DEFAULT SAUNA SLOTS");
 

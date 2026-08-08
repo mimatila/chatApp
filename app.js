@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //SCF
 
-function showCategories() {
+async function showCategories() {
 
     console.log("SHOW CATEGORIES CALLED");
 
@@ -288,8 +288,32 @@ function showCategories() {
     document.getElementById("autoBtn").style.display = "block";
 
     renderCategories();
-
     loadTopicCounts();
+
+    const boardName = localStorage.getItem("boardName");
+
+    const response = await fetch(
+        `http://localhost:3000/board/${boardName}`
+    );
+
+    const data = await response.json();
+
+    updateVisitedUI(data);
+}
+
+async function updateVisitedUsers() {
+
+    const boardName = localStorage.getItem("boardName");
+
+    const response = await fetch(
+        `http://localhost:3000/board/${boardName}`
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+        updateVisitedUI(data);
+    }
 }
 
 function showTopics() {
@@ -617,6 +641,14 @@ function initBoard() {
 
   updateEditModeUI();
 
+  setInterval(() => {
+
+  if (document.getElementById("boardCategoriesView").style.display !== "none") {
+        updateVisitedUsers();
+  }
+
+  }, 10000);
+
   if (refreshInterval) clearInterval(refreshInterval);
 
   const refreshTime = boardType === "notice" ? 60000 : 15000;
@@ -891,12 +923,15 @@ async function openSauna() {
 
     const boardName = localStorage.getItem("boardName");
 
+    const token = localStorage.getItem("token");
+
     const response = await fetch(
         "http://localhost:3000/saunaSlots",
         {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": token
             },
             body: JSON.stringify({
                 boardName
@@ -907,13 +942,20 @@ async function openSauna() {
     const data = await response.json();
 
     if (!data.success) {
-        alert("Could not load sauna list");
+        alert("Could not load sauna list.");
         return;
     }
 
     saunaSlots = data.slots;
 
     saunaEditMode = false;
+
+    saunaSlots = data.slots;
+
+    if (saunaSlots.length === 0 && userRole !== "owner") {
+        alert("Could not load sauna list.");
+        return;
+    }
 
     renderSaunaTable();
 
@@ -1103,6 +1145,7 @@ async function openAuto() {
     console.log("OPEN AUTO CALLED");
 
     const boardName = localStorage.getItem("boardName");
+    const userRole = localStorage.getItem("role");
 
     const response = await fetch(
         `http://localhost:3000/autoSlots/${boardName}`
@@ -1114,12 +1157,15 @@ async function openAuto() {
 
     if (data.slots.length === 0) {
 
-        document.getElementById("autoPopup").style.display = "flex";
+        if (userRole === "owner") {
+            document.getElementById("autoPopup").style.display = "flex";
+        } else {
+            alert("Parking spaces have not been created yet.");
+        }
 
     } else {
 
         renderAutoSlots(data.slots);
-
     }
 }
 
@@ -1537,17 +1583,6 @@ function loadMessage(forceScroll = false) {
     }
 
   const requestButton = document.getElementById("requestsBtn");
-
-  /*
-  const quickBtn = document.getElementById("quickMessagesBtn");
-
-  if (quickBtn) {
-    if (data.boardType === "notice") {
-        quickBtn.style.display = "none";
-    } else {
-        quickBtn.style.display = "inline";
-    }
-  }*/
 
     updateVisitedUI(data);
 
