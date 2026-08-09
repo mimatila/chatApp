@@ -90,6 +90,7 @@ const messages = {
         topics: "Aiheet",
         writeMessage: "Kirjoita viesti...",
         training: "Harjoitukset",
+        AUTO: "Parkkipaikat",
         meetings: "Kokoukset",
         "select topic": "valitse aihe",
         "general information": "Yleiset tiedot",
@@ -136,6 +137,7 @@ const messages = {
         confirmRemoveMessages: "You want to remove this message chain?",
         LOGIN_FAILED: "Login failed.",
         SAUNA: "Sauna List",
+        AUTO: "Parking Slots",
         BOARD_EXISTS: "Board already exists.",
         BOARD_CREATED: "Board created.",
         REMOVE_USER_CONFIRM: "Remove user?",
@@ -1489,6 +1491,7 @@ function loadBoardLanguage() {
   setText("members", "MEMBERS");
   setText("todayModeText", "TODAY");
   setText("editModeText", "EDIT");
+  setText("autoBtn", "AUTO");
   setText("importantModeText", "IMPORTANT");
   setText("infoModeText", "INFO");
   setText("logout", "LOGOUT");

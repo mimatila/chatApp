@@ -172,7 +172,7 @@ body {
   display: block;
   font-family: monospace;
   text-align: left;
-  padding: 5px 28px 5px 28px;
+  padding: 5px 15px 5px 15px;
   border: 1px solid #ccc;
   border-radius: 10px;
   background: #f7f7f7;
@@ -206,16 +206,12 @@ body {
     display: block;
 }
 
-.owner-message {
-    margin-left: 40px;
-    margin-right: 40px;
-}
-
 .owner-message .msg-body {
-    width: fit-content;
-    max-width: 80%;
-    margin: 0 auto;
-    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 0 100px;
+    box-sizing: border-box;
+    text-align: center;
     line-height: 1.5;
 }
 
@@ -470,13 +466,6 @@ button {
   background-color: #d9ecff;
 }
 
-.input-row button,
-#saveBtn {
-  width: 120px !important;
-  flex: 0 0 120px;
-  box-sizing: border-box;
-}
-
 #saveBtn {
   background-color:  #d9ecff;
 }
@@ -487,7 +476,6 @@ button {
   margin: 0 auto;
 }
 
-
 #quickMessagesBtn {
   position: absolute;
   left: -35px;
@@ -497,8 +485,6 @@ button {
   cursor: pointer;
 }
 
-
-
 .input-row {
   display: flex;
   gap: 10px;
@@ -506,6 +492,20 @@ button {
   max-width: 500px;
   margin: 0 auto;   /* 🔥 keskittää vaakasuunnassa */
 }
+
+.input-row button {
+  width: 120px !important;
+  flex: 0 0 120px;
+  box-sizing: border-box;
+}
+
+/*
+.input-row button,
+#saveBtn {
+  width: 120px !important;
+  flex: 0 0 120px;
+  box-sizing: border-box;
+}*/
 
 
 .top-nav {
@@ -1025,12 +1025,145 @@ input::placeholder {
 }
 
 @media (max-width: 600px) {
+
+     .left-actions button,
+    #clearBtn {
+        height: 30px;
+        width: 90px;
+        flex: 0 0 40px;
+        padding: 0 7px;
+        font-size: 10px;
+    }
+
+      .message-options {
+        justify-content: center;
+        gap: 12px;
+        margin-top: 5px;
+    }
+
+    .message-options label {
+        gap: 4px;
+        font-size: 10px;
+    }
+
+    .message-options input[type="checkbox"] {
+        width: 12px;
+        height: 12px;
+        margin: 0;
+    }
+
+    .input-row button {
+        width: 70px !important;
+        flex: 0 0 70px;
+        font-size: 10px;
+    }
+
+    #boardNewMsg {
+        height: 15px;
+        font-size: 13px;
+    }
+
+    #boardTitle {
+        font-size: 20px;
+    }
+
+    #boardDescription {
+        font-size: 10px;
+    }
+
+    #visitedUsers {
+        font-size: 10px;
+    }
+
+    #currentLocation {
+        font-size: 10px;
+    }
+
+    .message-options {
+        justify-content: center;
+        gap: 12px;
+        max-width: 100%;
+    }
+
     #mainCategories {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 100px);
+        column-gap: 8px;
     }
 
     #otherCategories {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, 100px);
+        column-gap: 8px;
+        justify-content: start;
+    }
+
+    .category-card {
+        font-size: 10px;
+        padding: 5px;
+    }
+
+     .owner-message .msg-body {
+        padding: 0 20px;
+    }
+
+    .board {
+        height: 60vh;
+    }
+
+    #boardMessagesDiv {
+        height: 60vh;
+    }
+    .message-area {
+        position: relative;
+        width: 80vw;
+        max-width: none;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .input-row {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        gap: 5px;
+        box-sizing: border-box;
+    }
+
+    #boardNewMsg {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    #quickMessagesBtn {
+        position: absolute;
+        left: -27px;
+        top: 50%;
+        font-size: 18px;
+        display: block !important;
+        z-index: 9999;
     }
 }
 
+@media (max-width: 360px) {
+
+    #mainCategories {
+    grid-template-columns: repeat(2, 80px);
+    column-gap: 8px;
+    }
+
+    #otherCategories {
+        grid-template-columns: repeat(3, 80px);
+        column-gap: 8px;
+        justify-content: start;
+    }
+
+    #quickMessagesBtn {
+        position: absolute;
+        left: -27px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        display: block !important;
+        z-index: 9999;
+    }
+}
