@@ -246,10 +246,22 @@ body {
 
 #createAutoPopupBtn{
   background-color:  #d9ecff;
+  width: 90px;
 }
 
 #closeAutoPopupBtn{
   background-color:  #d9ecff;
+  width: 90px;
+}
+
+#saveAutoPopupBtn{
+  background-color:  #d9ecff;
+  width: 90px;
+}
+
+#cancelAutoPopupBtn{
+  background-color:  #d9ecff;
+  width: 90px;
 }
 
 #closeRequestsBtn{
@@ -379,6 +391,7 @@ button {
     width: 120px;
     padding: 6px 0;
     margin: 0 auto;
+    font-size: 12px;
 }
 
 #openJoinBtn {
@@ -417,22 +430,27 @@ button {
 
 #saveSaunaBtn{
   background-color:  #d9ecff;
+  width: 90px;
 }
 
 #closeSaunaBtn{
   background-color:  #d9ecff;
+  width: 90px;
 }
 
 #editSaunaBtn{
   background-color:  #d9ecff;
+  width: 90px;
 }
 
 #editAutoPopupBtn{
   background-color:  #d9ecff;
+  width: 90px;
 }
 
 #closeAutoPopupBtn{
   background-color:  #d9ecff;
+  width: 90px;
 }
 
 #requestsBtn {
@@ -627,6 +645,7 @@ input::placeholder {
     display: flex;
     gap: 5px;
     margin: 2px 0;
+    font-size: 12px;
 }
 
 .slot-input,
@@ -1027,16 +1046,60 @@ input::placeholder {
 
 @media (max-width: 600px) {
 
-     .left-actions button,
+    .left-actions button,
     #clearBtn {
-        height: 30px;
-        width: 90px;
-        flex: 0 0 40px;
-        padding: 0 7px;
-        font-size: 10px;
+      height: 30px;
+      width: 90px;
+      flex: 0 0 40px;
+      padding: 0 7px;
+      font-size: 10px;
     }
 
-      .message-options {
+    #openJoinBtn {
+      width: 100px;  
+      font-size: 10px; 
+    }
+
+    #openCreateBtn {
+      width: 100px;
+      font-size: 10px;
+    }
+
+    #backToCategoriesBtn {
+      height:30px;
+      font-size: 10px;
+    }
+
+    #saunaTable input {
+      width: 45px;
+      height: 15px;
+    }
+
+    #saunaTable {
+      font-size: 9px;
+    }
+
+    #saunaTable td:not(:first-child) {
+      min-width: 45px;
+    }
+
+    #saunaTable .saunaInput {
+      padding: 2px;
+    }
+
+    .slot-input {
+      width: 40px;
+      height: 10px;
+      font-size: 10px;
+    }
+
+    .info-input {
+      width: 120px;
+      height: 10px;
+      font-size: 10px;
+    }
+
+    .message-options {
         justify-content: center;
         gap: 12px;
         margin-top: 5px;

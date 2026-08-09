@@ -274,9 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //SCF
 
-async function openCategories() {
+async function showCategories() {
 
-    console.log("OPEN CATEGORIES CALLED");
+    console.log("SHOW CATEGORIES CALLED");
 
     const el = document.getElementById("boardCategoriesView");
 
@@ -592,7 +592,7 @@ function initBoard() {
     document.body.classList.remove("notice-board");
   }
 
-  categories = getCategory(boardType, noticeTemplate);
+  categories = getCategories(boardType, noticeTemplate);
 
   /*
   if (boardType === "notice") {
@@ -709,7 +709,7 @@ function initNoticeBoard() {
 
     clearMessages();
 
-    openCategories();
+    showCategories();
 
     loadTopicCounts();
 
@@ -755,7 +755,7 @@ function loadBoardDescription() {
     }
 }
 
-function getCategory(boardType, noticeTemplate) {
+function getCategories(boardType, noticeTemplate) {
    
     console.log("GET CATEGORIES CALLED");
 
@@ -1210,12 +1210,12 @@ function editAutoSlots() {
         html += `
         <div class="auto-edit-row">
 
-            <input 
+            <input
                 value="${slot.slot_name || ""}"
                 data-id="${slot.id}"
                 class="slot-input">
 
-            <input 
+            <input
                 value="${slot.info || ""}"
                 data-id="${slot.id}"
                 class="info-input">
@@ -1226,11 +1226,11 @@ function editAutoSlots() {
     });
 
     html += `
-        <button onclick="saveAutoSlots()">
+        <button id="saveAutoPopupBtn" onclick="saveAutoSlots()">
             Save
         </button>
 
-        <button onclick="renderAutoSlots(autoSlots)">
+        <button id="cancelAutoPopupBtn" onclick="renderAutoSlots(autoSlots)">
             Cancel
         </button>
     `;
@@ -1505,7 +1505,7 @@ function loadMessage(forceScroll = false) {
     localStorage.setItem("boardType", boardType);
     localStorage.setItem("noticeTemplate", noticeTemplate);
 
-    categories = getCategory(boardType, noticeTemplate);
+    categories = getCategories(boardType, noticeTemplate);
 
     if (boardType === "notice" && !currentTopic) {
       clearMessages();
