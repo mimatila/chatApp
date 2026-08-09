@@ -274,9 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //SCF
 
-async function showCategories() {
+async function openCategories() {
 
-    console.log("SHOW CATEGORIES CALLED");
+    console.log("OPEN CATEGORIES CALLED");
 
     const el = document.getElementById("boardCategoriesView");
 
@@ -319,7 +319,8 @@ async function updateVisitedUsers() {
 }
 
 function showTopics() {
-
+    
+    console.log("SHOW TOPICS CALLED");
     document.getElementById("boardCategoriesView").style.display = "none";
     document.getElementById("boardTopicsView").style.display = "grid";
     document.getElementById("boardMessagesDiv").style.display = "none";
@@ -355,47 +356,48 @@ function editMessage(msg) {
 
 function renderCategories() {
 
-const el = document.getElementById("boardCategoriesView");
+  console.log("RENDER CATEGORIES CALLED");
 
-const main = [
-    "general information",
-    "announcements"
-];
+  const el = document.getElementById("boardCategoriesView");
 
-const other = categories.filter(
-    c => !main.includes(c)
-);
+  const main = [
+      "general information",
+      "announcements"
+  ];
 
-
-el.innerHTML = `
-
-<div id="mainCategories">
-    ${main.map(category => `
-        <div class="category-card"
-             data-category="${category}"
-             onclick="openCategory('${category}')">
-             ${t(category)}
-        </div>
-    `).join("")}
-</div>
+  const other = categories.filter(
+      c => !main.includes(c)
+  );
 
 
-<div id="otherCategories">
-    ${other.map(category => `
-        <div class="category-card"
-             data-category="${category}"
-             onclick="openCategory('${category}')">
-             ${t(category)}
-        </div>
-    `).join("")}
-</div>
+  el.innerHTML = `
 
-`;
+  <div id="mainCategories">
+      ${main.map(category => `
+          <div class="category-card"
+              data-category="${category}"
+              onclick="openCategory('${category}')">
+              ${t(category)}
+          </div>
+      `).join("")}
+  </div>
+
+
+  <div id="otherCategories">
+      ${other.map(category => `
+          <div class="category-card"
+              data-category="${category}"
+              onclick="openCategory('${category}')">
+              ${t(category)}
+          </div>
+      `).join("")}
+  </div>
+
+  `;
 
 }
 
 function openCategory(category) {
-
     
     console.log("OPEN CATEGORY CALLED");
 
@@ -440,7 +442,6 @@ function setPlaceholder(id, key) {
     if (el) {
         el.placeholder = t(key);
     }
-
 }
 
 // =====================
@@ -449,7 +450,7 @@ function setPlaceholder(id, key) {
 
 function initApp() {
 
-  console.log("INITAPP CALLED");
+  console.log("INIT APP CALLED");
 
   bindUI();
   autoLoginFill();
@@ -565,7 +566,7 @@ if (sessionStorage.getItem("skipAutoLogin")) {
 
 function initBoard() {
 
-  console.log("INITBOARD CALLED");
+  console.log("INIT BOARD CALLED");
 
   let boardName = localStorage.getItem("boardName");
 
@@ -591,7 +592,7 @@ function initBoard() {
     document.body.classList.remove("notice-board");
   }
 
-  categories = openCategories(boardType, noticeTemplate);
+  categories = getCategory(boardType, noticeTemplate);
 
   /*
   if (boardType === "notice") {
@@ -668,6 +669,7 @@ function initBoard() {
   if (boardType === "notice") {
     initNoticeBoard();
   } else {
+    document.getElementById("currentLocation").style.display = "none";
     initFamilyBoard();
   }
 
@@ -685,6 +687,7 @@ function initBoard() {
 
         document.getElementById("saunaBtn").style.display = "none";
         document.getElementById("autoBtn").style.display = "none";
+        
     }
 
 } else {
@@ -706,7 +709,7 @@ function initNoticeBoard() {
 
     clearMessages();
 
-    showCategories();
+    openCategories();
 
     loadTopicCounts();
 
@@ -752,7 +755,9 @@ function loadBoardDescription() {
     }
 }
 
-function openCategories(boardType, noticeTemplate) {
+function getCategory(boardType, noticeTemplate) {
+   
+    console.log("GET CATEGORIES CALLED");
 
     if (boardType === "notice") {
 
@@ -777,39 +782,6 @@ function openCategories(boardType, noticeTemplate) {
 
     return categories_family;
 }
-
-/*
-function renderCategoriesGrid() {
-
-  const grid = document.getElementById("boardCategoriesView");
-
-  if (!grid) return;  
-
-  const mainGrid = document.getElementById("mainCategories");
-  const otherGrid = document.getElementById("otherCategories");
-
-  mainGrid.innerHTML = "";
-  otherGrid.innerHTML = "";
-
-  categories.forEach(category => {
-
-    const card = document.createElement("div");
-
-    card.className = "category-card";
-    card.textContent = t(category);
-
-    card.onclick = () => {
-        openCategory(category);
-    };
-
-
-    if (category === "general information" || category === "announcements") {
-        mainGrid.appendChild(card);
-    } else {
-        otherGrid.appendChild(card);
-    }
-});
-}*/
 
 function renderTopicsGrid(topics) {
 
@@ -848,7 +820,7 @@ function renderTopicsGrid(topics) {
 
 function backToCategories() {
 
-    //console.log("BACK TO CATEGORY CALLED");
+    console.log("BACK TO CATEGORY CALLED");
 
     const msg = document.getElementById("boardMessagesDiv");
     const boardType = localStorage.getItem("boardType");
@@ -887,67 +859,68 @@ function backToCategories() {
 
 async function openSauna() {
 
-    saunaEditMode = false;
+  console.log("OPEN SAUNA CALLED");
+  saunaEditMode = false;
 
-    const userRole = localStorage.getItem("role");
-    const boardType = localStorage.getItem("boardType");
-    const noticeTemplate = localStorage.getItem("noticeTemplate");
+  const userRole = localStorage.getItem("role");
+  const boardType = localStorage.getItem("boardType");
+  const noticeTemplate = localStorage.getItem("noticeTemplate");
 
-    document.getElementById("saveSaunaBtn").style.display = "none";
+  document.getElementById("saveSaunaBtn").style.display = "none";
 
-    if (
-        boardType === "notice" &&
-        noticeTemplate === "taloyhtio" &&
-        userRole === "owner"
-    ) {
+  if (
+      boardType === "notice" &&
+      noticeTemplate === "taloyhtio" &&
+      userRole === "owner"
+  ) {
 
-        document.getElementById("editSaunaBtn").style.display = "block";
+      document.getElementById("editSaunaBtn").style.display = "block";
 
-    } else {
+  } else {
 
-        document.getElementById("editSaunaBtn").style.display = "none";
+      document.getElementById("editSaunaBtn").style.display = "none";
 
-    }
+  }
 
-    const boardName = localStorage.getItem("boardName");
+  const boardName = localStorage.getItem("boardName");
 
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    const response = await fetch(
-        "http://localhost:3000/saunaSlots",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": token
-            },
-            body: JSON.stringify({
-                boardName
-            })
-        }
-    );
+  const response = await fetch(
+      "http://localhost:3000/saunaSlots",
+      {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": token
+          },
+          body: JSON.stringify({
+              boardName
+          })
+      }
+  );
 
-    const data = await response.json();
+  const data = await response.json();
 
-    if (!data.success) {
-        alert("Could not load sauna list.");
-        return;
-    }
+  if (!data.success) {
+      alert("Could not load sauna list.");
+      return;
+  }
 
-    saunaSlots = data.slots;
+  saunaSlots = data.slots;
 
-    saunaEditMode = false;
+  saunaEditMode = false;
 
-    saunaSlots = data.slots;
+  saunaSlots = data.slots;
 
-    if (saunaSlots.length === 0 && userRole !== "owner") {
-        alert("Could not load sauna list.");
-        return;
-    }
+  if (saunaSlots.length === 0 && userRole !== "owner") {
+      alert("Could not load sauna list.");
+      return;
+  }
 
-    renderSaunaTable();
+  renderSaunaTable();
 
-    document.getElementById("saunaPopup").style.display = "flex";
+  document.getElementById("saunaPopup").style.display = "flex";
 }
 
 function renderSaunaTable() {
@@ -1312,35 +1285,6 @@ function closeAutoPopup() {
     document.getElementById("autoPopup").style.display = "none";
 }
 
-//OCF
-
-/*
-function openCategory(category) {
-
-  currentCategory = category;
-
-  localStorage.setItem(
-      "currentCategory",
-      category
-  );
-
-  loadTopicsFromDatabase(category)
-  .then(data => {
-
-    if (data.topics.length === 0) {
-
-      alert(t("NO_TOPICS_IN_CATEGORY"));
-
-      document.getElementById("boardTopicsView").innerHTML = "";
-
-      return;
-      }
-
-      //updateCurrentLocation();        
-      showTopics();
-  });
-}*/
-
 function initLanguage() {
 
   const lang = localStorage.getItem("language") || "fi";
@@ -1561,7 +1505,7 @@ function loadMessage(forceScroll = false) {
     localStorage.setItem("boardType", boardType);
     localStorage.setItem("noticeTemplate", noticeTemplate);
 
-    categories = openCategories(boardType, noticeTemplate);
+    categories = getCategory(boardType, noticeTemplate);
 
     if (boardType === "notice" && !currentTopic) {
       clearMessages();
@@ -1757,7 +1701,6 @@ if (
   })
   .catch(console.error)
   .finally(() => {
-    console.log("loadMessage END");
     loading = false;
   });
 }
