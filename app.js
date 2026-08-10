@@ -1173,8 +1173,6 @@ async function openAuto() {
 
     const data = await response.json();
 
-    console.log("AUTO DATA:", data);
-
     if (data.slots.length === 0) {
 
         if (userRole === "owner") {
@@ -1323,8 +1321,6 @@ async function saveAutoSlots() {
 
   });
 
-  console.log("SAVE AUTO:", slots);
-
   const response = await fetch("http://localhost:3000/autoSlots", {
   method: "PUT",
   headers: {
@@ -1334,8 +1330,6 @@ async function saveAutoSlots() {
 });
 
 const result = await response.json();
-
-console.log("SAVE RESULT:", result);
 
 if (result.success) {
     openAuto();
@@ -1878,7 +1872,7 @@ if (
 
 function loginWithPassword() {
 
-  console.log("LOGIN WIH PASSWORD CALLED");
+  console.log("LOGIN WITH PASSWORD CALLED");
 
   const boardName = document.getElementById("boardName").value;
   const boardPassword = document.getElementById("boardPassword").value;
@@ -2571,8 +2565,6 @@ if (result.success) {
 
     closeTopicPopup();
 
-    console.log("AFTER CLOSE");
-
     await loadTopicsFromDatabase(category);
     loadMessage(true);
 }
@@ -3135,7 +3127,7 @@ function changeCreateBoardType() {
 function createTopicPopupCategoryChanged() {
 
     const category = document.getElementById("cp_category").value;
-    console.log(category);
+    
     const topicInput = document.getElementById("cp_topic");
 
     topicInput.style.display = "block";
