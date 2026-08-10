@@ -419,6 +419,7 @@ button {
     gap: 8px;
     width: 100%;
     box-sizing: border-box;
+    margin-bottom: 20px;
 }
 
 .auto-edit-grid input {
@@ -433,6 +434,12 @@ button {
 .auto-slot {
     display: grid;
     grid-template-columns: 32px 80px;
+    gap: 2px;
+}
+
+.auto-edit-slot {
+    display: grid;
+    grid-template-columns: 34px 80px;
     gap: 2px;
 }
 
@@ -704,14 +711,16 @@ input::placeholder {
     align-items: center;
     gap: 10px;
     box-sizing: border-box;
+    margin-top: 20px;
 }
 
+/*
 .auto-edit-row {
     display: flex;
     gap: 5px;
     margin: 2px 0;
     font-size: 12px;
-}
+}*/
 
 .slot-input,
 .info-input {
@@ -910,7 +919,12 @@ input::placeholder {
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-
+#requestsPopup .popup-content {
+  background: #2b6cb0;
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
 
 #quickMessagesPopup .popup-content {
     padding: 10px;
@@ -1276,8 +1290,12 @@ input::placeholder {
         grid-template-columns: repeat(3, 1fr);
     }
 
-     .auto-slot {
-        grid-template-columns: 32px 75px;
+    .auto-slot {
+      grid-template-columns: 32px 80px;
+    }
+
+    .auto-edit-slot {
+      grid-template-columns: 34px 80px;
     }
 
     .slot-name {

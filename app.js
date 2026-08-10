@@ -1270,7 +1270,7 @@ let html = `
 autoSlots.forEach(slot => {
 
     html += `
-        <div class="auto-slot">
+        <div class="auto-edit-slot">
 
             <input
                 value="${slot.slot_name || ""}"
@@ -1306,7 +1306,7 @@ html += `
 
 async function saveAutoSlots() {
 
-  const rows = document.querySelectorAll(".auto-edit-row");
+  const rows = document.querySelectorAll(".auto-slot");
 
   const slots = [];
 
