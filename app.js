@@ -42,6 +42,7 @@ const messages = {
         BOARD_EXISTS: "Taulu on jo olemassa.",
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
         BOARD_CREATED: "Taulu luotu.",
+        CREATE_SAUNA_SLOTS: "Haluatko luoda saunavuorot?",
         DATABASE_ERROR: "Tietokantavirhe.",
         ONLY_OWNER_EDIT: "Vain omistaja voi muuttaa.",
         SAVE: "Tallennettu.",
@@ -138,6 +139,7 @@ const messages = {
         LOGIN_FAILED: "Login failed.",
         SAUNA: "Sauna List",
         AUTO: "Parking Slots",
+        CREATE_SAUNA_SLOTS: "Do you want to create sauna slots?",
         BOARD_EXISTS: "Board already exists.",
         BOARD_CREATED: "Board created.",
         REMOVE_USER_CONFIRM: "Remove user?",
@@ -859,68 +861,125 @@ function backToCategories() {
 
 async function openSauna() {
 
-  console.log("OPEN SAUNA CALLED");
-  saunaEditMode = false;
+    console.log("OPEN SAUNA CALLED");
 
-  const userRole = localStorage.getItem("role");
-  const boardType = localStorage.getItem("boardType");
-  const noticeTemplate = localStorage.getItem("noticeTemplate");
+    saunaEditMode = false;
 
-  document.getElementById("saveSaunaBtn").style.display = "none";
+    const userRole = localStorage.getItem("role");
+    const boardType = localStorage.getItem("boardType");
+    const noticeTemplate = localStorage.getItem("noticeTemplate");
 
-  if (
-      boardType === "notice" &&
-      noticeTemplate === "taloyhtio" &&
-      userRole === "owner"
-  ) {
+    document.getElementById("saveSaunaBtn").style.display = "none";
 
-      document.getElementById("editSaunaBtn").style.display = "block";
+    if (
+        boardType === "notice" &&
+        noticeTemplate === "taloyhtio" &&
+        userRole === "owner"
+    ) {
+        document.getElementById("editSaunaBtn").style.display = "block";
+    } else {
+        document.getElementById("editSaunaBtn").style.display = "none";
+    }
 
-  } else {
+    const boardName = localStorage.getItem("boardName");
+    const token = localStorage.getItem("token");
 
-      document.getElementById("editSaunaBtn").style.display = "none";
+    const response = await fetch(
+        "http://localhost:3000/saunaSlots",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token
+            },
+            body: JSON.stringify({
+                boardName
+            })
+        }
+    );
 
-  }
+    const data = await response.json();
 
-  const boardName = localStorage.getItem("boardName");
+    if (!data.success) {
+        alert("Could not load sauna list.");
+        return;
+    }
 
-  const token = localStorage.getItem("token");
+    saunaSlots = data.slots;
 
-  const response = await fetch(
-      "http://localhost:3000/saunaSlots",
-      {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": token
-          },
-          body: JSON.stringify({
-              boardName
-          })
-      }
-  );
+    // SaunaSlots puuttuvat → kysytään ownerilta
+    if (data.needsCreation && userRole === "owner") {
 
-  const data = await response.json();
+        if (!confirm(t("CREATE_SAUNA_SLOTS"))) {
+            return;
+        }
 
-  if (!data.success) {
-      alert("Could not load sauna list.");
-      return;
-  }
+        // OK → luodaan default-saunavuorot
+        const created = await createSaunaSlots(boardName, token);
 
-  saunaSlots = data.slots;
+        if (!created) {
+            return;
+        }
 
-  saunaEditMode = false;
+        // Haetaan juuri luodut vuorot uudelleen
+        const reloadResponse = await fetch(
+            "http://localhost:3000/saunaSlots",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                },
+                body: JSON.stringify({
+                    boardName
+                })
+            }
+        );
 
-  saunaSlots = data.slots;
+        const reloadData = await reloadResponse.json();
 
-  if (saunaSlots.length === 0 && userRole !== "owner") {
-      alert("Could not load sauna list.");
-      return;
-  }
+        if (!reloadData.success) {
+            alert("Could not load sauna list.");
+            return;
+        }
 
-  renderSaunaTable();
+        saunaSlots = reloadData.slots;
+    }
 
-  document.getElementById("saunaPopup").style.display = "flex";
+    if (saunaSlots.length === 0) {
+        alert("Could not load sauna list.");
+        return;
+    }
+
+    renderSaunaTable();
+
+    document.getElementById("saunaPopup").style.display = "flex";
+}
+
+async function createSaunaSlots(boardName, token) {
+
+    const response = await fetch(
+        "http://localhost:3000/createSaunaSlots",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token
+            },
+            body: JSON.stringify({
+                boardName
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    if (!data.success) {
+        alert("Could not create sauna slots.");
+        return false;
+    }
+
+    return true;
 }
 
 function renderSaunaTable() {
@@ -1143,27 +1202,28 @@ function renderAutoSlots(slots) {
     content.innerHTML = "";
 
     let html = `
-        <h3 class="h3">
-            Parking Spaces
-        </h3>
+    <h3 class="h3">
+        Parking Spaces
+    </h3>
+
+    <div class="auto-grid">
+`;
+
+slots.forEach(slot => {
+
+    html += `
+        <div class="auto-slot">
+            <span class="slot-name">
+                ${slot.slot_name}
+            </span>
+
+            <span class="slot-info">
+                ${slot.info || "-"}
+            </span>
+        </div>
     `;
 
-    slots.forEach(slot => {
-
-        html += `
-            <div class="auto-row">
-                <span class="slot-name">
-                    ${slot.slot_name}
-                </span>
-
-                <span class="slot-info">
-                    ${slot.info || "-"}
-                </span>
-            </div>
-        `;
-
-    });
-
+});
 
     html += `
         <div class="popup-buttons">
@@ -1199,16 +1259,18 @@ function editAutoSlots() {
 
     const content = document.getElementById("autoPopupContent");
 
-    let html = `
-        <h3 class="h3">
-            Parking Spaces
-        </h3>
-    `;
+let html = `
+    <h3 class="h3">
+        Parking Spaces
+    </h3>
 
-    autoSlots.forEach(slot => {
+    <div class="auto-edit-grid">
+`;
 
-        html += `
-        <div class="auto-edit-row">
+autoSlots.forEach(slot => {
+
+    html += `
+        <div class="auto-slot">
 
             <input
                 value="${slot.slot_name || ""}"
@@ -1221,9 +1283,13 @@ function editAutoSlots() {
                 class="info-input">
 
         </div>
-        `;
+    `;
 
-    });
+});
+
+html += `
+    </div>
+`;
 
     html += `
         <button id="saveAutoPopupBtn" onclick="saveAutoSlots()">
@@ -2183,7 +2249,7 @@ function openSettings() {
 
       document.getElementById(
         "settingsPopup"
-      ).style.display = "block";
+      ).style.display = "flex";
     });
 }
 
@@ -2324,7 +2390,7 @@ function showMembers() {
 `).join("")}
     </div>`;
 
-      popup.style.display = "block";
+      popup.style.display = "flex";
     });
 }
 
@@ -2657,7 +2723,7 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
 function openRequests() {
 
   console.log("OPEN REQUESTS START");
-  document.getElementById("requestsPopup").style.display = "block";
+  document.getElementById("requestsPopup").style.display = "flex";
  
   loadRequests();
 }
@@ -2912,7 +2978,7 @@ function renderQuickPopup(){
     }).join("");
     }
 
-      popup.style.display = "block";
+      popup.style.display = "flex";
     });
 } 
 
@@ -2997,21 +3063,21 @@ function updateEditModeUI() {
   if (leaveBtn) {
     leaveBtn.style.display =
     (role === "member" && editMode)
-    ? "block"
+    ? "flex"
     : "none";
   }
 
   if (settingsBtn) {
     settingsBtn.style.display =
     (role === "owner" && editMode)
-    ? "block"
+    ? "flex"
     : "none";
 }
 
 if (deleteBoardBtn) {
    deleteBoardBtn.style.display =
    (role === "owner" && editMode)
-    ? "block"
+    ? "flex"
     : "none";
 }
 }

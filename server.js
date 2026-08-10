@@ -1809,25 +1809,6 @@ app.post("/saunaSlots", async (req, res) => {
             [boardName]
         );
 
-        if (existing[0].count === 0 && user.role === "owner") {
-
-            console.log("COPY DEFAULT SAUNA SLOTS");
-
-            await pool.query(
-                `INSERT INTO saunaSlots
-                    (board_id, day, time, familyName)
-                 SELECT
-                    (SELECT id FROM boards WHERE name = ?),
-                    day,
-                    time,
-                    NULL
-                 FROM defaultSaunaSlots`,
-                [boardName]
-            );
-
-            console.log("DEFAULT SAUNA SLOTS COPIED");
-        }
-
         const [slots] = await pool.query(
             `SELECT day, time, familyName
              FROM saunaSlots
@@ -1842,12 +1823,55 @@ app.post("/saunaSlots", async (req, res) => {
 
         res.json({
             success: true,
-            slots
+            slots,
+            needsCreation: existing[0].count === 0
         });
 
     } catch (err) {
 
         console.error("SAUNA SLOTS ERROR:", err);
+
+        res.status(500).json({
+            success: false
+        });
+    }
+});
+
+app.post("/createSaunaSlots", async (req, res) => {
+
+    try {
+
+        const { boardName } = req.body;
+
+        const user = await authUser(req, boardName);
+
+        if (!user || user.role !== "owner") {
+            return res.status(403).json({
+                success: false
+            });
+        }
+
+        await pool.query(
+            `INSERT INTO saunaSlots
+                (board_id, day, time, familyName)
+             SELECT
+                (SELECT id FROM boards WHERE name = ?),
+                day,
+                time,
+                NULL
+             FROM defaultSaunaSlots`,
+            [boardName]
+        );
+
+        console.log("DEFAULT SAUNA SLOTS COPIED");
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        console.error("CREATE SAUNA SLOTS ERROR:", err);
 
         res.status(500).json({
             success: false

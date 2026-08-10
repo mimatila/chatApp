@@ -385,6 +385,7 @@ button {
   background-color:  #d9ecff;
 }
 
+/*
 .auto-row {
     display: grid;
     grid-template-columns: 40px 1fr;
@@ -392,6 +393,55 @@ button {
     padding: 6px 0;
     margin: 0 auto;
     font-size: 12px;
+}*/
+
+.auto-slot input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.auto-slot .slot-input {
+    text-align: center;
+}
+
+.auto-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.auto-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.auto-edit-grid input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.auto-edit-grid .slot-input {
+    text-align: center;
+}
+
+.auto-slot {
+    display: grid;
+    grid-template-columns: 32px 80px;
+    gap: 2px;
+}
+
+.slot-name {
+    font-size: 11px;
+}
+
+.slot-info {
+    font-size: 11px;
 }
 
 #openJoinBtn {
@@ -639,6 +689,21 @@ input::placeholder {
     display: flex;
     justify-content: center;
     gap: 10px;
+}
+#autoPopup .popup-content {
+    width: 540px;
+    max-width: 90vw;
+    box-sizing: border-box;
+}
+
+.auto-grid .popup-buttons {
+    grid-column: 1 / -1;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
 }
 
 .auto-edit-row {
@@ -1201,6 +1266,34 @@ input::placeholder {
         font-size: 18px;
         display: block !important;
         z-index: 9999;
+    }
+
+     .auto-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .auto-edit-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+     .auto-slot {
+        grid-template-columns: 32px 75px;
+    }
+
+    .slot-name {
+      font-size: 10px;
+    }
+
+    .slot-info {
+      font-size: 10px;   
+    }
+
+    .slot-input {
+      font-size: 10px;
+    }
+
+    .info-input {
+      font-size: 10px;   
     }
 }
 
