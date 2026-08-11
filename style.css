@@ -645,7 +645,11 @@ input::placeholder {
 
 #saunaTable td {
     white-space: nowrap;
-    padding: 2px 12px;
+    padding: 2px 10px;
+}
+
+#saunaTable td:has(.saunaInput) {
+    padding: 2px 10px;
 }
 
 #saunaTable td:not(:first-child) {
@@ -1057,22 +1061,26 @@ input::placeholder {
       height:30px;
       font-size: 10px;
     }
-
+    
     #saunaTable input {
-      width: 45px;
+      min-width: 45px;
       height: 15px;
     }
+
+    #saunaTable td:not(:first-child) {
+      min-width: 45px;
+    }   
 
     #saunaTable {
       font-size: 9px;
     }
 
-    #saunaTable td:not(:first-child) {
-      min-width: 45px;
-    }
-
     #saunaTable .saunaInput {
       padding: 2px;
+    }
+
+    #saunaTable td:has(.saunaInput) {
+      padding: 2px 5px;
     }
 
     .slot-input {
@@ -1192,31 +1200,31 @@ input::placeholder {
     }
 
     #currentLocation {
-    font-size: 10px;   
+      font-size: 10px;   
     }
 
-     .auto-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .auto-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .auto-edit-grid {
-        grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .auto-slot {
-      grid-template-columns: 32px 80px;
+      grid-template-columns: 32px 60px;
     }
 
     .auto-edit-slot {
-      grid-template-columns: 34px 80px;
+      grid-template-columns: 34px 60px;
     }
 
     .slot-name {
-      font-size: 10px;
+      font-size: 9px;
     }
 
     .slot-info {
-      font-size: 10px;   
+      font-size: 9px;   
     }
 
     .slot-input {
@@ -1226,6 +1234,8 @@ input::placeholder {
     .info-input {
       font-size: 10px;   
     }
+
+
 }
 
 @media (max-width: 360px) {
