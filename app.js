@@ -378,7 +378,7 @@ function renderCategories() {
       ${main.map(category => `
           <div class="category-card"
               data-category="${category}"
-              onclick="openCategory('${category}')">
+              onclick="openCategory('${category}', this)">
               ${t(category)}
           </div>
       `).join("")}
@@ -389,7 +389,7 @@ function renderCategories() {
       ${other.map(category => `
           <div class="category-card"
               data-category="${category}"
-              onclick="openCategory('${category}')">
+              onclick="openCategory('${category}', this)">
               ${t(category)}
           </div>
       `).join("")}
@@ -399,26 +399,34 @@ function renderCategories() {
 
 }
 
-function openCategory(category) {
-    
+function openCategory(category, el) {
+
     console.log("OPEN CATEGORY CALLED");
 
-    currentCategory = category;
-    currentTopic = "";
+    el.classList.add("pressed");
 
-    localStorage.setItem("currentCategory", category);
-    localStorage.removeItem("currentTopic");
+    setTimeout(() => {
 
-    loadTopicsFromDatabase(category)
-        .then(data => {
+        el.classList.remove("pressed");
 
-            if (data.topics.length === 0) {
-                alert(t("NO_TOPICS_IN_CATEGORY"));
-                return;
-            }
+        currentCategory = category;
+        currentTopic = "";
 
-            showTopics();
-        });
+        localStorage.setItem("currentCategory", category);
+        localStorage.removeItem("currentTopic");
+
+        loadTopicsFromDatabase(category)
+            .then(data => {
+
+                if (data.topics.length === 0) {
+                    alert(t("NO_TOPICS_IN_CATEGORY"));
+                    return;
+                }
+
+                showTopics();
+            });
+
+    }, 400);
 }
 
 function t(key) {
@@ -804,15 +812,22 @@ function renderTopicsGrid(topics) {
 
         card.onclick = () => {
 
-          currentTopic = topic;
-          updateCurrentLocation();
+        card.classList.add("pressed");
 
-          localStorage.setItem("currentTopic",topic);
+        setTimeout(() => {
 
-          showMessages();
+            card.classList.remove("pressed");
 
-          loadMessage(true);
-        };
+            currentTopic = topic;
+            updateCurrentLocation();
+
+            localStorage.setItem("currentTopic", topic);
+
+            showMessages();
+            loadMessage(true);
+
+        }, 400);
+    };
 
         el.appendChild(card);
     });
@@ -1189,6 +1204,8 @@ async function openAuto() {
 
 function renderAutoSlots(slots) {
 
+    console.log("RENDER AUTO SLOTS");
+
     const userRole = localStorage.getItem("role");
     const boardType = localStorage.getItem("boardType");
     const noticeTemplate = localStorage.getItem("noticeTemplate");
@@ -1254,7 +1271,8 @@ slots.forEach(slot => {
 }
 
 function editAutoSlots() {
-
+    
+    console.log("EDIT AUTO SLOTS");
     const content = document.getElementById("autoPopupContent");
 
 let html = `
@@ -1285,10 +1303,6 @@ autoSlots.forEach(slot => {
 
 });
 
-html += `
-    </div>
-`;
-
     html += `
         <button id="saveAutoPopupBtn" onclick="saveAutoSlots()">
             Save
@@ -1304,7 +1318,9 @@ html += `
 
 async function saveAutoSlots() {
 
-  const rows = document.querySelectorAll(".auto-slot");
+  console.log("SAVE AUTO SLOTS");
+
+  const rows = document.querySelectorAll(".auto-edit-slot");
 
   const slots = [];
 
@@ -1321,6 +1337,8 @@ async function saveAutoSlots() {
 
   });
 
+  console.log("SENDING AUTO SLOTS:", slots);
+
   const response = await fetch("http://localhost:3000/autoSlots", {
   method: "PUT",
   headers: {
@@ -1330,6 +1348,8 @@ async function saveAutoSlots() {
 });
 
 const result = await response.json();
+
+
 
 if (result.success) {
     openAuto();
@@ -1627,11 +1647,23 @@ messages.forEach(msg => {
 
   if (msg.type === "important") {
     div.classList.add("important-msg");
+
+    const indicator = document.createElement("span");
+    indicator.className = "important-indicator";
+    indicator.textContent = "🚨";
+
+    div.appendChild(indicator);
   }
 
   if (msg.type === "info") {
     div.classList.add("info-msg");
-  }
+
+    const indicator = document.createElement("span");
+    indicator.className = "info-indicator";
+    indicator.textContent = "ⓘ";
+
+    div.appendChild(indicator);
+}
 
   const wrapper = document.createElement("div");
   wrapper.className = "msg-content";
@@ -2593,7 +2625,7 @@ function submitTopic() {
 
   let topic;
 
-    topic = document.getElementById("cp_topic").value;
+  topic = document.getElementById("cp_topic").value;
 
   if (topic.length > 40) {
     alert(t("TOPIC_TOO_LONG"));
