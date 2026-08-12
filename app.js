@@ -337,6 +337,8 @@ function showMessages() {
     document.getElementById("boardCategoriesView").style.display = "none";
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "block";
+    document.getElementById("saunaBtn").style.display = "none";
+    document.getElementById("autoBtn").style.display = "none";
     backToCategoriesBtn.style.display = "block";
     
 }
@@ -1647,21 +1649,17 @@ messages.forEach(msg => {
 
   if (msg.type === "important") {
     div.classList.add("important-msg");
-
     const indicator = document.createElement("span");
     indicator.className = "important-indicator";
     indicator.textContent = "🚨";
-
     div.appendChild(indicator);
   }
 
   if (msg.type === "info") {
     div.classList.add("info-msg");
-
     const indicator = document.createElement("span");
     indicator.className = "info-indicator";
     indicator.textContent = "ⓘ";
-
     div.appendChild(indicator);
 }
 
@@ -2543,6 +2541,7 @@ function submitCreateBoard() {
 function openTopicPopup() {
 
   if (!editingTopicId) {
+    document.getElementById("cp_header").value = "";
     document.getElementById("cp_topic").value = "";
     document.getElementById("cp_message").value = "";
     document.getElementById("cp_createBtn").innerText = "Create";
@@ -2554,6 +2553,7 @@ function openTopicPopup() {
 
 function closeTopicPopup() {
   document.getElementById("createTopicPopup").style.display = "none";
+  document.getElementById("cp_header").value = "";
   document.getElementById("cp_topic").value = "";
   document.getElementById("cp_message").value = "";
 }
@@ -2626,6 +2626,8 @@ function submitTopic() {
   let topic;
 
   topic = document.getElementById("cp_topic").value;
+
+  console.log("topic lenght: ", topic.length);
 
   if (topic.length > 40) {
     alert(t("TOPIC_TOO_LONG"));
