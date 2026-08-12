@@ -1611,25 +1611,24 @@ if (
 });
 
 app.post("/topics", async (req,res)=>{
+    const { boardName, category } = req.body;
 
-  const { boardName, category } = req.body;
+    const [rows] = await pool.query(
+        `SELECT topic, MIN(time) AS first_time
+         FROM boardMessages
+         WHERE board_id = (
+             SELECT id FROM boards WHERE name = ?
+         )
+         AND category = ?
+         AND topic IS NOT NULL
+         GROUP BY topic
+         ORDER BY first_time DESC`,
+        [boardName, category]
+    );
 
-  const [rows] = await pool.query(
-    `
-    SELECT DISTINCT topic
-    FROM boardMessages
-    WHERE board_id = (
-      SELECT id FROM boards WHERE name = ?
-    )
-    AND category = ?
-    AND topic IS NOT NULL
-    `,
-    [boardName, category]
-  );
-
-  res.json({
-    topics: rows.map(r => r.topic)
-  });
+    res.json({
+        topics: rows.map(r => r.topic)
+    });
 });
 
 app.post("/topicCounts", async (req, res) => {

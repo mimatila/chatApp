@@ -21,13 +21,13 @@
 <div class="board-actions">
 
     <div class="left-actions">
-      <button id="topicBtn" onclick="openTopicPopup()"> New Topic
+      <button id="topicBtn" class="light-blue-btn" onclick="openTopicPopup()"> New Topic
       </button>
       <button id="backToCategoriesBtn" onclick="backToCategories()">
       Categories
       </button>
-      <button id="saunaBtn" onclick="openSauna()"> Sauna Slots</button>
-      <button id="autoBtn" onclick="openAuto()"> Parking Spaces</button>
+      <button id="saunaBtn" class="light-blue-btn-120" onclick="openSauna()"> Sauna Slots</button>
+      <button id="autoBtn" class="light-blue-btn" onclick="openAuto()"> Parking Spaces</button>
     </div>
       <button id="clearBtn" class="clearBtn" onclick="clearTable()">
         Clear
@@ -75,7 +75,7 @@
     </span>
     <div class="input-row">
     <input id="boardNewMsg" placeholder="Write message...">
-    <button id="sendBtn" class="send-btn" onclick="updateMessage()">
+    <button id="sendBtn" class="light-blue-btn" onclick="updateMessage()">
     Send
     </button>
     </div>
@@ -155,13 +155,13 @@
         </table>
         <br>
         <div id="saunaButtons">
-    <button id="saveSaunaBtn" onclick="saveSauna()" style="display:none;">
+    <button id="saveSaunaBtn" class="light-blue-btn" onclick="saveSauna()" style="display:none;">
         Save
     </button>
-    <button id="editSaunaBtn" onclick="editSauna()">
+    <button id="editSaunaBtn" class="light-blue-btn-90" onclick="editSauna()">
         Edit
     </button>
-    <button id="closeSaunaBtn" onclick="closeSauna()">
+    <button id="closeSaunaBtn" class="light-blue-btn-90" onclick="closeSauna()">
         Close
     </button>
 </div>
@@ -178,11 +178,11 @@
 
         <input id="autoCountInput" type="number" value="5">
 
-        <button id="createAutoPopupBtn" onclick="createAutoSlots()">
+        <button id="createAutoPopupBtn" class="light-blue-btn-90" onclick="createAutoSlots()">
             Create
         </button>
 
-        <button id="closeAutoPopupBtn" onclick="closeAutoPopup()">
+        <button id="closeAutoPopupBtn" class="light-blue-btn-90" onclick="closeAutoPopup()">
             Cancel
         </button>
 
@@ -195,7 +195,7 @@
   <h3 class="h3">Members</h3>
   <div id="membersList"></div>
   <br>
-  <button id="closeMembersBtn" onclick="closeMembers()">Sulje</button>
+  <button id="closeMembersBtn" class="light-blue-btn" onclick="closeMembers()">Sulje</button>
   </div>
 </div>
 
@@ -213,10 +213,10 @@
     >
     <span>päivää</span>
     <br><br>
-    <button id="saveSettingsBtn" onclick="saveSettings()">
+    <button id="saveSettingsBtn" class="light-blue-btn" onclick="saveSettings()">
     Tallenna
     </button>
-    <button id="closeSettingsBtn" onclick="closeSettings()">
+    <button id="closeSettingsBtn" class="light-blue-btn" onclick="closeSettings()">
     Sulje
     </button>
   </div>
@@ -227,7 +227,7 @@
     <h3 class="h3">Join Requests</h3>
     <div id="requestsList"></div>
     <br>
-    <button id="closeRequestsBtn" onclick="closeRequests()">Sulje</button>
+    <button id="closeRequestsBtn" class="light-blue-btn" onclick="closeRequests()">Sulje</button>
   </div>
 </div>
 
@@ -236,8 +236,8 @@
     <h3 >Quick Messages</h3>
     <div id="quickMessagesList"></div>
     <br>
-    <button id="saveQuickBtn" onclick="saveQuickMessages()"> Save </button>
-    <button id="closeQuickBtn" onclick="closeQuickMessages()"> Close </button>
+    <button id="saveQuickBtn" class="light-blue-btn" onclick="saveQuickMessages()"> Save </button>
+    <button id="closeQuickBtn" class="light-blue-btn" onclick="closeQuickMessages()"> Close </button>
   </div>
 </div>
 
@@ -259,8 +259,20 @@
     <textarea id="cp_message"
     placeholder="Write your message..."
     rows="5"></textarea>
-    <button id="cp_createBtn" onclick="submitTopic()">Create</button>
-    <button id="cp_cancelBtn" onclick="closeTopicPopup()">Cancel</button>
+
+    <div class="topic-type-options">
+    <label>
+        <input type="checkbox" id="cp_important">
+        Important
+    </label>
+
+    <label>
+        <input type="checkbox" id="cp_info">
+        Info
+    </label>
+</div>
+    <button class="light-blue-btn-90" id="cp_createBtn" onclick="submitTopic()">Create</button>
+    <button class="light-blue-btn-90" id="cp_cancelBtn" onclick="closeTopicPopup()">Cancel</button>
   </div>
 </div>
 

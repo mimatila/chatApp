@@ -680,6 +680,8 @@ function initBoard() {
 
   if (boardType === "notice") {
     initNoticeBoard();
+    document.getElementById("cp_important").checked = false;
+    document.getElementById("cp_info").checked = false;
   } else {
     document.getElementById("currentLocation").style.display = "none";
     initFamilyBoard();
@@ -1244,11 +1246,11 @@ slots.forEach(slot => {
 
     html += `
         <div class="popup-buttons">
-            <button id="editAutoPopupBtn" onclick="editAutoSlots()">
+            <button id="editAutoPopupBtn" class="light-blue-btn-90" onclick="editAutoSlots()">
                 Edit
             </button>
 
-            <button id="closeAutoPopupBtn" onclick="closeAutoPopup()">
+            <button id="closeAutoPopupBtn" class="light-blue-btn-90" onclick="closeAutoPopup()">
                 Close
             </button>
         </div>
@@ -1306,11 +1308,11 @@ autoSlots.forEach(slot => {
 });
 
     html += `
-        <button id="saveAutoPopupBtn" onclick="saveAutoSlots()">
+        <button id="saveAutoPopupBtn" class="light-blue-btn-90" onclick="saveAutoSlots()">
             Save
         </button>
 
-        <button id="cancelAutoPopupBtn" onclick="renderAutoSlots(autoSlots)">
+        <button id="cancelAutoPopupBtn" class="light-blue-btn-90" onclick="renderAutoSlots(autoSlots)">
             Cancel
         </button>
     `;
@@ -2556,6 +2558,10 @@ function closeTopicPopup() {
   document.getElementById("cp_header").value = "";
   document.getElementById("cp_topic").value = "";
   document.getElementById("cp_message").value = "";
+  document.getElementById("cp_category").value = "general";
+  document.getElementById("cp_informationTopic").value = "";
+  document.getElementById("cp_important").checked = false;
+  document.getElementById("cp_info").checked = false;
 }
 
 async function updateTopic(id) {
@@ -2689,12 +2695,6 @@ if (data.success) {
     }
 
     closeTopicPopup();
-
-    document.getElementById("cp_category").value = "general";
-    document.getElementById("cp_topic").value = "";
-    document.getElementById("cp_header").value = "";
-    document.getElementById("cp_message").value = "";
-    document.getElementById("cp_informationTopic").value = "";
 }
   });
 }

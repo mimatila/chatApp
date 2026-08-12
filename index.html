@@ -12,8 +12,8 @@
     <img src="images/fi.svg" id="langFi" class="lang-flag">
     <img src="images/gb.svg" id="langEn" class="lang-flag">
   </div>
-  <button id="openJoinBtn" onclick="openJoinBoard()">Join Board</button>
-  <button id="openCreateBtn" onclick="openCreatePopup()">Create Board</button>
+  <button id="openJoinBtn" class="light-blue-btn-120" onclick="openJoinBoard()">Join Board</button>
+  <button id="openCreateBtn" class="light-blue-btn-120" onclick="openCreatePopup()">Create Board</button>
 </div>
 
 <div class="login-box">
@@ -26,7 +26,7 @@
     <input id="boardName" placeholder="Board Name">
     <input id="boardUsername" placeholder="Username">
     <input id="boardPassword" type="password" placeholder="Password">
-    <button id="openBoardBtn" type="submit">Open Board</button>
+    <button id="openBoardBtn" class="light-blue-btn" type="submit">Open Board</button>
   </form>
 </div>
 
@@ -34,7 +34,7 @@
   <div class="popup-content">
     <h3 id="createBoardPopupTitle">Create Board</h3>
     <label for="cp_boardType">Board Type</label>
-    <select id="cp_boardType" onchange="changeCreateBoardType()">
+    <select id="cp_boardType" class="light-blue-btn" onchange="changeCreateBoardType()">
       <option value="family">family</option>
       <option value="notice">notice</option>
     </select>
@@ -51,8 +51,8 @@
     <input id="cp_username" placeholder="Username">
     <input id="cp_password" placeholder="Password" type="password">
     <input id="cp_email" placeholder="Email">
-    <button id="submitCreatePopupBtn" onclick="submitCreateBoard()">Create</button>
-    <button id="closeCreatePopupBtn" onclick="closeCreatePopup()">Cancel</button>
+    <button id="submitCreatePopupBtn" class="light-blue-btn" onclick="submitCreateBoard()">Create</button>
+    <button id="closeCreatePopupBtn" class="light-blue-btn" onclick="closeCreatePopup()">Cancel</button>
   </div>
 </div>
 
@@ -64,8 +64,8 @@
   <input id="joinPassword" type="password" placeholder="Password">
   <input id="joinEmail" type="email" placeholder="Email">
   <br>
-  <button id="sendJoinBtn" onclick="sendJoinRequest()"> Send Request </button>
-  <button id="joinCancelBtn" onclick="closeJoinBoard()"> Cancel </button>
+  <button id="sendJoinBtn" class="light-blue-btn" onclick="sendJoinRequest()"> Send Request </button>
+  <button id="joinCancelBtn" class="light-blue-btn" onclick="closeJoinBoard()"> Cancel </button>
   </div>
 </div>
 
