@@ -2611,7 +2611,15 @@ function submitTopic() {
     return;
   }
 
-  let type="normal";
+  let type = "normal";
+
+  if (document.getElementById("cp_important").checked) {
+      type = "important";
+  }
+
+  if (document.getElementById("cp_info").checked) {
+      type = "info";
+  }
 
   const boardName = localStorage.getItem("boardName");
   const category = document.getElementById("cp_category").value;

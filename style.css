@@ -1097,6 +1097,11 @@ input::placeholder {
     background-color: lightgreen;
 }
 
+#cp_createBtn,
+#cp_cancelBtn {
+    margin-top: 20px;
+}
+
 #backToCategoriesBtn {
     display:none;
     height:34px;
