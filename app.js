@@ -101,6 +101,7 @@ const messages = {
         CREATE_BOARD_TITLE: "Luo Taulu",
         OPEN_BOARD: "Avaa Taulu",
         JOIN_BOARD: "Liity Taululle",
+        LEAVE_BOARD: "Poistu Taululta",
         CREATE_BOARD: "Luo Taulu",
         BOARD_NAME: "Taulun nimi",
         USERNAME: "Käyttäjänimi",
@@ -215,6 +216,7 @@ const messages = {
         CLEAR: "Clear",
         SETTINGS: "Settings",
         MEMBERS: "Members",
+        LEAVE_BOARD: "Leave Board",
         TODAY: "today",
         EDIT: "edit",
         IMPORTANT: "important",
@@ -1512,6 +1514,7 @@ function loadBoardLanguage() {
   setText("cp_cancelBtn", "CANCEL");
   setText("homeBtn", "HOME");
   setText("topicBtn", "NEW_TOPIC");
+  setText("leaveBoardBtn", "LEAVE_BOARD");
   setText("sendBtn", "SEND");
   setText("clearBtn", "CLEAR");
   setText("saunaBtn", "SAUNA");
@@ -3097,24 +3100,20 @@ function updateEditModeUI() {
   if (leaveBtn) {
     leaveBtn.style.display =
     (role === "member" && editMode)
-    ? "flex"
+    ? ""
     : "none";
   }
 
-  if (settingsBtn) {
-    settingsBtn.style.display =
+  settingsBtn.style.display =
     (role === "owner" && editMode)
-    ? "flex"
+    ? ""
     : "none";
-}
 
-if (deleteBoardBtn) {
-   deleteBoardBtn.style.display =
-   (role === "owner" && editMode)
-    ? "flex"
+  deleteBoardBtn.style.display =
+    (role === "owner" && editMode)
+    ? ""
     : "none";
-}
-}
+  }
 
 function loadTopicCounts() {
 
