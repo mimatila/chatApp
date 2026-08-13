@@ -661,6 +661,12 @@ function initBoard() {
 
   updateEditModeUI();
 
+  console.log("innerHeight: ", window.innerHeight);
+
+  console.log("scrollHeight: ", document.documentElement.scrollHeight);
+
+  console.log("clientHeight: ", document.documentElement.clientHeight);
+
   setInterval(() => {
 
   if (document.getElementById("boardCategoriesView").style.display !== "none") {
@@ -671,6 +677,7 @@ function initBoard() {
 
   if (refreshInterval) clearInterval(refreshInterval);
 
+  /*
   const refreshTime = boardType === "notice" ? 60000 : 15000;
 
   refreshInterval = setInterval(() => {
@@ -679,7 +686,7 @@ function initBoard() {
       loadMessage(false);
     }
   }, refreshTime);
-
+*/
   if (boardType === "notice") {
     initNoticeBoard();
     document.getElementById("cp_important").checked = false;
@@ -1652,20 +1659,28 @@ messages.forEach(msg => {
     div.className = "msg-row";
   }
 
-  if (msg.type === "important") {
-    div.classList.add("important-msg");
+ const editMode = document.getElementById("editMode")?.checked;
+
+if (msg.type === "important") {
+  div.classList.add("important-msg");
+
+  if (!editMode) {
     const indicator = document.createElement("span");
     indicator.className = "important-indicator";
     indicator.textContent = "🚨";
     div.appendChild(indicator);
   }
+}
 
-  if (msg.type === "info") {
-    div.classList.add("info-msg");
+if (msg.type === "info") {
+  div.classList.add("info-msg");
+
+  if (!editMode) {
     const indicator = document.createElement("span");
     indicator.className = "info-indicator";
     indicator.textContent = "ⓘ";
     div.appendChild(indicator);
+  }
 }
 
   const wrapper = document.createElement("div");
@@ -1740,7 +1755,7 @@ if (
 
   div.appendChild(wrapper);
 
-  const editMode = document.getElementById("editMode")?.checked;
+  //const editMode = document.getElementById("editMode")?.checked;
   const username = localStorage.getItem("boardUsername");
 
   const user = data.users.find(u => u.username === username);
