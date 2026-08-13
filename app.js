@@ -592,7 +592,6 @@ function initBoard() {
   const role = localStorage.getItem("role");
   const boardType = localStorage.getItem("boardType");
   const noticeTemplate = localStorage.getItem("noticeTemplate");
-
   const quickBtn = document.getElementById("quickMessagesBtn");
 
   if (quickBtn) {
@@ -677,6 +676,7 @@ function initBoard() {
 
   if (refreshInterval) clearInterval(refreshInterval);
 
+  //TÄÄ OTETAAN KÄYTTÖÖN KUN VALMISTUU!
   /*
   const refreshTime = boardType === "notice" ? 60000 : 15000;
 

@@ -31,22 +31,11 @@ body {
   box-shadow: 0 0 4px #0078d7;
 }
 
-/*
-.board-container {
-  position: relative;
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,.15);
-}*/
-
 .board-container {
     position: relative;
     height: auto;
     max-width: 700px;
-    margin: 0px auto;
+    margin: 0 auto;
     padding: 20px;
     box-sizing: border-box;
     background: #d0d0d0;
@@ -78,53 +67,53 @@ body {
 }
 
 .notice-board #boardCategoriesView {
-    display: grid;
-    justify-items: center;
-    row-gap: 30px;
-    min-height: 200px;
-    align-content: center;
+  display: grid;
+  height: 35vh;
+  justify-items: center;
+  row-gap: 30px;
+  align-content: center;
 }
 
 #mainCategories {
-    display: grid;
-    grid-template-columns: repeat(2, 150px);
-    column-gap: 30px;
+  display: grid;
+  grid-template-columns: repeat(2, 150px);
+  column-gap: 30px;
 }
 
 #otherCategories {
-    display: grid;
-    grid-template-columns: repeat(3, 150px);
-    column-gap: 30px;
+  display: grid;
+  grid-template-columns: repeat(3, 150px);
+  column-gap: 30px;
 }
 
 .main-category {
-    grid-column: span 3;
+  grid-column: span 3;
 }
 
 #currentLocation {
-    min-height: 20px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    margin: 5px;
+  min-height: 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 5px;
 }
 
 .category-card {
-    background: #2b6cb0;
-    border: 2px solid black;
-    border-radius: 8px;
-    color: white;
-    padding: 8px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    transition: all 0.15s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    justify-content: center;
-    cursor: pointer;
-    font-size: 0.9rem;
-    overflow-wrap: anywhere;
+  background: #2b6cb0;
+  border: 2px solid black;
+  border-radius: 8px;
+  color: white;
+  padding: 8px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
 }
 
 .category-card:hover {
@@ -141,7 +130,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    min-height: 200px;
+    height: 35vh;
     overflow-y: auto;
     padding-right: 20px;
     box-sizing: border-box;
@@ -182,12 +171,12 @@ body {
   background-color: lightblue;
   margin: 0 auto;
   max-width: 600px;
-  min-height: 0;
+  height: 35vh;
   padding: 10px;
 }
 
 #boardMessagesDiv {
-  min-height: 200px;
+  height: 35vh;
   max-width: var(--content-width);
   width: 100%;
   box-sizing: border-box;
@@ -200,7 +189,7 @@ body {
   padding: 5px 15px 5px 15px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  background: #f7f7f7;
+  background: white;
   font-size: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
@@ -1166,11 +1155,10 @@ input::placeholder {
     }
 
     .board {
-        height: 60vh;
+        height: 65vh;
     }
-
     #boardMessagesDiv {
-        height: 60vh;
+        height: 65vh;
     }
     .message-area {
         position: relative;
