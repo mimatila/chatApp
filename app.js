@@ -288,7 +288,7 @@ async function showCategories() {
 
     const el = document.getElementById("boardCategoriesView");
 
-    el.style.display = "none";
+    el.style.display = "grid";
     el.style.height = "100%";
 
     document.getElementById("boardTopicsView").style.display = "none";
