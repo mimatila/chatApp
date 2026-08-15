@@ -610,6 +610,12 @@ function initBoard() {
 
   let boardName = localStorage.getItem("boardName");
 
+  alert(
+    "boardName: " + boardName +
+    "\nboardType: " + localStorage.getItem("boardType") +
+    "\nnoticeTemplate: " + localStorage.getItem("noticeTemplate")
+  );
+
   if (!boardName) {
   console.log("NO BOARD NAME");
   return;
