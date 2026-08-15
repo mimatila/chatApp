@@ -105,6 +105,8 @@ const messages = {
         CREATE_BOARD: "Luo Taulu",
         BOARD_NAME: "Taulun nimi",
         USERNAME: "Käyttäjänimi",
+        SAUNA_TITLE: "Saunavuorot",
+        AUTO_TITLE: "Autopaikat",
         PASSWORD: "Salasana",
         EMAIL: "Sähköposti",
         SEND_REQUEST: "Lähetä Pyyntö",
@@ -153,6 +155,8 @@ const messages = {
         TOPIC_ALREADY_EXISTS: "Topic already exists",
         SAVE: "Save done.",
         HOME: "Home",
+        SAUNA_TITLE: "Sauna List",
+        AUTO_TITLE: "Parking Slots",
         MESSAGES_CLEARED: "Messages cleared.",
         USERNAME_EXISTS: "Username already exists.",
         REQUEST_PENDING: "Request already pending.",
@@ -284,7 +288,7 @@ async function showCategories() {
 
     const el = document.getElementById("boardCategoriesView");
 
-    el.style.display = "grid";
+    el.style.display = "none";
     el.style.height = "100%";
 
     document.getElementById("boardTopicsView").style.display = "none";
@@ -624,7 +628,8 @@ function initBoard() {
   const ownerButtons = [
     "requestsBtn",
     "settingsBtn",
-    "deleteBoardBtn"
+    "deleteBoardBtn",
+    "clearBtn"
   ];
 
   ownerButtons.forEach(id => {
@@ -1012,9 +1017,46 @@ async function createSaunaSlots(boardName, token) {
 
 function renderSaunaTable() {
 
-    const tableBody = document.querySelector("#saunaTable tbody");
+    const table = document.querySelector("#saunaTable");
+    const tableHead = table.querySelector("thead");
+    const tableBody = table.querySelector("tbody");
 
     tableBody.innerHTML = "";
+
+    // Jos language puuttuu, käytetään suomea
+    const language = localStorage.getItem("language") || "fi";
+
+    const translations = {
+        fi: {
+            time: "Aika",
+            Ke: "Ke",
+            To: "To",
+            Pe: "Pe",
+            La: "La"
+        },
+        en: {
+            time: "Time",
+            Ke: "Wed",
+            To: "Thu",
+            Pe: "Fri",
+            La: "Sat"
+        }
+    };
+
+    const t = translations[language] || translations.fi;
+
+
+    // Taulukon otsikot
+    tableHead.innerHTML = `
+        <tr>
+            <th>${t.time}</th>
+            <th>${t.Ke}</th>
+            <th>${t.To}</th>
+            <th>${t.Pe}</th>
+            <th>${t.La}</th>
+        </tr>
+    `;
+
 
     const rows = {};
 
@@ -1032,7 +1074,6 @@ function renderSaunaTable() {
 
         rows[slot.time][slot.day] =
             slot.familyName ?? "-";
-
     });
 
 
@@ -1049,7 +1090,6 @@ function renderSaunaTable() {
         `;
 
         tableBody.appendChild(row);
-
     });
 }
 
@@ -1229,9 +1269,11 @@ function renderAutoSlots(slots) {
 
     content.innerHTML = "";
 
-    let html = `
+    content.innerHTML = "";
+
+let html = `
     <h3 class="h3">
-        Parking Spaces
+        ${t("AUTO_TITLE")}
     </h3>
 
     <div class="auto-grid">
@@ -1518,6 +1560,7 @@ function loadBoardLanguage() {
       t("announcements");
 
   setText("cp_createBtn", "CREATE");
+  setText("saunaTitle", "SAUNA_TITLE");
   setText("cp_cancelBtn", "CANCEL");
   setText("homeBtn", "HOME");
   setText("topicBtn", "NEW_TOPIC");

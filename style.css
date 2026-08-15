@@ -152,6 +152,7 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     align-items: center;
     justify-content: center;
+    text-decoration: underline;
     overflow-wrap: anywhere;
 }
 
@@ -410,6 +411,21 @@ button {
     margin: 0;
     transform: translateY(4px);
 }
+
+/*
+input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background-color: #d9ecff;
+    border: 1px solid #888;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #5aa9e6;
+}*/
 
 .auto-slot input {
     width: 100%;
@@ -1060,6 +1076,10 @@ input::placeholder {
       padding: 2px 5px;
     }
 
+    .topic-card {
+      font-size: 11px;
+    } 
+
     .slot-input {
       width: 40px;
       height: 10px;
@@ -1160,6 +1180,12 @@ input::placeholder {
     #boardMessagesDiv {
         height: 65vh;
     }
+
+    #boardTopicsView {
+   
+    height: 65vh;
+    
+}
     .message-area {
         position: relative;
         width: 80vw;
@@ -1187,7 +1213,6 @@ input::placeholder {
         left: -27px;
         top: 50%;
         font-size: 18px;
-        display: block !important;
         z-index: 9999;
     }
 
