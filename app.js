@@ -624,7 +624,7 @@ function initBoard() {
   const savedCategory = localStorage.getItem("currentCategory") || "general information";
   currentCategory = savedCategory;
   
-  loadCategories();
+  //loadCategories();
 
   currentTopic = "";
 
