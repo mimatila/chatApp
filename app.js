@@ -737,7 +737,7 @@ function initNoticeBoard() {
 
     clearMessages();
 
-    //showCategories();
+    showCategories();
 
     loadTopicCounts();
 
