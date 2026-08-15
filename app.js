@@ -610,23 +610,17 @@ function initBoard() {
 
   let boardName = localStorage.getItem("boardName");
 
-  alert(
-    "boardName: " + boardName +
-    "\nboardType: " + localStorage.getItem("boardType") +
-    "\nnoticeTemplate: " + localStorage.getItem("noticeTemplate")
-  );
-
+  /*
   if (!boardName) {
   console.log("NO BOARD NAME");
   return;
-}
+}*/
 
-
-  /*
+  
   if (!boardName) {
     window.location.href = "index.html";
     return;
-  }*/
+  }
 
     console.log("LOCAL STORAGE TEST");
 
