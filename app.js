@@ -623,16 +623,18 @@ function initBoard() {
 
     console.log("LOCAL STORAGE TEST");
 
-alert(
-  "boardName: " + localStorage.getItem("boardName") +
-  "\nboardType: " + localStorage.getItem("boardType") +
-  "\nnoticeTemplate: " + localStorage.getItem("noticeTemplate")
-);
+
 
   const role = localStorage.getItem("role");
   const boardType = localStorage.getItem("boardType");
   const noticeTemplate = localStorage.getItem("noticeTemplate");
   const quickBtn = document.getElementById("quickMessagesBtn");
+
+  alert(
+  "boardName: " + localStorage.getItem("boardName") +
+  "\nboardType: " + localStorage.getItem("boardType") +
+  "\nnoticeTemplate: " + localStorage.getItem("noticeTemplate")
+);
 
   console.log("INIT BOARD TYPE:", boardType);
 
