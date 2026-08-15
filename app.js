@@ -631,12 +631,6 @@ function initBoard() {
   const noticeTemplate = localStorage.getItem("noticeTemplate");
   const quickBtn = document.getElementById("quickMessagesBtn");
 
-  alert(
-  "boardName: " + localStorage.getItem("boardName") +
-  "\nboardType: " + localStorage.getItem("boardType") +
-  "\nnoticeTemplate: " + localStorage.getItem("noticeTemplate")
-);
-
   console.log("INIT BOARD TYPE:", boardType);
 
   if (quickBtn) {
