@@ -609,6 +609,11 @@ function initBoard() {
 
   let boardName = localStorage.getItem("boardName");
 
+  if (!boardName) {
+  console.log("NO BOARD NAME");
+  return;
+}
+
   /*
   if (!boardName) {
     window.location.href = "index.html";
