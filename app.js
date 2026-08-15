@@ -609,7 +609,7 @@ function initBoard() {
   }
 
   if (boardType === "notice") {
-    //document.body.classList.add("notice-board");
+    document.body.classList.add("notice-board");
   } else {
     document.body.classList.remove("notice-board");
   }
@@ -740,13 +740,13 @@ function initFamilyBoard() {
 
 function initNoticeBoard() {
 
-    clearMessages();
+    //clearMessages();
 
-    showCategories();
+    //showCategories();
 
-    loadTopicCounts();
+    //loadTopicCounts();
 
-    updateRequestBadge();
+    //updateRequestBadge();
 }
 
 function initLanguageButtons() {
