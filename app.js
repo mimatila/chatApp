@@ -754,6 +754,7 @@ function initFamilyBoard() {
 
     //topicSummary.style.display = "none";
     
+    updateRequestBadge();
     loadMessage(true);
     
 }
