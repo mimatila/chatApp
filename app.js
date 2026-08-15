@@ -740,13 +740,13 @@ function initFamilyBoard() {
 
 function initNoticeBoard() {
 
-    //clearMessages();
+    clearMessages();
 
-    //showCategories();
+    showCategories();
 
-    //loadTopicCounts();
+    loadTopicCounts();
 
-    //updateRequestBadge();
+    updateRequestBadge();
 }
 
 function initLanguageButtons() {
