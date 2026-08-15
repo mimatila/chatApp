@@ -609,10 +609,11 @@ function initBoard() {
 
   let boardName = localStorage.getItem("boardName");
 
+  /*
   if (!boardName) {
     window.location.href = "index.html";
     return;
-  }
+  }*/
 
   const role = localStorage.getItem("role");
   const boardType = localStorage.getItem("boardType");
