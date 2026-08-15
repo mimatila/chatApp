@@ -1614,7 +1614,10 @@ app.post("/topics", async (req,res)=>{
     const { boardName, category } = req.body;
 
     const [rows] = await pool.query(
-        `SELECT topic, MIN(time) AS first_time
+        `SELECT 
+            topic, 
+            COUNT(*) AS count,
+            MIN(time) AS first_time
          FROM boardMessages
          WHERE board_id = (
              SELECT id FROM boards WHERE name = ?
@@ -1627,7 +1630,7 @@ app.post("/topics", async (req,res)=>{
     );
 
     res.json({
-        topics: rows.map(r => r.topic)
+        topics: rows
     });
 });
 

@@ -107,11 +107,16 @@ const messages = {
         USERNAME: "Käyttäjänimi",
         SAUNA_TITLE: "Saunavuorot",
         AUTO_TITLE: "Autopaikat",
+        PARKING_SLOTS_CREATED: "Autopaikkojen luonti onnistui.",
+        PARKING_SLOTS_CREATE_FAILED: "Autopaikkojen luonti epäonnistui.",
         PASSWORD: "Salasana",
         EMAIL: "Sähköposti",
         SEND_REQUEST: "Lähetä Pyyntö",
+        SAUNA_SLOT_SAVE: "Saunavuorot talletettu.",
+        SAUNA_SLOT_SAVE_FAILED: "Saunavuorojen talletus epäonnistui.",
         CANCEL: "Peru",
         CREATE_TOPIC_TITLE: "Uusi Info",
+        SAUNA_SLOT_CREATE_NO_SUCCESS: "Saunavuorolistan luonti epäonnistui.",
         CREATE: "Luo",
         SAUNA: "Saunavuorot",
         NEW_TOPIC: "Uusi Info",
@@ -121,6 +126,9 @@ const messages = {
         MEMBERS: "Jäsenet",
         TODAY: "tänään",
         EDIT: "muokkaa",
+        SAUNALIST_LOAD_NO_SUCCESS:"Saunavuoro listan lataaminen epäonnistui.",
+        PARKING_SLOTS_NOT_CREATED: "Autopaikkoja ei ole vielä luotu.",
+        SELECT_TOPIC: "Valitse aihe ensin.",
         IMPORTANT: "tärkeä",
         INFO: "info",
         LOGOUT: "Kirjaudu ulos",
@@ -135,6 +143,7 @@ const messages = {
     en: {
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
+        PARKING_SLOTS_NOT_CREATED: "Parking spaces have not been created yet.",
         onlyOwnerCanWrite: "Only the owner can write to this chain.",
         PleaseSelectTopicFirst: "Select topic first.",
         confirmRemoveMessage: "You want to remove this message?",
@@ -142,6 +151,8 @@ const messages = {
         LOGIN_FAILED: "Login failed.",
         SAUNA: "Sauna List",
         AUTO: "Parking Slots",
+        SAUNA_SLOT_CREATE_NO_SUCCESS: "Could not create sauna slots.",
+        SAUNALIST_LOAD_NO_SUCCESS:"Could not load sauna list.",
         CREATE_SAUNA_SLOTS: "Do you want to create sauna slots?",
         BOARD_EXISTS: "Board already exists.",
         BOARD_CREATED: "Board created.",
@@ -155,7 +166,10 @@ const messages = {
         TOPIC_ALREADY_EXISTS: "Topic already exists",
         SAVE: "Save done.",
         HOME: "Home",
+        PARKING_SLOTS_CREATED: "Parking slots created.",
+        PARKING_SLOTS_CREATE_FAILED: "Parking slots creation failed.",
         SAUNA_TITLE: "Sauna List",
+        SELECT_TOPIC: "Select topic first.",
         AUTO_TITLE: "Parking Slots",
         MESSAGES_CLEARED: "Messages cleared.",
         USERNAME_EXISTS: "Username already exists.",
@@ -177,6 +191,8 @@ const messages = {
         MEMBER_NOT_FOUND: "Member not found.",
         QUICK_MESSAGE_EMPTY: "Quick message cannot be empty.",
         SAVE_FAILED: "Save failed.",
+        SAUNA_SLOT_SAVE: "Sauna slots saved.",
+        SAUNA_SLOT_SAVE_FAILED: "Sauna slots save failed.",
         SAVE_ERROR: "Error saving.",
         INVALID_QUICK_MESSAGES: "Invalid quick messages.",
         NOT_OWNER: "Only owner can do this.",
@@ -614,20 +630,23 @@ function initBoard() {
     document.body.classList.remove("notice-board");
   }
 
-  categories = getCategories(boardType, noticeTemplate);
+if (boardType === "notice") {
 
-  /*
-  if (boardType === "notice") {
-    renderCategoriesGrid();
-  } */
+    categories = getCategories(boardType, noticeTemplate);
 
-  const savedCategory = localStorage.getItem("currentCategory") || "general information";
-  currentCategory = savedCategory;
-  
-  loadCategories();
+    const savedCategory = localStorage.getItem("currentCategory") || "general information";
+    currentCategory = savedCategory;
 
-  currentTopic = "";
+    loadCategories();
 
+} else {
+
+    currentCategory = "";
+    currentTopic = "";
+
+    document.getElementById("boardCategoriesView").style.display = "none";
+    document.getElementById("boardTopicsView").style.display = "none";
+}
   clearMessages();
 
   const ownerButtons = [
@@ -832,30 +851,42 @@ function renderTopicsGrid(topics) {
         const card = document.createElement("div");
 
         card.className = "topic-card";
-        card.textContent = topic;
+        card.dataset.topic = topic.topic;
+
+        const title = document.createElement("span");
+        title.innerText = topic.topic;
+
+        const count = document.createElement("span");
+        count.className = "topic-count";
+        count.innerText = `(${topic.count})`;
+
+        card.appendChild(title);
+        card.appendChild(count);
+
 
         card.onclick = () => {
 
-        card.classList.add("pressed");
+            card.classList.add("pressed");
 
-        setTimeout(() => {
+            setTimeout(() => {
 
-            card.classList.remove("pressed");
+                card.classList.remove("pressed");
 
-            currentTopic = topic;
-            updateCurrentLocation();
+                currentTopic = topic.topic;
+                updateCurrentLocation();
 
-            localStorage.setItem("currentTopic", topic);
+                localStorage.setItem("currentTopic", topic.topic);
 
-            showMessages();
-            loadMessage(true);
+                showMessages();
+                loadMessage(true);
 
-        }, 400);
-    };
+            }, 400);
+        };
 
         el.appendChild(card);
     });
 }
+
 
 //BCF
 
@@ -940,7 +971,7 @@ async function openSauna() {
     const data = await response.json();
 
     if (!data.success) {
-        alert("Could not load sauna list.");
+        alert(t("SAUNALIST_LOAD_NO_SUCCESS"));
         return;
     }
 
@@ -978,21 +1009,21 @@ async function openSauna() {
         const reloadData = await reloadResponse.json();
 
         if (!reloadData.success) {
-            alert("Could not load sauna list.");
+            alert(t("SAUNALIST_LOAD_NO_SUCCESS"));
             return;
         }
 
         saunaSlots = reloadData.slots;
-    }
+        }
 
-    if (saunaSlots.length === 0) {
-        alert("Could not load sauna list.");
-        return;
-    }
+        if (saunaSlots.length === 0) {
+            alert(t("SAUNALIST_LOAD_NO_SUCCESS"));
+            return;
+        }
 
-    renderSaunaTable();
+        renderSaunaTable();
 
-    document.getElementById("saunaPopup").style.display = "flex";
+        document.getElementById("saunaPopup").style.display = "flex";
 }
 
 async function createSaunaSlots(boardName, token) {
@@ -1014,7 +1045,7 @@ async function createSaunaSlots(boardName, token) {
     const data = await response.json();
 
     if (!data.success) {
-        alert("Could not create sauna slots.");
+        alert(t("SAUNA_SLOT_CREATE_NO_SUCCESS"));
         return false;
     }
 
@@ -1160,11 +1191,11 @@ async function saveSauna() {
 
         await openSauna();
 
-        alert("Sauna slots saved");
+        alert(t("SAUNA_SLOT_SAVE"));
 
     } else {
 
-        alert(t(data.message) || "Save failed");
+        alert(t("SAUNA_SLOT_SAVE_FAILED"));
 
     }
 
@@ -1225,11 +1256,11 @@ async function createAutoSlots() {
 
         document.getElementById("autoPopup").style.display = "none";
 
-        alert("Parking spaces created");
+        alert(t("PARKING_SLOTS_CREATED"));
 
     } else {
 
-        alert(data.message || "Create failed");
+        alert(t("PARKING_SLOTS_CREATE_FAILED"));
 
     }
 }
@@ -1252,7 +1283,7 @@ async function openAuto() {
         if (userRole === "owner") {
             document.getElementById("autoPopup").style.display = "flex";
         } else {
-            alert("Parking spaces have not been created yet.");
+            alert(t("PARKING_SLOTS_NOT_CREATED"));
         }
 
     } else {
@@ -1689,6 +1720,19 @@ function loadMessage(forceScroll = false) {
   });
 }
 
+updateCurrentLocation(messages);
+
+const importantMode = document.getElementById("importantMode")?.checked;
+const infoMode = document.getElementById("infoMode")?.checked;
+
+if (importantMode) {
+    messages = messages.filter(msg => msg.type === "important");
+}
+
+if (infoMode) {
+    messages = messages.filter(msg => msg.type === "info");
+}
+
 const ownerCategories = [
     "general information",
     "announcements"
@@ -1711,25 +1755,41 @@ messages.forEach(msg => {
  const editMode = document.getElementById("editMode")?.checked;
 
 if (msg.type === "important") {
-  div.classList.add("important-msg");
+    div.classList.add("important-msg");
 
-  if (!editMode) {
-    const indicator = document.createElement("span");
-    indicator.className = "important-indicator";
-    indicator.textContent = "🚨";
-    div.appendChild(indicator);
-  }
+    if (!editMode) {
+        const indicator = document.createElement("span");
+        indicator.className = "important-indicator";
+        indicator.textContent = "🚨";
+
+        const messageTime = new Date(msg.time);
+        const age = Date.now() - messageTime.getTime();
+
+        if (age < 5 * 60 * 1000) {
+            indicator.classList.add("active-alarm");
+        }
+
+        div.appendChild(indicator);
+    }
 }
 
 if (msg.type === "info") {
-  div.classList.add("info-msg");
+    div.classList.add("info-msg");
 
-  if (!editMode) {
-    const indicator = document.createElement("span");
-    indicator.className = "info-indicator";
-    indicator.textContent = "ⓘ";
-    div.appendChild(indicator);
-  }
+    if (!editMode) {
+        const indicator = document.createElement("span");
+        indicator.className = "info-indicator";
+        indicator.textContent = "ⓘ";
+
+        const messageTime = new Date(msg.time);
+        const age = Date.now() - messageTime.getTime();
+
+        if (age < 5 * 60 * 1000) {
+            indicator.classList.add("active-alarm");
+        }
+
+        div.appendChild(indicator);
+    }
 }
 
   const wrapper = document.createElement("div");
@@ -2146,7 +2206,7 @@ async function clearTable() {
   const boardType = localStorage.getItem("boardType");
 
   if (boardType === "notice" && !currentTopic) {
-    alert("Select topic first");
+    alert(t("SELECT_TOPIC"));
     return;
   }
 
@@ -2191,7 +2251,7 @@ async function clearTable() {
 
 //UCF
 
-function updateCurrentLocation() {
+function updateCurrentLocation(messages = null) {
 
   console.log("UPDATE LOCATION CALLED");
 
@@ -2207,6 +2267,20 @@ function updateCurrentLocation() {
 
   if (currentTopic) {
     text += " > " + currentTopic;
+  }
+
+  if (messages) {
+    const messageCount = messages.length;
+
+    const importantCount = messages.filter(
+      msg => msg.type === "important"
+    ).length;
+
+    const infoCount = messages.filter(
+      msg => msg.type === "info"
+    ).length;
+
+    text += ` | 💬 ${messageCount} 🚨 ${importantCount} ⓘ ${infoCount}`;
   }
 
   el.innerText = text;
@@ -2396,7 +2470,7 @@ if (importantMode) {
     if (this.checked) {
       document.getElementById("infoMode").checked = false;
     }
-
+    loadMessage();
   });
 }
 
@@ -2408,7 +2482,7 @@ if (infoMode) {
     if (this.checked) {
       document.getElementById("importantMode").checked = false;
     }
-
+    loadMessage();
   });
 }
 
