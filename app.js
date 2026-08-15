@@ -740,7 +740,7 @@ function initFamilyBoard() {
 
 function initNoticeBoard() {
 
-    //clearMessages();
+    clearMessages();
 
     showCategories();
 
