@@ -586,6 +586,11 @@ function initBoard() {
 
   console.log("INIT BOARD CALLED");
 
+  console.log(
+    "INIT START:",
+    document.documentElement.scrollHeight
+);
+
   let boardName = localStorage.getItem("boardName");
 
   if (!boardName) {
@@ -604,7 +609,7 @@ function initBoard() {
   }
 
   if (boardType === "notice") {
-    document.body.classList.add("notice-board");
+    //document.body.classList.add("notice-board");
   } else {
     document.body.classList.remove("notice-board");
   }
