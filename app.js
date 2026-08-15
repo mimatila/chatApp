@@ -614,11 +614,20 @@ function initBoard() {
   return;
 }
 
+
   /*
   if (!boardName) {
     window.location.href = "index.html";
     return;
   }*/
+
+    console.log("LOCAL STORAGE TEST");
+
+alert(
+  "boardName: " + localStorage.getItem("boardName") +
+  "\nboardType: " + localStorage.getItem("boardType") +
+  "\nnoticeTemplate: " + localStorage.getItem("noticeTemplate")
+);
 
   const role = localStorage.getItem("role");
   const boardType = localStorage.getItem("boardType");
