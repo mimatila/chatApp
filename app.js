@@ -11,7 +11,7 @@ let autoSlots = [];
 
 console.log("APP.JS VERSION 123");
 console.log("APP START");
-alert("UUSI APP.JS LADATTU");
+//alert("UUSI APP.JS LADATTU");
 
 const boardDescriptions = {
     fi: {
