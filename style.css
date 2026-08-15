@@ -60,6 +60,12 @@ body {
   font-size: 0.75rem;
 }
 
+#boardTopicsView,
+#boardMessagesDiv,
+#boardMessagesView {
+    display: none;
+}
+
 .notice-board #boardCategoriesView {
   display: grid;
   height: 35vh;
@@ -187,12 +193,6 @@ body {
   background: white;
   font-size: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-#boardTopicsView,
-#boardMessagesDiv,
-#boardMessagesView {
-    display: none;
 }
 
 .owner-topic-title {
