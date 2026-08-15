@@ -619,6 +619,8 @@ function initBoard() {
   const noticeTemplate = localStorage.getItem("noticeTemplate");
   const quickBtn = document.getElementById("quickMessagesBtn");
 
+  console.log("INIT BOARD TYPE:", boardType);
+
   if (quickBtn) {
     quickBtn.style.display =
     boardType === "notice" ? "none" : "inline";
