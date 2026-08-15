@@ -735,7 +735,8 @@ function initFamilyBoard() {
 
     //topicSummary.style.display = "none";
     
-    //loadMessage(true);
+    loadMessage(true);
+    
 }
 
 function initNoticeBoard() {
