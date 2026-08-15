@@ -624,7 +624,7 @@ function initBoard() {
   const savedCategory = localStorage.getItem("currentCategory") || "general information";
   currentCategory = savedCategory;
   
-  //loadCategories();
+  loadCategories();
 
   currentTopic = "";
 
@@ -735,7 +735,7 @@ function initFamilyBoard() {
 
     //topicSummary.style.display = "none";
     
-    loadMessage(true);
+    //loadMessage(true);
 }
 
 function initNoticeBoard() {
