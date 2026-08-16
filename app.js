@@ -616,11 +616,11 @@ function initBoard() {
   return;
 }*/
 
-  
+  /*
   if (!boardName) {
     window.location.href = "index.html";
     return;
-  }
+  }*/
 
     console.log("LOCAL STORAGE TEST");
 
