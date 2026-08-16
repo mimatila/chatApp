@@ -616,15 +616,12 @@ function initBoard() {
   return;
 }*/
 
-  /*
   if (!boardName) {
     window.location.href = "index.html";
     return;
-  }*/
+  }
 
     console.log("LOCAL STORAGE TEST");
-
-
 
   const role = localStorage.getItem("role");
   const boardType = localStorage.getItem("boardType");
