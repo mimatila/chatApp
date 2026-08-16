@@ -7,16 +7,24 @@
 </head>
 <body>
 
-<div class="top-nav">
-  <div class="language-select">
-    <img src="images/fi.svg" id="langFi" class="lang-flag">
-    <img src="images/gb.svg" id="langEn" class="lang-flag">
-  </div>
-  <button id="openJoinBtn" class="light-blue-btn-120" onclick="openJoinBoard()">Join Board</button>
-  <button id="openCreateBtn" class="light-blue-btn-120" onclick="openCreatePopup()">Create Board</button>
-</div>
+  <div class="index-container">
 
 <div class="login-box">
+
+  <div class="language-select">
+        <img src="images/fi.svg" id="langFi" class="lang-flag">
+        <img src="images/gb.svg" id="langEn" class="lang-flag">
+      </div>
+
+      <div class="top-buttons">
+      <button id="openJoinBtn" class="light-blue-btn-120" onclick="openJoinBoard()">
+        Join Board
+      </button>
+
+      <button id="openCreateBtn" class="light-blue-btn-120" onclick="openCreatePopup()">
+        Create Board
+      </button>
+      </div>
 
   <div id="boardCount">Boards: ...</div>
 
@@ -28,6 +36,8 @@
     <input id="boardPassword" type="password" placeholder="Password">
     <button id="openBoardBtn" class="light-blue-btn" type="submit">Open Board</button>
   </form>
+</div>
+
 </div>
 
 <div id="createPopup" class="popup">

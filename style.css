@@ -4,7 +4,10 @@
 }
 
 body {
-  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   font-family: Arial;
   text-align: center;
   margin-top: 20px auto;
@@ -29,6 +32,18 @@ body {
 .lang-flag.active {
   border: 2px solid #0078d7;
   box-shadow: 0 0 4px #0078d7;
+}
+
+.index-container {
+    position: relative;
+    height: auto;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #d0d0d0;
+    border-radius: 12px;
+    border: 2px solid #555;
 }
 
 .board-container {
@@ -354,10 +369,12 @@ body {
 }
 
 .login-box {
+  position:relative;
   display: inline-block;
   background-color: #2b6cb0;;
-  padding: 20px;
+  padding: 50px;
   border: 1px solid #ccc;
+  border-radius: 10px;
 }
 
 .login-box h2 {
@@ -371,8 +388,7 @@ body {
   gap: 10px;
 }
 
-.login-box input,
-.login-box button {
+.login-box input {
   width: 100%;
   box-sizing: border-box;
 }
@@ -576,24 +592,19 @@ input[type="checkbox"]:checked {
   box-sizing: border-box;
 }
 
-.top-nav {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 2000;
+.login-box .language-select {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
 }
 
-.language-select {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.top-nav button {
-  width: auto;
+.top-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
 input::placeholder {
@@ -898,7 +909,8 @@ input::placeholder {
   
 
 #loginTitle {
-    text-decoration: underline;
+  color: yellow;
+  text-decoration: underline;
 }
 
 #createTopicTitle {
