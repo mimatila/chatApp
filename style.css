@@ -40,6 +40,7 @@ body {
     display: flex;
     justify-content: center; /* vaakasuunnassa */
     align-items: center;     /* pystysuunnassa */
+    flex-direction: column;
     box-sizing: border-box;
     max-width: 400px;
     margin: 0 auto;
@@ -48,6 +49,23 @@ body {
     background: #d0d0d0;
     border-radius: 12px;
     border: 2px solid #555;
+}
+
+.index-header {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.index-header h1 {
+    margin: 0;
+    font-size: 28px;
+    text-decoration: underline;
+}
+
+.index-header p {
+    margin: 5px 0 0;
+    font-size: 14px;
 }
 
 .board-container {
@@ -608,7 +626,8 @@ input[type="checkbox"]:checked {
 .top-buttons {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 input::placeholder {
@@ -915,6 +934,8 @@ input::placeholder {
 #loginTitle {
   color: yellow;
   text-decoration: underline;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 #createTopicTitle {
