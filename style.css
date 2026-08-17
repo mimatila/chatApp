@@ -129,6 +129,18 @@ body {
   grid-column: span 3;
 }
 
+#categoryTemplateRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#templateSection {
+    width: auto;
+    margin: 0;
+}
+
 #currentLocation {
   min-height: 20px;
   text-align: center;
@@ -256,13 +268,13 @@ body {
 }
 
 .owner-message .msg-body {
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 0 100px;
-    box-sizing: border-box;
-    text-align: center;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    text-align: left;
     line-height: 1.5;
+    white-space: pre-line;
 }
 
 .owner-message .msg-content {
@@ -1021,10 +1033,20 @@ input::placeholder {
     min-height: 0;
     text-align: center;
     text-align-last: center;
-    margin: 5px auto;
+    margin: 5px 0;
     height: 34px;
     background-color: #d9ecff;
 }
+
+#messageTemplate {
+    min-height: 0;
+    text-align: center;
+    text-align-last: center;
+    margin: 5px 0;
+    height: 34px;
+    background-color: #d9ecff;
+}
+
 
 #cp_informationTopic {
     min-height: 0;

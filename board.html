@@ -243,8 +243,16 @@
 <div id="createTopicPopup" class="popup">
   <div class="popup-content">
     <h3 id="createTopicTitle">Create New Topic</h3>
+    <div id="categoryTemplateRow">
     <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
     </select>
+    <div id="templateSection">
+    <select id="messageTemplate" onchange="changeTemplate()">
+        <option value="general">Yleinen</option>
+        <option value="contact">Yhteystiedot</option>
+        <option value="notice">Tiedote</option>
+    </select>
+</div></div>
     <input id="cp_topic" placeholder="topic" maxlength="40">
     <select id="cp_informationTopic" style="display:none;">
     <option value="general information">
@@ -256,12 +264,6 @@
     </select>
     
     <input id="cp_header" type="text" placeholder="Header" maxlength="40">
-    
-    <select id="messageTemplate" onchange="changeTemplate()">
-    <option value="general">Yleinen</option>
-    <option value="contact">Yhteystiedot</option>
-    <option value="notice">Tiedote</option>
-    </select>
 
     <textarea id="cp_message"
     placeholder="Write your message..."
