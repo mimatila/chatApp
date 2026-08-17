@@ -757,6 +757,12 @@ updateTemplateVisibility();
 
   updateEditModeUI();
 
+  console.log("BODY", document.body.scrollHeight);
+console.log("CONTAINER", document.querySelector(".board-container")?.getBoundingClientRect().height);
+console.log("BOARD", document.querySelector(".board")?.getBoundingClientRect().height);
+console.log("MESSAGES", document.querySelector("#boardMessagesDiv")?.getBoundingClientRect().height);
+console.log("CATEGORIES", document.querySelector("#boardCategoriesView")?.getBoundingClientRect().height);
+
   console.log("innerHeight: ", window.innerHeight);
 
   console.log("scrollHeight: ", document.documentElement.scrollHeight);
