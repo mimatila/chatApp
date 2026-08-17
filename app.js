@@ -31,6 +31,32 @@ const boardDescriptions = {
     }
 };
 
+const messageTemplates = {
+    general: {
+        title: "Yleinen",
+        text: ""
+    },
+
+    contact: {
+        title: "Yhteystiedot",
+        text:
+        `Nimi:
+        Osoite:
+        Puhelin:
+        Sähköposti:`
+        },
+
+    notice: {
+        title: "Tiedote",
+        text:
+`Tiedote:
+
+Päivämäärä:
+
+Lisätiedot:`
+    }
+};
+
 const messages = {
     fi: {   
         ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
@@ -41,6 +67,8 @@ const messages = {
         confirmRemoveMessages: "Haluatko poistaa tämän viestiketjun?",
         LOGIN_FAILED: "Kirjautuminen epäonnistui.",
         BOARD_EXISTS: "Taulu on jo olemassa.",
+        BOARD_INFO: "Ilmoitustaulu",
+        WELCOME_TEXT: "Tervetuloa ilmoitustaululle",
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
         BOARD_CREATED: "Taulu luotu.",
         CREATE_SAUNA_SLOTS: "Haluatko luoda saunavuorot?",
@@ -125,6 +153,7 @@ const messages = {
         CLEAR: "Tyhjennä",
         SETTINGS: "Asetukset",
         MEMBERS: "Jäsenet",
+        BOARD_COUNT: "Taulut",
         TODAY: "tänään",
         EDIT: "muokkaa",
         SAUNALIST_LOAD_NO_SUCCESS:"Saunavuoro listan lataaminen epäonnistui.",
@@ -144,6 +173,8 @@ const messages = {
     en: {
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
+        BOARD_INFO: "Notice Board",
+        WELCOME_TEXT: "Welcome to your board system",
         PARKING_SLOTS_NOT_CREATED: "Parking spaces have not been created yet.",
         onlyOwnerCanWrite: "Only the owner can write to this chain.",
         PleaseSelectTopicFirst: "Select topic first.",
@@ -200,6 +231,7 @@ const messages = {
         BOARD_DELETED: "Board deleted.",
         LEAVE_BOARD_CONFIRM: "Are you sure you want to leave this board?\n\nYour user account will be removed from this board.",
         USER_REMOVED: "User removed.",
+        BOARD_COUNT: "Boards",
         DELETE_FAILED: "Delete failed (no permission or server error).",
         NETWORK_ERROR: "Network error.",
         BOARD_TYPE_FAMILY: "family",
@@ -292,10 +324,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (document.getElementById("boardCount")) {
         loadBoardCount();
+        initApp();
+        clearLoginFields();
+    } else {
+        initApp();
     }
-
-    initApp();
 });
+
+
+function changeTemplate() {
+    const type = document.getElementById("messageTemplate").value;
+    const message = document.getElementById("cp_message");
+
+    message.value = messageTemplates[type].text;
+}
 
 //SCF
 
@@ -341,6 +383,7 @@ async function updateVisitedUsers() {
     if (data.success) {
         updateVisitedUI(data);
     }
+
 }
 
 function showTopics() {
@@ -532,11 +575,6 @@ function bindUI() {
 
 function getBoardName() {
   return localStorage.getItem("boardName");
-}
-
-function home() {
-    sessionStorage.setItem("skipAutoLogin", "true");
-    window.location.href = "index.html";
 }
 
 
@@ -790,7 +828,7 @@ function initLanguageButtons() {
     langFi.onclick = () => {
     localStorage.setItem("language", "fi");
     initLanguage();
-    //loadBoardCount();
+    loadBoardCount();
     };
   }
 
@@ -799,7 +837,7 @@ function initLanguageButtons() {
     console.log("EN clicked");
     localStorage.setItem("language", "en");
     initLanguage();
-    //loadBoardCount();
+    loadBoardCount();
     };
     }
   }
@@ -1572,6 +1610,7 @@ function loadIndexLanguage() {
   setText("openJoinBtn", "JOIN_BOARD");
   setText("openCreateBtn", "CREATE_BOARD");
   setText("openBoardBtn", "OPEN_BOARD");
+  setText("boardCount", "BOARD_COUNT");
 
   setPlaceholder("boardName", "BOARD_NAME");
   setPlaceholder("boardUsername", "USERNAME");
@@ -1584,6 +1623,8 @@ function loadIndexLanguage() {
 
   setText("sendJoinBtn", "SEND_REQUEST");
   setText("joinCancelBtn", "CANCEL");
+  setText("taulu", "BOARD_INFO");
+  setText("welcome", "WELCOME_TEXT");
 
   setPlaceholder("cp_boardName", "BOARD_NAME");
   setPlaceholder("cp_username", "USERNAME");
@@ -2302,6 +2343,24 @@ function updateCurrentLocation(messages = null) {
 // NAV
 // =====================
 
+function home() {
+    sessionStorage.setItem("skipAutoLogin", "true");
+    window.location.href = "index.html";   
+}
+
+function clearLoginFields() {
+    console.log("CLEAR LOGIN FIELDS CALLED");
+    const boardName = document.getElementById("boardName");
+    const boardUsername = document.getElementById("boardUsername");
+    const boardPassword = document.getElementById("boardPassword");
+
+    if (!boardName || !boardUsername || !boardPassword) return;
+
+    boardName.value = "";
+    boardUsername.value = "";
+    boardPassword.value = "";
+}
+
 function logout() {
   const lang = localStorage.getItem("language");
 
@@ -2381,6 +2440,12 @@ function renderVisitedUsers(users) {
 
   console.log("RENDER VISITED CALLED");
 
+  console.log(
+    "BEFORE VISITED",
+    document.querySelector(".board").getBoundingClientRect().height
+);
+
+
   const el = document.getElementById("visitedUsers");
   if (!el) return;
 
@@ -2404,6 +2469,11 @@ function renderVisitedUsers(users) {
   el.innerHTML =
   `👤 ${labels.loggedIn}: <b>${loggedUser}</b>&nbsp;&nbsp;&nbsp;&nbsp;🟢 ${labels.lastVisited}: ` +
   sorted.map(u => u.name).join(", ");
+
+  console.log(
+    "AFTER VISITED",
+    document.querySelector(".board").getBoundingClientRect().height
+);
 }
 
 function updateVisitedUI(data) {
