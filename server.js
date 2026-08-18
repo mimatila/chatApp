@@ -408,6 +408,7 @@ app.put("/boardMessage/:id", async (req, res) => {
     const { id } = req.params;
 
     const {
+        header,
         topic,
         message
     } = req.body;
@@ -416,13 +417,13 @@ app.put("/boardMessage/:id", async (req, res) => {
 
         const sql = `
             UPDATE boardMessages
-            SET topic = ?, text = ?
+            SET header =?, topic = ?, text = ?
             WHERE id = ?
         `;
 
         const [result] = await pool.query(
             sql,
-            [topic, message, id]
+            [header, topic, message, id]
         );
 
         res.json({

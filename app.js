@@ -38,7 +38,7 @@ const messageTemplates = {
     },
 
     contact: {
-    title: "Yhteystiedot",
+    title: "Yhteystiedot:",
     text:
 `Nimi:
 Osoite:
@@ -68,7 +68,7 @@ const messages = {
         LOGIN_FAILED: "Kirjautuminen epäonnistui.",
         BOARD_EXISTS: "Taulu on jo olemassa.",
         BOARD_INFO: "Ilmoitustaulu",
-        WELCOME_TEXT: "Tervetuloa ilmoitustaululle",
+        WELCOME_TEXT: "Tervetuloa ilmoitustaululle!",
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
         BOARD_CREATED: "Taulu luotu.",
         M_ROLE: "omistaja",
@@ -180,7 +180,7 @@ const messages = {
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
         BOARD_INFO: "Notice Board",
-        WELCOME_TEXT: "Welcome to your board system",
+        WELCOME_TEXT: "Welcome to your board system!",
         PARKING_SLOTS_NOT_CREATED: "Parking spaces have not been created yet.",
         onlyOwnerCanWrite: "Only the owner can write to this chain.",
         PleaseSelectTopicFirst: "Select topic first.",
@@ -427,6 +427,7 @@ function editMessage(msg) {
 
     editingTopicId = msg.id;
 
+    document.getElementById("cp_header").value = msg.header;
     document.getElementById("cp_category").value = msg.category;
     document.getElementById("cp_topic").value = msg.topic;
     document.getElementById("cp_message").value = msg.text;
@@ -483,19 +484,11 @@ function renderCategories() {
 
 function openCategory(category, el) {
 
-    console.log("OPEN CATEGORY CALLED");
-
     el.classList.add("pressed");
 
     setTimeout(() => {
 
         el.classList.remove("pressed");
-
-        currentCategory = category;
-        currentTopic = "";
-
-        localStorage.setItem("currentCategory", category);
-        localStorage.removeItem("currentTopic");
 
         loadTopicsFromDatabase(category)
             .then(data => {
@@ -504,6 +497,12 @@ function openCategory(category, el) {
                     alert(t("NO_TOPICS_IN_CATEGORY"));
                     return;
                 }
+
+                currentCategory = category;
+                currentTopic = "";
+
+                localStorage.setItem("currentCategory", category);
+                localStorage.removeItem("currentTopic");
 
                 showTopics();
             });
@@ -2821,6 +2820,12 @@ function submitCreateBoard() {
 
 function openTopicPopup() {
 
+  console.log("OPEN TOPIC POPUP CURRENT:", currentCategory);
+console.log(
+    "OPEN TOPIC POPUP SELECT:",
+    document.getElementById("cp_category")?.value
+);
+
   if (!editingTopicId) {
     document.getElementById("cp_header").value = "";
     document.getElementById("cp_topic").value = "";
@@ -2833,12 +2838,17 @@ function openTopicPopup() {
 }
 
 function closeTopicPopup() {
+
   document.getElementById("createTopicPopup").style.display = "none";
+
   document.getElementById("cp_header").value = "";
   document.getElementById("cp_topic").value = "";
   document.getElementById("cp_message").value = "";
-  document.getElementById("cp_category").value = "general";
+
+  //document.getElementById("cp_category").value = currentCategory;
+
   document.getElementById("cp_informationTopic").value = "";
+
   document.getElementById("cp_important").checked = false;
   document.getElementById("cp_info").checked = false;
 }
@@ -2850,6 +2860,7 @@ console.log("UPDATE TOPIC CALLED!");
 const topic = document.getElementById("cp_topic").value;
 const message = document.getElementById("cp_message").value;
 const category = document.getElementById("cp_category").value;
+const header = document.getElementById("cp_header").value;
 
 const response = await fetch(
     `http://localhost:3000/boardMessage/${id}`,
@@ -2859,6 +2870,7 @@ const response = await fetch(
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
+            header,
             topic,
             message
         })
@@ -3463,6 +3475,13 @@ function createTopicPopupCategoryChanged() {
 }*/
 
 function createTopicPopupCategoryChanged() {
+
+    console.log(
+    "CATEGORY CHANGED:",
+    document.getElementById("cp_category").value,
+    "CURRENT:",
+    currentCategory
+);
 
     const category = document.getElementById("cp_category").value;
     const role = localStorage.getItem("role");
