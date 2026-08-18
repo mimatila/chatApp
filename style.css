@@ -560,6 +560,10 @@ input[type="checkbox"]:checked {
     background-color: #d9ecff;
 }
 
+.light-yellow-btn {
+    background-color: #fff9d6;
+}
+
 .light-blue-btn-90 {
     width: 90px;
     background-color: #d9ecff;
@@ -788,6 +792,7 @@ input::placeholder {
   font-weight: bold;
   text-align: left;
   color: blue;
+  background-color: #fff9d6;
 }
 
 #boardNewMsg::placeholder {

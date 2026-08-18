@@ -71,12 +71,15 @@ const messages = {
         WELCOME_TEXT: "Tervetuloa ilmoitustaululle",
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
         BOARD_CREATED: "Taulu luotu.",
+        M_ROLE: "omistaja",
+        MM_ROLE: "jäsen",
         CREATE_SAUNA_SLOTS: "Haluatko luoda saunavuorot?",
         DATABASE_ERROR: "Tietokantavirhe.",
         ONLY_OWNER_EDIT: "Vain omistaja voi muuttaa.",
         SAVE: "Tallennettu.",
         HOME: "Koti",
         LOGIN_AGAIN: "Kirjaudu uudelleen.",
+        NO_PENDING: "Ei odottavia liittymis pyyntöjä.",
         NO_PERMISSION: "Ei oikeuksia.",
         MESSAGES_CLEARED: "Viestit poistettu.",
         USERNAME_EXISTS: "Käyttäjänimi on jo käytössä.",
@@ -125,6 +128,8 @@ const messages = {
         "select topic": "valitse aihe",
         "general information": "Yleiset tiedot",
         announcements: "Tiedotteet",
+        MEMBERS_TITLE: "Jäsenet",
+        CP_JOIN_TITLE: "Liittymis pyynnöt",
         LOGIN_TITLE: "Kirjaudu Taululle",
         JOIN_TITLE: "Liity Taululle",
         CREATE_BOARD_TITLE: "Luo Taulu",
@@ -189,6 +194,8 @@ const messages = {
         CREATE_SAUNA_SLOTS: "Do you want to create sauna slots?",
         BOARD_EXISTS: "Board already exists.",
         BOARD_CREATED: "Board created.",
+        M_ROLE: "owner",
+        MM_ROLE: "member",
         REMOVE_USER_CONFIRM: "Remove user?",
         ONLY_OWNER_EDIT: "Only owner can edit.",
         OWNER_CATEGORY_NO_MESSAGES: "Owner category no messages.",
@@ -197,9 +204,12 @@ const messages = {
         LOGIN_AGAIN: "Please login again.",
         NO_PERMISSION: "No permission.",
         TOPIC_ALREADY_EXISTS: "Topic already exists",
+        MEMBERS_TITLE: "Members",
+        CP_JOIN_TITLE: "Join Requests",
         SAVE: "Save done.",
         HOME: "Home",
         PARKING_SLOTS_CREATED: "Parking slots created.",
+        NO_PENDING: "No pending requests.",
         PARKING_SLOTS_CREATE_FAILED: "Parking slots creation failed.",
         SAUNA_TITLE: "Sauna List",
         SELECT_TOPIC: "Select topic first.",
@@ -1693,6 +1703,8 @@ function loadBoardLanguage() {
       t("announcements");
 
   setText("cp_createBtn", "CREATE_BTN");
+  setText("cp_members", "MEMBERS_TITLE");
+  setText("cp_join", "CP_JOIN_TITLE");
   setText("cp_createBtn", "SAVE_BTN");
   setText("saunaTitle", "SAUNA_TITLE");
   setText("cp_cancelBtn", "CANCEL");
@@ -2662,7 +2674,7 @@ function showMembers() {
       owners.map(m => `
         <div class="member-owner">
             ${m.username}
-            <span class="member-role">(${m.role})</span>
+            <span class="member-role">(${t("M_ROLE")})</span>
         </div>
       `).join("") +
 
@@ -2670,7 +2682,7 @@ function showMembers() {
        ${others.map(m => `
     <div class="member-row">
         ${m.username}
-        <span class="member-role">(${m.role})</span>
+        <span class="member-role">(${t("MM_ROLE")})</span>
 
         ${owner && editMode
           ? `<button
@@ -3049,7 +3061,10 @@ function loadRequests() {
 
   if (!board.pendingRequests || board.pendingRequests.length === 0) {
 
-    list.innerHTML = "<b>No pending requests.</b>";
+    const text="NO_PENDING";
+
+    list.innerHTML = `<b>${t(text)}</b>`;
+    
 
     setTimeout(() => {
       closeRequests();

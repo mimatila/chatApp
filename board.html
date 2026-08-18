@@ -75,7 +75,7 @@
     </span>
     <div class="input-row">
     <input id="boardNewMsg" placeholder="Write message...">
-    <button id="sendBtn" class="light-blue-btn" onclick="updateMessage()">
+    <button id="sendBtn" class="light-yellow-btn" onclick="updateMessage()">
     Send
     </button>
     </div>
@@ -191,7 +191,7 @@
 
 <div id="membersPopup" class="popup">
   <div class="popup-content">
-  <h3 class="h3">Members</h3>
+  <h3 class="h3" id="cp_members">Members</h3>
   <div id="membersList"></div>
   <br>
   <button id="closeMembersBtn" class="light-blue-btn-90" onclick="closeMembers()">Sulje</button>
@@ -223,7 +223,7 @@
 
 <div id="requestsPopup" class="popup">
   <div class="popup-content">
-    <h3 class="h3">Join Requests</h3>
+    <h3 class="h3" id="cp_join">Join Requests</h3>
     <div id="requestsList"></div>
     <br>
     <button id="closeRequestsBtn" class="light-blue-btn-90" onclick="closeRequests()">Sulje</button>
