@@ -31,31 +31,31 @@ const boardDescriptions = {
     }
 };
 
-const messageTemplates = {
-    general: {
-        title: "",
-        text: ""
-    },
+function getMessageTemplates() {
+    return {
+        general: {
+            title: "",
+            text: ""
+        },
 
-    contact: {
-    title: "Yhteystiedot:",
-    text:
-`Nimi:
-Osoite:
-Puhelin:
-Sähköposti:`
-},
+        contact: {
+            title: `${t("CONTACT_TITLE")}:`,
+            text:
+`${t("NAME")}:
+${t("ADDRESS")}:
+${t("PHONE")}:
+${t("EMAIL")}:`
+        },
 
-    notice: {
-        title: "Tiedote",
-        text:
-`Tiedote:
+        notice: {
+            title: `${t("NOTICE_TITLE")}:`,
+            text:
+`${t("SUBJECT")}:
 
-Päivämäärä:
-
-Lisätiedot:`
-    }
-};
+${t("ADDITIONAL_INFO")}:`
+        }
+    };
+}
 
 const messages = {
     fi: {   
@@ -127,6 +127,14 @@ const messages = {
         meetings: "Kokoukset",
         "select topic": "valitse aihe",
         "general information": "Yleiset tiedot",
+        CONTACT_TITLE: "Yhteystiedot",
+        NOTICE_TITLE: "Tiedotteet",
+        NAME: "Nimi",
+        ADDRESS: "Osoite",
+        PHONE: "Puhelin",
+        EMAIL: "Sähköposti",
+        SUBJECT: "Aihe",
+        ADDITIONAL_INFO: "Lisätiedot",
         announcements: "Tiedotteet",
         MEMBERS_TITLE: "Jäsenet",
         CP_JOIN_TITLE: "Liittymis pyynnöt",
@@ -187,6 +195,14 @@ const messages = {
         confirmRemoveMessage: "You want to remove this message?",
         confirmRemoveMessages: "You want to remove this message chain?",
         LOGIN_FAILED: "Login failed.",
+        CONTACT_TITLE: "Contact info",
+        NOTICE_TITLE: "Announcements",
+        NAME: "Name",
+        ADDRESS: "Address",
+        PHONE: "Phone",
+        EMAIL: "Email",
+        SUBJECT: "Topic",
+        ADDITIONAL_INFO: "Addition info",
         SAUNA: "Sauna List",
         AUTO: "Parking Slots",
         SAUNA_SLOT_CREATE_NO_SUCCESS: "Could not create sauna slots.",
@@ -296,6 +312,7 @@ const messages = {
         }
     };
 
+
 const categories_family = [];
 
 const categories_taloyhtio = [
@@ -347,7 +364,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function changeTemplate() {
     const type = document.getElementById("messageTemplate").value;
 
-    const template = messageTemplates[type];
+    const templates = getMessageTemplates();
+    const template = templates[type];
 
     document.getElementById("cp_header").value = template.title;
     document.getElementById("cp_message").value = template.text;
@@ -2825,6 +2843,7 @@ console.log(
     "OPEN TOPIC POPUP SELECT:",
     document.getElementById("cp_category")?.value
 );
+
 
   if (!editingTopicId) {
     document.getElementById("cp_header").value = "";

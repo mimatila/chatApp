@@ -142,7 +142,8 @@ body {
   border-radius: 8px;
   color: white;
   padding: 8px;
-  height: 35px;
+  height: 100px;
+  width: 100px;
   display: flex;
   align-items: center;
   text-align: center;
@@ -264,8 +265,12 @@ body {
 }
 
 .owner-message .msg-text {
-    display: block;
-    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    flex: 1;
+    min-width: 0;
+    margin: 0 70px;
+    box-sizing: border-box;
 }
 
 .owner-message .msg-body {
@@ -275,7 +280,9 @@ body {
     padding: 0;
     text-align: left;
     line-height: 1.5;
-    white-space: pre-line;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
 }
 
 .owner-message .msg-content {
@@ -1254,11 +1261,6 @@ input::placeholder {
         font-size: 10px;
         padding: 5px;
     }
-
-     .owner-message .msg-body {
-        padding: 0 20px;
-    }
-
 
     #boardTopicsView {
    
