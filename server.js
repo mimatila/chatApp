@@ -1393,7 +1393,8 @@ async function authUser(req, boardName) {
     }
 
     const [rows] = await pool.query(
-        `
+     
+      `
         SELECT 
             users.id,
             users.username,
