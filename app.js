@@ -784,19 +784,6 @@ updateTemplateVisibility();
 
   updateEditModeUI();
 
-  console.log("BODY", document.body.scrollHeight);
-console.log("CONTAINER", document.querySelector(".board-container")?.getBoundingClientRect().height);
-console.log("BOARD", document.querySelector(".board")?.getBoundingClientRect().height);
-console.log("MESSAGES", document.querySelector("#boardMessagesDiv")?.getBoundingClientRect().height);
-console.log("CATEGORIES", document.querySelector("#boardCategoriesView")?.getBoundingClientRect().height);
-
-console.log("BODY height:", document.body.getBoundingClientRect().height);
-  console.log("innerHeight: ", window.innerHeight);
-
-  console.log("scrollHeight: ", document.documentElement.scrollHeight);
-
-  console.log("clientHeight: ", document.documentElement.clientHeight);
-
   setInterval(() => {
 
   if (document.getElementById("boardCategoriesView").style.display !== "none") {
@@ -2840,11 +2827,6 @@ function submitCreateBoard() {
 function openTopicPopup() {
 
   console.log("OPEN TOPIC POPUP CURRENT:", currentCategory);
-console.log(
-    "OPEN TOPIC POPUP SELECT:",
-    document.getElementById("cp_category")?.value
-);
-
 
   if (!editingTopicId) {
     document.getElementById("cp_header").value = "";
@@ -3495,13 +3477,6 @@ function createTopicPopupCategoryChanged() {
 }*/
 
 function createTopicPopupCategoryChanged() {
-
-    console.log(
-    "CATEGORY CHANGED:",
-    document.getElementById("cp_category").value,
-    "CURRENT:",
-    currentCategory
-);
 
     const category = document.getElementById("cp_category").value;
     const role = localStorage.getItem("role");
