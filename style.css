@@ -58,8 +58,7 @@ body {
 }
 
 .index-header h1 {
-    margin: 0;
-    font-size: 28px;
+    font-size: 20px;
     text-decoration: underline;
 }
 
@@ -427,13 +426,14 @@ body {
 }
 
 .login-box {
-  position:relative;
-  display: inline-block;
-  background-color: #2b6cb0;;
-  padding: 50px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #2b6cb0;
+    padding: 25px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
 }
+
 #openBoardBtn {
   margin-top: 5px;
 } 
@@ -954,7 +954,7 @@ input::placeholder {
 
 #quickMessagesPopup .popup-content {
   padding: 10px;
-  max-height: 80vh;
+  max-height: 95vh;
   box-sizing: border-box;
   
   /*transform: translateY(-50px);*/
