@@ -72,6 +72,8 @@ const messages = {
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
         BOARD_CREATED: "Taulu luotu.",
         M_ROLE: "omistaja",
+        SAUNA_DELETED: "Saunavuorot poistettu.",
+        AUTO_DELETED: "Autopaikat poistettu.",
         MM_ROLE: "jäsen",
         CREATE_SAUNA_SLOTS: "Haluatko luoda saunavuorot?",
         DATABASE_ERROR: "Tietokantavirhe.",
@@ -282,6 +284,8 @@ const messages = {
         "general information": "general information",
         announcements: "announcements",
         LOGIN_TITLE: "Login Board",
+        SAUNA_DELETED: "Sauna slots deleted.",
+        AUTO_DELETED: "Auto slots deleted.",
         JOIN_TITLE: "Join Board",
         CREATE_BOARD_TITLE: "Create Board",
         OPEN_BOARD: "Open Board",
@@ -1418,6 +1422,33 @@ async function createAutoSlots() {
     }
 }
 
+function showAutoCreate() {
+
+    const content = document.getElementById("autoPopupContent");
+
+    content.innerHTML = `
+        <h3 class="h3">
+            Parking Slots
+        </h3>
+
+        <input id="autoCountInput" type="number" value="5">
+
+        <button id="createAutoPopupBtn"
+                class="light-blue-btn-90"
+                onclick="createAutoSlots()">
+            Create
+        </button>
+
+        <button id="closeAutoPopupBtn"
+                class="light-blue-btn-90"
+                onclick="closeAutoPopup()">
+            Cancel
+        </button>
+    `;
+
+    document.getElementById("autoPopup").style.display = "flex";
+}
+
 async function openAuto() {
 
     console.log("OPEN AUTO CALLED");
@@ -1431,18 +1462,25 @@ async function openAuto() {
 
     const data = await response.json();
 
+    console.log("hep: ", data.slots.length);
+
     if (data.slots.length === 0) {
 
-        if (userRole === "owner") {
-            document.getElementById("autoPopup").style.display = "flex";
-        } else {
-            alert(t("PARKING_SLOTS_NOT_CREATED"));
-        }
+    if (userRole === "owner") {
+
+        showAutoCreate();
 
     } else {
 
-        renderAutoSlots(data.slots);
+        alert(t("PARKING_SLOTS_NOT_CREATED"));
+
     }
+
+} else {
+
+    renderAutoSlots(data.slots);
+
+}
 }
 
 function renderAutoSlots(slots) {
@@ -1459,7 +1497,6 @@ function renderAutoSlots(slots) {
 
     content.innerHTML = "";
 
-    content.innerHTML = "";
 
 let html = `
     <h3 class="h3">
@@ -1549,9 +1586,14 @@ autoSlots.forEach(slot => {
 });
 
     html += `
+        </div>
         <button id="saveAutoPopupBtn" class="light-blue-btn-90" onclick="saveAutoSlots()">
             Save
         </button>
+
+        <button id="deleteAutoPopupBtn" class="light-blue-btn-90" onclick="deleteAutoSlots()">
+                Delete
+            </button>
 
         <button id="cancelAutoPopupBtn" class="light-blue-btn-90" onclick="renderAutoSlots(autoSlots)">
             Cancel
@@ -1559,6 +1601,46 @@ autoSlots.forEach(slot => {
     `;
 
     content.innerHTML = html;
+}
+
+function deleteAutoSlots() {
+
+    console.log("DELETE AUTO CALLED");
+
+    if (!confirm(t("confirmDeleteSauna"))) {
+        return;
+    }
+
+    const boardName = localStorage.getItem("boardName");
+    const token = localStorage.getItem("token");
+
+    fetch(`http://localhost:3000/deleteAutoSlots/${boardName}`, {
+
+        method: "DELETE",
+
+        headers: {
+            "Authorization": token
+        }
+
+    })
+    .then(async (res) => {
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok || !data?.success) {
+
+            alert(t(data?.message || "DELETE_FAILED"));
+            return;
+
+        }
+
+        alert(t(data.message || "DELETE_SUCCESS"));
+
+        autoSlots = [];
+
+        closeAutoPopup();
+
+    });
 }
 
 async function saveAutoSlots() {
