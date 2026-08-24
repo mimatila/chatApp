@@ -117,6 +117,7 @@ const messages = {
         general: "Yleinen",
         maintenance: "Huolto",
         events: "Tapahtumat",
+        confirmDeleteSauna: "Halautko varmasti poistaa saunavuorot listan?",
         announcement: "Ilmoitukset",
         recommendations: "Suositukset",
         topic: "Aihe",
@@ -132,6 +133,7 @@ const messages = {
         NAME: "Nimi",
         ADDRESS: "Osoite",
         PHONE: "Puhelin",
+        MESSAGES: "viestit",
         EMAIL: "Sähköposti",
         SUBJECT: "Aihe",
         ADDITIONAL_INFO: "Lisätiedot",
@@ -199,6 +201,7 @@ const messages = {
         NOTICE_TITLE: "Announcements",
         NAME: "Name",
         ADDRESS: "Address",
+        MESSAGES: "messages",
         PHONE: "Phone",
         EMAIL: "Email",
         SUBJECT: "Topic",
@@ -266,6 +269,7 @@ const messages = {
         information: "information",
         general: "general",
         maintenance: "maintenance",
+        confirmDeleteSauna: "Do you want to delete sauna slots?",
         events: "events",
         topic: "Topic",
         topics: "Topics",
@@ -810,8 +814,7 @@ updateTemplateVisibility();
     document.getElementById("cp_important").checked = false;
     document.getElementById("cp_info").checked = false;
   } else {
-    document.getElementById("currentLocation").style.display = "none";
-    initFamilyBoard();
+      initFamilyBoard();
   }
 
   // Notice Uusi Aihe 
@@ -1032,7 +1035,7 @@ function backToCategories() {
     localStorage.removeItem("currentCategory");
     localStorage.removeItem("currentTopic");
 
-    updateCurrentLocation();
+    //updateCurrentLocation();
 }
 
 //OSF
@@ -1055,8 +1058,10 @@ async function openSauna() {
         userRole === "owner"
     ) {
         document.getElementById("editSaunaBtn").style.display = "block";
+        document.getElementById("deleteSaunaBtn").style.display = "none";
     } else {
         document.getElementById("editSaunaBtn").style.display = "none";
+        document.getElementById("deleteSaunaBtn").style.display = "none";
     }
 
     const boardName = localStorage.getItem("boardName");
@@ -1132,6 +1137,44 @@ async function openSauna() {
         renderSaunaTable();
 
         document.getElementById("saunaPopup").style.display = "flex";
+}
+
+function deleteSaunaSlots() {
+
+    console.log("DELETE SAUNA CALLED");
+
+    if (!confirm(t("confirmDeleteSauna"))) {
+        return;
+    }
+
+    const boardName = localStorage.getItem("boardName");
+    const token = localStorage.getItem("token");
+
+    fetch(`http://localhost:3000/deleteSaunaSlots/${boardName}`, {
+
+        method: "DELETE",
+
+        headers: {
+            "Authorization": token
+        }
+
+    })
+    .then(async (res) => {
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok || !data?.success) {
+
+            alert(t(data?.message || "DELETE_FAILED"));
+            return;
+
+        }
+
+        alert(t(data.message || "DELETE_SUCCESS"));
+
+        closeSauna();
+
+    });
 }
 
 async function createSaunaSlots(boardName, token) {
@@ -1313,7 +1356,8 @@ function closeSauna() {
 
     saunaEditMode = false;
 
-    document.getElementById("editSaunaBtn").style.display = "block";
+    document.getElementById("editSaunaBtn").style.display = "none";
+    document.getElementById("deleteSaunaBtn").style.display = "none";
     document.getElementById("saveSaunaBtn").style.display = "none";
 
     document.getElementById("saunaPopup").style.display = "none";
@@ -1332,6 +1376,7 @@ function editSauna() {
     saunaEditMode = true;
 
     document.getElementById("editSaunaBtn").style.display = "none";
+    document.getElementById("deleteSaunaBtn").style.display = "block";
     document.getElementById("saveSaunaBtn").style.display = "block";
 
     renderSaunaTable();
@@ -2367,37 +2412,46 @@ async function clearTable() {
 
 function updateCurrentLocation(messages = null) {
 
-  console.log("UPDATE LOCATION CALLED");
+    console.log("UPDATE LOCATION CALLED");
 
-  const el = document.getElementById("currentLocation");
+    const el = document.getElementById("currentLocation");
+    const boardType = localStorage.getItem("boardType");
 
-  if (!el) return;
+    if (!el) return;
 
-  let text = "";
+    let text = "";
 
-  if (currentCategory) {
-      text = t(currentCategory);
-  }
+    if (boardType === "family") {
 
-  if (currentTopic) {
-    text += " > " + currentTopic;
-  }
+        text = t("MESSAGES");
 
-  if (messages) {
-    const messageCount = messages.length;
+    } else {
 
-    const importantCount = messages.filter(
-      msg => msg.type === "important"
-    ).length;
+        if (currentCategory) {
+            text = t(currentCategory);
+        }
 
-    const infoCount = messages.filter(
-      msg => msg.type === "info"
-    ).length;
+        if (currentTopic) {
+            text += " > " + currentTopic;
+        }
+    }
 
-    text += ` | 💬 ${messageCount} 🚨 ${importantCount} ⓘ ${infoCount}`;
-  }
+    if (messages) {
 
-  el.innerText = text;
+        const messageCount = messages.length;
+
+        const importantCount = messages.filter(
+            msg => msg.type === "important"
+        ).length;
+
+        const infoCount = messages.filter(
+            msg => msg.type === "info"
+        ).length;
+
+        text += ` | 💬 ${messageCount} 🚨 ${importantCount} ⓘ ${infoCount}`;
+    }
+
+    el.innerText = text;
 }
 
 // =====================
@@ -2787,6 +2841,11 @@ function submitCreateBoard() {
   if (boardType === "notice") {
     noticeTemplate = document.getElementById("cp_noticeTemplate").value;
   }
+
+  if (!boardName.trim()) {
+    alert("Anna taululle nimi");
+    return;
+}
 
   fetch("http://localhost:3000/create", {
     method: "POST",
@@ -3448,7 +3507,6 @@ function loadTopicCounts() {
 
 });
 }
-
 
 function changeCreateBoardType() {
 

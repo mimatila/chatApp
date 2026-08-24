@@ -114,6 +114,13 @@ app.post("/create", async (req, res) => {
     ownerEmail
   } = req.body;
 
+  if (!boardName || !boardName.trim()) {
+    return res.status(400).json({
+        success: false,
+        message: "Board name is required"
+    });
+}
+
   const quickMessages = [
     "Kaupassa",
     "Töissä",
@@ -305,6 +312,80 @@ app.delete("/delete/:boardName", async (req, res) => {
     connection.release();
   }
 });
+
+app.delete("/deleteSaunaSlots/:boardName", async (req, res) => {
+
+  const boardName = req.params.boardName;
+
+  const user = await authUser(req, boardName);
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: "LOGIN_AGAIN"
+    });
+  }
+
+  if (user.role !== "owner") {
+    return res.status(403).json({
+      success: false,
+      message: "NOT_OWNER"
+    });
+  }
+
+  const connection = await pool.getConnection();
+
+  try {
+
+    await connection.beginTransaction();
+
+    // Hae board_id
+    const [boards] = await connection.query(
+      "SELECT id FROM boards WHERE name = ?",
+      [boardName]
+    );
+
+    if (boards.length === 0) {
+      await connection.rollback();
+
+      return res.status(404).json({
+        success: false,
+        message: "BOARD_NOT_FOUND"
+      });
+    }
+
+    const boardId = boards[0].id;
+
+    await connection.query(
+    "DELETE FROM saunaSlots WHERE board_id = ?",
+    [boardId]
+
+);
+
+    await connection.commit();
+
+    res.json({
+      success: true,
+      message: "SAUNA_DELETED"
+    });
+
+  } catch (err) {
+
+    await connection.rollback();
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "DATABASE_ERROR"
+    });
+
+  } finally {
+
+    connection.release();
+  }
+});
+
 
 app.delete("/admin/boards", async (req,res)=>{
 
