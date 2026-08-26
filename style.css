@@ -1154,6 +1154,12 @@ input::placeholder {
 
 @media (max-width: 600px) {
 
+     body.index-page {
+        height: 100dvh;
+        margin: 0;
+        overflow: hidden;
+    }
+
     .index-container {
     width:360px;
     height: 540px; 
