@@ -17,6 +17,10 @@ body {
     user-select: none;
 }
 
+body.index-page {
+    margin: 0;
+}
+
 .lang-flag {
   width: 28px;
   height: 20px;
@@ -62,20 +66,20 @@ body {
     display: grid;
     height: auto;
     justify-items: center;
-    row-gap: 15px;
+    row-gap: 25px;
     align-content: center;
 }
 
 #mainCategories {
   display: grid;
   grid-template-columns: repeat(2, 80px);
-  column-gap: 30px; 
+  column-gap: 50px; 
 }
 
 #otherCategories {
   display: grid;
   grid-template-columns: repeat(3, 80px);
-  column-gap: 30px;
+  column-gap: 50px;
 }
 
 .main-category {
@@ -83,13 +87,14 @@ body {
 }
 
 .category-card {
+  
   background: #2b6cb0;
   border: 2px solid black;
   border-radius: 8px;
   color: white;
   padding: 8px;
-  height: 60px;
-  width: 60px;
+  height: 75px;
+  width: 75px;
   display: flex;
   align-items: center;
   text-align: center;
@@ -97,7 +102,7 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   justify-content: center;
   cursor: pointer;
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   overflow-wrap: anywhere;
 }
 
@@ -245,7 +250,7 @@ body {
 }
 
 .board-content {
-    width: 80%;
+    width: 95%;
     box-sizing: border-box;
 }
 
@@ -278,6 +283,14 @@ body {
     font-size: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+#openJoinBtn { 
+      font-size: 12px; 
+    }
+
+    #openCreateBtn {
+      font-size: 12px;
+    }
 
 .owner-topic-title {
     display: block;
@@ -767,6 +780,8 @@ input::placeholder {
 #autoPopup .popup-content {
     width: 540px;
     max-width: 90vw;
+    max-height: 50vh;
+    overflow-y: auto;
     box-sizing: border-box;
 }
 
@@ -1205,10 +1220,16 @@ input::placeholder {
       font-size: 10px;
     }
 
+    .owner-message .msg-text {
+   
+    margin: 0 10px;
+    
+}
+
     .message-options {
         justify-content: center;
         gap: 12px;
-        margin-top: 5px;
+        margin-top: 10px;
     }
 
     .message-options label {
@@ -1269,17 +1290,17 @@ input::placeholder {
     grid-template-columns: 70px;
     justify-content: center;
     align-content: center;
-    gap: 15px;
+    gap: 10px;
 }
 
 #mainCategories > *,
 #otherCategories > * {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
 }
 
     .category-card {
-        font-size: 9px;
+        font-size: 10px;
         padding: 5px;
     }
 
@@ -1291,7 +1312,7 @@ input::placeholder {
 
 .notice-board #boardCategoriesView {
     
-    row-gap: 25px;
+    row-gap: 15px;
    
 }
 

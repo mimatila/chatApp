@@ -116,10 +116,11 @@ const messages = {
         TOPIC_ALREADY_EXISTS: "Aihe on jo olemassa.",
         confirmDeleteBoard: "Oletko varma että haluat poistaa taulun?",
         information: "Info",
-        general: "Yleinen",
+        general: "Yleiset",
         maintenance: "Huolto",
         events: "Tapahtumat",
-        confirmDeleteSauna: "Halautko varmasti poistaa saunavuorot listan?",
+        confirmDeleteSauna: "Haluatko varmasti poistaa saunavuorot listan?",
+        confirmDeleteAuto: "Haluatko varmasti poistaa parkkipaikat listan?",
         announcement: "Ilmoitukset",
         recommendations: "Suositukset",
         topic: "Aihe",
@@ -129,7 +130,7 @@ const messages = {
         AUTO: "Parkkipaikat",
         meetings: "Kokoukset",
         "select topic": "valitse aihe",
-        "general information": "Yleiset tiedot",
+        "general information": "Info",
         CONTACT_TITLE: "Yhteystiedot",
         NOTICE_TITLE: "Tiedotteet",
         NAME: "Nimi",
@@ -269,20 +270,20 @@ const messages = {
         BOARD_TYPE_FAMILY: "family",
         BOARD_TYPE_NOTICE: "notice",
         information: "information",
-        general: "general",
-        maintenance: "maintenance",
+        general: "General",
+        maintenance: "Maintenance",
         confirmDeleteSauna: "Do you want to delete sauna slots?",
-        events: "events",
+        confirmDeleteAuto: "Do you want to delete auto slots?",
+        events: "Events",
         topic: "Topic",
         topics: "Topics",
         writeMessage: "Write message...",
-        announcement: "announcements",
         recommendations: "recommendations",
         training: "training",
         meetings: "meetings",
         "select topic": "select topic",
-        "general information": "general information",
-        announcements: "announcements",
+        "general information": "Info",
+        announcements: "Notices",
         LOGIN_TITLE: "Login Board",
         SAUNA_DELETED: "Sauna slots deleted.",
         AUTO_DELETED: "Auto slots deleted.",
@@ -684,6 +685,9 @@ function initBoard() {
     "INIT START:",
     document.documentElement.scrollHeight
 );
+
+console.log("1: ", window.innerHeight);
+console.log("2: ",document.documentElement.scrollHeight);
 
   let boardName = localStorage.getItem("boardName");
 
@@ -1607,7 +1611,7 @@ function deleteAutoSlots() {
 
     console.log("DELETE AUTO CALLED");
 
-    if (!confirm(t("confirmDeleteSauna"))) {
+    if (!confirm(t("confirmDeleteAuto"))) {
         return;
     }
 
