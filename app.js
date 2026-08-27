@@ -1579,11 +1579,11 @@ slots.forEach(slot => {
 
     html += `
         <div class="auto-slot">
-            <span class="slot-name">
+            <span class="auto-slot-name">
                 ${slot.slot_name}
             </span>
 
-            <span class="slot-info">
+            <span class="auto-slot-info">
                 ${slot.info || "-"}
             </span>
         </div>
