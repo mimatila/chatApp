@@ -1157,7 +1157,7 @@ input::placeholder {
      body.index-page {
         height: 100dvh;
         margin: 0;
-        overflow: hidden;
+        
     }
 
     .index-container {
