@@ -1968,16 +1968,19 @@ app.post("/saunaSlots", async (req, res) => {
         );
 
         const [slots] = await pool.query(
-            `SELECT day, time, familyName
-             FROM saunaSlots
-             WHERE board_id = (
-                 SELECT id
-                 FROM boards
-                 WHERE name = ?
-             )
-             ORDER BY day, time`,
-            [boardName]
-        );
+
+    `SELECT day, time, familyName, familyName2
+     FROM saunaSlots
+     WHERE board_id = (
+         SELECT id
+         FROM boards
+         WHERE name = ?
+     )
+     ORDER BY day, time`,
+
+    [boardName]
+
+);
 
         res.json({
             success: true,
@@ -2045,16 +2048,17 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
         const token = req.headers.authorization;
 
-
         if (!token) {
+
             return res.status(401).json({
                 success: false,
                 message: "Missing token"
             });
+
         }
 
-
         // Haetaan käyttäjä tokenilla
+
         const [users] = await pool.query(
             `
             SELECT id, board_id, role
@@ -2063,7 +2067,6 @@ app.post("/updateSaunaSlots", async (req, res) => {
             `,
             [token]
         );
-
 
         if (users.length === 0) {
 
@@ -2074,11 +2077,10 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
         }
 
-
         const user = users[0];
 
-
         // Owner tarkistus
+
         if (user.role !== "owner") {
 
             return res.status(403).json({
@@ -2088,8 +2090,8 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
         }
 
-
         // Tarkistetaan board
+
         const [boards] = await pool.query(
             `
             SELECT id
@@ -2098,7 +2100,6 @@ app.post("/updateSaunaSlots", async (req, res) => {
             `,
             [boardName]
         );
-
 
         if (boards.length === 0) {
 
@@ -2109,11 +2110,10 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
         }
 
-
         const boardId = boards[0].id;
 
-
         // Tarkistetaan että käyttäjä kuuluu tähän boardiin
+
         if (user.board_id !== boardId) {
 
             return res.status(403).json({
@@ -2123,8 +2123,8 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
         }
 
-
         // Tarkistetaan data
+
         if (!slots || !Array.isArray(slots)) {
 
             return res.status(400).json({
@@ -2134,20 +2134,21 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
         }
 
-
         // Päivitetään sauna-ajat
+
         for (const slot of slots) {
 
             await pool.query(
                 `
                 UPDATE saunaSlots
-                SET familyName = ?
+                SET familyName = ?, familyName2 = ?
                 WHERE board_id = ?
                 AND day = ?
                 AND time = ?
                 `,
                 [
                     slot.familyName || null,
+                    slot.familyName2 || null,
                     boardId,
                     slot.day,
                     slot.time
@@ -2156,11 +2157,9 @@ app.post("/updateSaunaSlots", async (req, res) => {
 
         }
 
-
         res.json({
             success: true
         });
-
 
     } catch (err) {
 

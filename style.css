@@ -733,6 +733,8 @@ input::placeholder {
 #saunaPopup .popup-content {
     width: 450px;
     max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 #saunaButtons {
@@ -780,7 +782,7 @@ input::placeholder {
 #autoPopup .popup-content {
     width: 540px;
     max-width: 90vw;
-    max-height: 50vh;
+    max-height: 90vh;
     overflow-y: auto;
     box-sizing: border-box;
 }
@@ -1154,10 +1156,9 @@ input::placeholder {
 
 @media (max-width: 600px) {
 
-     body.index-page {
+    body.index-page {
         height: 100dvh;
-        margin: 0;
-        
+        margin: 0;       
     }
 
     .index-container {

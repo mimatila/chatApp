@@ -127,7 +127,7 @@ const messages = {
         topics: "Aiheet",
         writeMessage: "Kirjoita viesti...",
         training: "Harjoitukset",
-        AUTO: "Parkkipaikat",
+        AUTO: "Autopaikat",
         meetings: "Kokoukset",
         "select topic": "valitse aihe",
         "general information": "Info",
@@ -1017,6 +1017,12 @@ function backToCategories() {
     const boardType = localStorage.getItem("boardType");
     const noticeTemplate = localStorage.getItem("noticeTemplate");
 
+    const location = document.getElementById("currentLocation");
+
+    if (location) {
+      location.innerText = "";
+    }
+
     if (msg) {
         msg.style.display = "none";
         msg.innerHTML = "";
@@ -1035,6 +1041,7 @@ function backToCategories() {
     ) {
         document.getElementById("saunaBtn").style.display = "block";
         document.getElementById("autoBtn").style.display = "block";
+       
     }
 
     currentCategory = "";
@@ -1042,6 +1049,8 @@ function backToCategories() {
     
     localStorage.removeItem("currentCategory");
     localStorage.removeItem("currentTopic");
+
+    //document.getElementById("currentLocation").style.display = "none";
 
     //updateCurrentLocation();
 }
@@ -1223,6 +1232,7 @@ function renderSaunaTable() {
     const language = localStorage.getItem("language") || "fi";
 
     const translations = {
+
         fi: {
             time: "Aika",
             Ke: "Ke",
@@ -1230,6 +1240,7 @@ function renderSaunaTable() {
             Pe: "Pe",
             La: "La"
         },
+
         en: {
             time: "Time",
             Ke: "Wed",
@@ -1240,7 +1251,6 @@ function renderSaunaTable() {
     };
 
     const t = translations[language] || translations.fi;
-
 
     // Taulukon otsikot
     tableHead.innerHTML = `
@@ -1253,7 +1263,6 @@ function renderSaunaTable() {
         </tr>
     `;
 
-
     const rows = {};
 
     saunaSlots.forEach(slot => {
@@ -1261,17 +1270,36 @@ function renderSaunaTable() {
         if (!rows[slot.time]) {
 
             rows[slot.time] = {
-                Ke: "-",
-                To: "-",
-                Pe: "-",
-                La: "-"
+
+                Ke: {
+                    familyName: "-",
+                    familyName2: ""
+                },
+
+                To: {
+                    familyName: "-",
+                    familyName2: ""
+                },
+
+                Pe: {
+                    familyName: "-",
+                    familyName2: ""
+                },
+
+                La: {
+                    familyName: "-",
+                    familyName2: ""
+                }
             };
         }
 
-        rows[slot.time][slot.day] =
-            slot.familyName ?? "-";
-    });
+        rows[slot.time][slot.day] = {
 
+            familyName: slot.familyName ?? "-",
+
+            familyName2: slot.familyName2 ?? ""
+        };
+    });
 
     Object.keys(rows).forEach(time => {
 
@@ -1279,9 +1307,13 @@ function renderSaunaTable() {
 
         row.innerHTML = `
             <td>${time}</td>
+
             <td>${renderSaunaCell(rows[time].Ke, "Ke", time)}</td>
+
             <td>${renderSaunaCell(rows[time].To, "To", time)}</td>
+
             <td>${renderSaunaCell(rows[time].Pe, "Pe", time)}</td>
+
             <td>${renderSaunaCell(rows[time].La, "La", time)}</td>
         `;
 
@@ -1294,18 +1326,28 @@ function renderSaunaCell(value, day, time) {
     if (saunaEditMode) {
 
         return `
-            <input 
+            <input
                 class="saunaInput"
                 data-day="${day}"
                 data-time="${time}"
-                value="${value === "-" ? "" : value}">
+                value="${value.familyName === "-" ? "" : value.familyName}">
+
+            <input
+                class="saunaInput"
+                data-day="${day}"
+                data-time="${time}"
+                value="${value.familyName2}">
         `;
 
     } else {
 
-        return value;
-
+    if (value.familyName2) {
+        return `${value.familyName}<br>${value.familyName2}`;
     }
+
+    return value.familyName;
+
+}
 }
 
 async function saveSauna() {
@@ -1314,33 +1356,57 @@ async function saveSauna() {
 
     const slots = [];
 
-    document.querySelectorAll(".saunaInput")
-    .forEach(input => {
+    const slotMap = {};
 
-        slots.push({
-            day: input.dataset.day,
-            time: input.dataset.time,
-            familyName: input.value
-        });
+    document.querySelectorAll(".saunaInput").forEach(input => {
+
+        const key = `${input.dataset.day}_${input.dataset.time}`;
+
+        if (!slotMap[key]) {
+
+            slotMap[key] = {
+                day: input.dataset.day,
+                time: input.dataset.time,
+                familyName: "",
+                familyName2: ""
+            };
+
+        }
+
+        if (slotMap[key].familyName === "") {
+
+            slotMap[key].familyName = input.value;
+
+        } else {
+
+            slotMap[key].familyName2 = input.value;
+
+        }
 
     });
 
+    Object.values(slotMap).forEach(slot => {
+
+        slots.push(slot);
+
+    });
 
     const response = await fetch(
         "http://localhost:3000/updateSaunaSlots",
         {
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": localStorage.getItem("token")
             },
+
             body: JSON.stringify({
                 boardName,
                 slots
             })
         }
     );
-
 
     const data = await response.json();
 
@@ -1357,7 +1423,6 @@ async function saveSauna() {
         alert(t("SAUNA_SLOT_SAVE_FAILED"));
 
     }
-
 }
 
 function closeSauna() {

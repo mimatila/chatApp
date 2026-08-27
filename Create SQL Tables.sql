@@ -96,6 +96,7 @@ CREATE TABLE saunaSlots (
     day VARCHAR(10) NOT NULL,
     time VARCHAR(20) NOT NULL,
     familyName VARCHAR(100) DEFAULT NULL,
+    familyName2 VARCHAR(100) DEFAULT NULL,
 
     FOREIGN KEY (board_id)
         REFERENCES boards(id)
