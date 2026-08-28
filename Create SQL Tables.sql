@@ -63,13 +63,28 @@ CREATE TABLE settings (
         ON DELETE CASCADE
 );
 
-CREATE TABLE quickMessages (
+CREATE TABLE quickMessagesTemplate (
     id INT AUTO_INCREMENT PRIMARY KEY,
     board_id INT,
     message VARCHAR(100),
 
     FOREIGN KEY (board_id)
         REFERENCES boards(id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE quickMessages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    board_id INT,
+    user_id INT,
+    message VARCHAR(100),
+
+    FOREIGN KEY (board_id)
+        REFERENCES boards(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
         ON DELETE CASCADE
 );
 

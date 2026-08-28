@@ -403,8 +403,13 @@ async function showCategories() {
     const boardName = localStorage.getItem("boardName");
 
     const response = await fetch(
-        `http://localhost:3000/board/${boardName}`
-    );
+    `http://localhost:3000/board/${boardName}`,
+    {
+        headers: {
+            "Authorization": localStorage.getItem("token")
+        }
+    }
+);
 
     const data = await response.json();
 
@@ -416,7 +421,12 @@ async function updateVisitedUsers() {
     const boardName = localStorage.getItem("boardName");
 
     const response = await fetch(
-        `http://localhost:3000/board/${boardName}`
+        `http://localhost:3000/board/${boardName}`,
+        {
+            headers: {
+                "Authorization": localStorage.getItem("token")
+            }
+        }
     );
 
     const data = await response.json();
@@ -424,7 +434,6 @@ async function updateVisitedUsers() {
     if (data.success) {
         updateVisitedUI(data);
     }
-
 }
 
 function showTopics() {
@@ -696,6 +705,8 @@ console.log("2: ",document.documentElement.scrollHeight);
   console.log("NO BOARD NAME");
   return;
 }*/
+
+console.log("BOARD NAME:", boardName);
 
   if (!boardName) {
     window.location.href = "index.html";
@@ -1939,7 +1950,11 @@ const boardName = localStorage.getItem("boardName");
 
 if (!boardName) return;
 
-fetch(`http://localhost:3000/board/${boardName}`)
+fetch(`http://localhost:3000/board/${boardName}`, {
+    headers: {
+        "Authorization": localStorage.getItem("token")
+    }
+})
 .then(res => res.json())
 .then(data => {
 
@@ -1980,12 +1995,17 @@ function loadMessage(forceScroll = false) {
     return;
   }
 
-  fetch(`http://localhost:3000/board/${boardName}`)
-    .then(res => res.json())
-    .then(data => {
+  fetch(`http://localhost:3000/board/${boardName}`, {
+  headers: {
+    "Authorization": localStorage.getItem("token")
+  }
+})
+  .then(res => res.json())
+  .then(data => {
 
     const boardType = data.boardType;
     const noticeTemplate = data.noticeTemplate;
+
     localStorage.setItem("boardType", boardType);
     localStorage.setItem("noticeTemplate", noticeTemplate);
 
@@ -2753,11 +2773,15 @@ function openSettings() {
   const boardName =
     localStorage.getItem("boardName");
 
-  fetch(`http://localhost:3000/board/${boardName}`)
-    .then(res => res.json())
-    .then(board => {
+  fetch(`http://localhost:3000/board/${boardName}`, {
+  headers: {
+    "Authorization": localStorage.getItem("token")
+  }
+})
+  .then(res => res.json())
+  .then(board => {
 
-      document.getElementById(
+    document.getElementById(
         "autoDeleteDays"
       ).value =
         board.autoDeleteDays ?? 10;
@@ -2865,7 +2889,11 @@ function showMembers() {
   
   const boardName = localStorage.getItem("boardName");
 
-  fetch(`http://localhost:3000/board/${boardName}`)
+  fetch(`http://localhost:3000/board/${boardName}`, {
+    headers: {
+      "Authorization": localStorage.getItem("token")
+    }
+  })
     .then(res => res.json())
     .then(board => {
 
@@ -3276,7 +3304,11 @@ function loadRequests() {
 
   const boardName = localStorage.getItem("boardName");
 
-  fetch(`http://localhost:3000/board/${boardName}`)
+  fetch(`http://localhost:3000/board/${boardName}`, {
+  headers: {
+    "Authorization": localStorage.getItem("token")
+  }
+})
     .then(res => res.json())
     .then(board => {     
 
@@ -3486,41 +3518,47 @@ function renderQuickPopup(){
 
   el.innerHTML = "";
 
-  fetch(`http://localhost:3000/board/${boardName}`)
+  fetch(`http://localhost:3000/board/${boardName}`, {
+    headers: {
+      "Authorization": localStorage.getItem("token")
+    }
+  })
     .then(res => res.json())
     .then(board => {
 
       const quickMessages = board.quickMessages || [];
 
+      // ... loppu ennallaan
+
       if (editMode) {
 
-  el.innerHTML =
-    quickMessages.map((msg) => `
-      <input class="quick-input" value="${msg}">
-    `).join("");
+        el.innerHTML =
+          quickMessages.map((msg) => `
+            <input class="quick-input" value="${msg}">
+          `).join("");
 
-} else {
+      } else {
 
-  el.innerHTML =
-    quickMessages.map((msg) => {
+        el.innerHTML =
+          quickMessages.map((msg) => {
 
-      const shortMsg = msg.length > 39 
-        ? msg.substring(0, 39) + "..."
-        : msg;
+            const shortMsg = msg.length > 39 
+              ? msg.substring(0, 39) + "..."
+              : msg;
 
-      return `
-      <div class="quick-row"
-          onclick="sendQuickMessage(this)">
-          ${shortMsg}
-      </div>
-      `;
+            return `
+              <div class="quick-row"
+                   onclick="sendQuickMessage(this)">
+                ${shortMsg}
+              </div>
+            `;
 
-    }).join("");
-    }
+          }).join("");
+      }
 
       popup.style.display = "flex";
     });
-} 
+}
 
 function sendQuickMessage(el) {
 

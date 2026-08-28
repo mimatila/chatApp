@@ -16,6 +16,17 @@ body {
     user-select: none;
 }
 
+#logo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  z-index: 9999;
+  background: transparent;
+}
+
 body.index-page {
     margin: 0;
 }
@@ -740,7 +751,7 @@ input::placeholder {
   width: 300px;
   margin: 100px auto;
   border-radius: 10px;
-  max-height: 90vh;
+  max-height: 95vh;
   overflow-y: auto;
 }
 
@@ -999,7 +1010,6 @@ input::placeholder {
 
 #quickMessagesPopup .popup-content {
   padding: 10px;
-  max-height: 95vh;
   box-sizing: border-box;
   
   /*transform: translateY(-50px);*/

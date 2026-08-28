@@ -104,6 +104,8 @@ if (!ok) {
 });
 
 app.post("/create", async (req, res) => {
+   
+  let quickMessagesTemplate = [];
 
   const {
     boardName,
@@ -121,7 +123,9 @@ app.post("/create", async (req, res) => {
     });
 }
 
-  const quickMessages = [
+if(boardType === "family"){  
+
+  quickMessagesTemplate = [
     "Kaupassa",
     "Töissä",
     "Kotona",
@@ -133,6 +137,8 @@ app.post("/create", async (req, res) => {
     "Tauolla",
     "Kuntosalilla"
   ];
+
+} 
 
   const reservedNames = ["admin"];
 
@@ -189,7 +195,7 @@ const boardId = boardResult.insertId;
   const hash = await bcrypt.hash(boardPassword, 10);
   
   // Luo owner
-  await connection.query(
+  const [userResult] = await connection.query(
   `INSERT INTO users
    (board_id, username, password, email, role, token)
    VALUES (?, ?, ?, ?, ?, ?)`,
@@ -203,18 +209,39 @@ const boardId = boardResult.insertId;
   ]
 );
 
-  // Lisää quickMessages
-  for (const msg of quickMessages) {
+const ownerId = userResult.insertId;
+
+if (boardType === "family") {
+
+  // Luo quickMessagesTemplate
+  for (const msg of quickMessagesTemplate) {
+
     await connection.query(
-      `INSERT INTO quickMessages
-      (board_id, message)
-      VALUES (?, ?)`,
+      `INSERT INTO quickMessagesTemplate
+       (board_id, message)
+       VALUES (?, ?)`,
       [
         boardId,
         msg
       ]
     );
+
   }
+
+  // Kopioi template ownerin quickMessages-setiksi
+  await connection.query(
+    `INSERT INTO quickMessages
+     (board_id, user_id, message)
+     SELECT board_id, ?, message
+     FROM quickMessagesTemplate
+     WHERE board_id = ?`,
+    [
+      ownerId,
+      boardId
+    ]
+  );
+
+} 
 
   await connection.commit();
 
@@ -712,108 +739,146 @@ app.get("/favicon.ico", (req, res) => {
 
 app.get("/board/:boardName", async (req, res) => {
 
-  const boardName = req.params.boardName;
+    const boardName = req.params.boardName;
 
-  try {
+    try {
 
-    // Hae board
-    const [boards] = await pool.query(
-  "SELECT id, boardType, noticeTemplate FROM boards WHERE name = ?",
-  [boardName]
-);
+        // Hae board
+        const [boards] = await pool.query(
+            "SELECT id, boardType, noticeTemplate FROM boards WHERE name = ?",
+            [boardName]
+        );
 
-    if (boards.length === 0) {
-      return res.status(404).json({
+        if (boards.length === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Taulua ei löydy"
+            });
+
+        }
+
+        const boardId = boards[0].id;
+        const boardType = boards[0].boardType;
+
+        // Hae settings
+        const [settings] = await pool.query(
+            "SELECT autoDeleteDays FROM settings WHERE board_id = ?",
+            [boardId]
+        );
+
+        const autoDeleteDays =
+            settings[0]?.autoDeleteDays ?? 30;
+
+        // await cleanup(boardId, autoDeleteDays);
+
+
+        // Hae käyttäjät
+        const [users] = await pool.query(
+            `SELECT username, email, role, token
+             FROM users
+             WHERE board_id = ?`,
+            [boardId]
+        );
+
+
+        // Hae viestit
+        const [boardMessages] = await pool.query(
+            `SELECT id, author, time, text, type, category, topic, header
+             FROM boardMessages
+             WHERE board_id = ?
+             ORDER BY time`,
+            [boardId]
+        );
+
+
+        // Hae liittymispyynnöt
+        const [pendingRequests] = await pool.query(
+            `SELECT id, username, password, email, status, time
+             FROM pendingRequests
+             WHERE board_id = ?`,
+            [boardId]
+        );
+
+
+        // Hae quickMessagesTemplate vain family-boardille
+        // Tunnista kirjautunut käyttäjä
+const user = await authUser(req, boardName);
+
+if (!user) {
+    return res.status(401).json({
         success: false,
-        message: "Taulua ei löydy"
-      });
+        message: "LOGIN_AGAIN"
+    });
+}
+
+// Hae käyttäjän omat quickMessages
+let quickMessages = [];
+
+if (boardType === "family") {
+
+    const [rows] = await pool.query(
+        `SELECT message
+         FROM quickMessages
+         WHERE board_id = ?
+         AND user_id = ?
+         ORDER BY id`,
+        [boardId, user.id]
+    );
+
+    quickMessages = rows.map(
+        q => q.message
+    );
+}
+
+
+        // Hae viimeksi nähdyt käyttäjät
+        const [visitedUsers] = await pool.query(
+            `SELECT name, lastSeen
+             FROM visitedUsers
+             WHERE board_id = ?`,
+            [boardId]
+        );
+
+
+        // Rakennetaan JSON
+        const board = {
+
+            boardType: boards[0].boardType,
+
+            noticeTemplate: boards[0].noticeTemplate,
+
+            users,
+
+            boardMessages,
+
+            pendingRequests,
+
+            autoDeleteDays:
+                settings.length > 0
+                    ? settings[0].autoDeleteDays
+                    : 10,
+
+            quickMessages,
+
+            visitedUsers
+        };
+
+        console.log("BOARD RESPONSE:", board);
+        res.json(board);
+
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
     }
 
-    const boardId = boards[0].id;
-
- 
-    const [settings] = await pool.query(
-      "SELECT autoDeleteDays FROM settings WHERE board_id = ?",
-      [boardId]
-    );
-
-const autoDeleteDays = settings[0]?.autoDeleteDays ?? 30;
-
-//await cleanup(boardId, autoDeleteDays);
-
-
-    // Hae käyttäjät
-    const [users] = await pool.query(
-      `SELECT username, email, role, token
-       FROM users
-       WHERE board_id = ?`,
-      [boardId]
-    );
-
-    // Hae viestit
-   const [boardMessages] = await pool.query(
-  `SELECT id, author, time, text, type, category, topic, header
-   FROM boardMessages
-   WHERE board_id = ?
-   ORDER BY time`,
-  [boardId]
-);
-
-    // Hae liittymispyynnöt
-    const [pendingRequests] = await pool.query(
-      `SELECT id, username, password, email, status, time
-       FROM pendingRequests
-       WHERE board_id = ?`,
-      [boardId]
-    );
-
-    // Hae pikaviestit
-    const [quickMessages] = await pool.query(
-      `SELECT message
-       FROM quickMessages
-       WHERE board_id = ?
-       ORDER BY id`,
-      [boardId]
-    );
-
-    // Hae viimeksi nähdyt käyttäjät
-    const [visitedUsers] = await pool.query(
-      `SELECT name, lastSeen
-       FROM visitedUsers
-       WHERE board_id = ?`,
-      [boardId]
-    );
-
-    // Rakennetaan sama JSON kuin ennen
-    const board = {
-
-      boardType: boards[0].boardType,
-
-      noticeTemplate: boards[0].noticeTemplate,
-
-      users,
-      boardMessages,
-      pendingRequests,
-      autoDeleteDays:
-      settings.length > 0
-      ? settings[0].autoDeleteDays
-      : 10,
-      quickMessages:
-      quickMessages.map(q => q.message),
-      visitedUsers
-    };
-
-    res.json(board);
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: "Database error"
-    });
-  }
 });
 
 app.post("/loadMessages", async (req, res) => {
@@ -983,86 +1048,94 @@ app.get("/boards/count", async (req, res) => {
 
 app.post("/quickMessages/saveAll", async (req, res) => {
 
-  const { boardName, quickMessages } = req.body;
+    const { boardName, quickMessages } = req.body;
 
-  try {
+    try {
 
-    const user = await authUser(req, boardName);
+        const user = await authUser(req, boardName);
 
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "LOGIN_AGAIN"
-      });
+        if (!user) {
+
+            return res.status(401).json({
+                success: false,
+                message: "LOGIN_AGAIN"
+            });
+
+        }
+
+        if (!Array.isArray(quickMessages) || quickMessages.length !== 10) {
+
+            return res.status(400).json({
+                success: false,
+                message: "INVALID_QUICK_MESSAGES"
+            });
+
+        }
+
+        if (quickMessages.some(msg => msg.trim() === "")) {
+
+            return res.status(400).json({
+                success: false,
+                message: "QUICK_MESSAGE_EMPTY"
+            });
+
+        }
+
+        // Päivitä käyttäjän omat quickMessages-rivit
+        const [rows] = await pool.query(
+            `SELECT id
+             FROM quickMessages
+             WHERE board_id = ?
+             AND user_id = ?
+             ORDER BY id`,
+            [
+                user.board_id,
+                user.id
+            ]
+        );
+
+        if (rows.length !== quickMessages.length) {
+
+            return res.status(400).json({
+                success: false,
+                message: "INVALID_QUICK_MESSAGES"
+            });
+
+        }
+
+        for (let i = 0; i < quickMessages.length; i++) {
+
+            await pool.query(
+                `UPDATE quickMessages
+                 SET message = ?
+                 WHERE id = ?
+                 AND board_id = ?
+                 AND user_id = ?`,
+                [
+                    quickMessages[i],
+                    rows[i].id,
+                    user.board_id,
+                    user.id
+                ]
+            );
+
+        }
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: "DATABASE_ERROR"
+        });
+
     }
 
-    // Hae board_id
-    const [boards] = await pool.query(
-      "SELECT id FROM boards WHERE name = ?",
-      [boardName]
-    );
-
-    if (boards.length === 0) {
-  return res.status(404).json({
-    success: false,
-    message: "BOARD_NOT_FOUND"
-  });
-}
-
-    const boardId = boards[0].id;
-
-    // Päivitä pikaviesti
-    const [rows] = await pool.query(
-  `SELECT id
-   FROM quickMessages
-   WHERE board_id = ?
-   ORDER BY id`,
-  [boardId]
-);
-
-if (!Array.isArray(quickMessages) || quickMessages.length !== 10) {
-  return res.status(400).json({
-    success: false,
-    message: "INVALID_QUICK_MESSAGES"
-  });
-}
-
-if (quickMessages.some(msg => msg.trim() === "")) {
-  return res.status(400).json({
-    success: false,
-    message: "QUICK_MESSAGE_EMPTY"
-  });
-}
-
-for (let i = 0; i < quickMessages.length; i++) {
-
-  await pool.query(
-    `UPDATE quickMessages
-     SET message = ?
-     WHERE id = ?
-     AND board_id = ?`,
-    [
-      quickMessages[i],
-      rows[i].id,
-      boardId
-    ]
-  );
-
-}
-
-    res.json({
-    success: true
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: "DATABASE_ERROR"
-    });
-  }
 });
 
 app.delete("/message/:boardName/:id", async (req, res) => {
@@ -1404,19 +1477,31 @@ app.post("/acceptRequest", async (req, res) => {
     const request = rows[0];
 
     // Lisää käyttäjä
+    const [userResult] = await connection.query(
+      `INSERT INTO users
+       (board_id, username, email, password, role, token)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        request.board_id,
+        request.username,
+        request.email,
+        request.password,
+        "member",
+        null
+      ]
+    );
+
+    const userId = userResult.insertId;
+
+    // Kopioi quickMessagesTemplate käyttäjän quickMessages-setiksi
     await connection.query(
-  `INSERT INTO users
-   (board_id, username, email, password, role, token)
-   VALUES (?, ?, ?, ?, ?, ?)`,
-  [
-    request.board_id,
-    request.username,
-    request.email,
-    request.password,   // tämä on jo hash
-    "member",
-    null
-  ]
-);
+      `INSERT INTO quickMessages
+       (board_id, user_id, message)
+       SELECT board_id, ?, message
+       FROM quickMessagesTemplate
+       WHERE board_id = ?`,
+      [userId, request.board_id]
+    );
 
     // Poista liittymispyyntö
     await connection.query(
@@ -1444,7 +1529,9 @@ app.post("/acceptRequest", async (req, res) => {
   } finally {
 
     connection.release();
+
   }
+
 });
 
 app.post("/rejectRequest", async (req, res) => {
