@@ -554,7 +554,7 @@ input[type="checkbox"]:checked {
 
 .auto-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0;
     width: 100%;
     box-sizing: border-box;
@@ -563,13 +563,15 @@ input[type="checkbox"]:checked {
 
 .auto-edit-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 8px;
+    row-gap: 2px;
     margin-bottom: 20px;
 }
 
 .auto-edit-grid input {
     width: 100%;
+    height: 28px;
     box-sizing: border-box;
 }
 
@@ -583,13 +585,13 @@ input[type="checkbox"]:checked {
     min-height: 36px;
 }
 
-.auto-slot:nth-child(4n + 1) {
+.auto-slot:nth-child(3n + 1) {
     border-left: 1px solid black;
 }
 
 .auto-edit-slot {
     display: grid;
-    grid-template-columns: 34px 80px;
+    grid-template-columns: 34px 120px;
     gap: 2px;
 }
 
@@ -597,9 +599,7 @@ input[type="checkbox"]:checked {
 .auto-slot-info {
     font-size: 11px;
     padding: 4px;
-
     box-sizing: border-box;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1395,27 +1395,37 @@ input::placeholder {
     }
 
     .auto-grid {
-      grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .auto-edit-grid {
-      grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .auto-grid .auto-slot {
+        border-left: none;
+    }
+
+    .auto-grid .auto-slot:nth-child(2n + 1) {
+        border-left: 1px solid black;
     }
 
     .auto-slot {
-      grid-template-columns: 32px 60px;
+      grid-template-columns: 32px 80px;
     }
+
+    .auto-slot {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 0;
+    /*border-right: 1px solid black;*/
+    border-bottom: 1px solid black;
+    box-sizing: border-box;
+    min-height: 36px;
+}
 
     .auto-edit-slot {
-      grid-template-columns: 34px 60px;
-    }
-
-    .auto-slot-name {
-      font-size: 9px;
-    }
-
-    .auto-slot-info {
-      font-size: 9px;   
+      grid-template-columns: 34px 110px;
     }
 
     .slot-input {

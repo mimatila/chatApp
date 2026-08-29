@@ -986,7 +986,7 @@ function getCategories(boardType, noticeTemplate) {
     return categories_family;
 }
 
-function renderTopicsGrid(topics) {
+function renderTopicsMessages(topics) {
 
     console.log("RENDER TOPICS GRID:", topics);
 
@@ -3287,7 +3287,7 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
             return data;
         }
 
-        renderTopicsGrid(data.topics);
+        renderTopicsMessages(data.topics);
 
         if (selectedTopic) {
 
@@ -3595,11 +3595,11 @@ function renderQuickPopup(){
 
       };
 
-      if (editMode) {
+    if (editMode) {
 
-  el.innerHTML = quickMessages.map((msg) => {
+      el.innerHTML = quickMessages.map((msg) => {
 
-    let displayMsg = msg;
+      let displayMsg = msg;
 
     if (quickMessagesTemplate.includes(msg)) {
 
