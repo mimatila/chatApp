@@ -3645,6 +3645,11 @@ function updateEditModeUI() {
     : "none";
   }
 
+  clearBtn.style.display =
+    (role === "owner" && editMode)
+    ? ""
+    : "none";
+
   settingsBtn.style.display =
     (role === "owner" && editMode)
     ? ""

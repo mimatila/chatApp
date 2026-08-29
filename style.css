@@ -98,7 +98,7 @@ body.index-page {
 
 .category-card {
   
-  background: #2b6cb0;
+  background: #3182ce;
   border: 2px solid black;
   border-radius: 8px;
   color: white;
@@ -160,7 +160,7 @@ body.index-page {
 .topic-card {
     position: relative;
     display: flex;
-    background: #2b6cb0;
+    background: #3182ce;
     border: 2px solid black;
     color: white;
     /*border-radius: 10px;*/
@@ -293,14 +293,6 @@ body.index-page {
     font-size: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-
-#openJoinBtn { 
-      font-size: 12px; 
-    }
-
-    #openCreateBtn {
-      font-size: 12px;
-    }
 
 .owner-topic-title {
     display: block;
@@ -564,12 +556,9 @@ input[type="checkbox"]:checked {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0;
-
     width: 100%;
     box-sizing: border-box;
-
     border-top: 1px solid black;
-    border-left: 1px solid black;
 }
 
 .auto-edit-grid {
@@ -588,12 +577,14 @@ input[type="checkbox"]:checked {
     display: grid;
     grid-template-columns: 32px 1fr;
     gap: 0;
-
     border-right: 1px solid black;
     border-bottom: 1px solid black;
-
     box-sizing: border-box;
     min-height: 36px;
+}
+
+.auto-slot:nth-child(4n + 1) {
+    border-left: 1px solid black;
 }
 
 .auto-edit-slot {

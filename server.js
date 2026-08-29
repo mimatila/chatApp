@@ -864,7 +864,6 @@ if (boardType === "family") {
             visitedUsers
         };
 
-        console.log("BOARD RESPONSE:", board);
         res.json(board);
 
 
@@ -2110,8 +2109,6 @@ app.post("/createSaunaSlots", async (req, res) => {
              FROM defaultSaunaSlots`,
             [boardName]
         );
-
-        console.log("DEFAULT SAUNA SLOTS COPIED");
 
         res.json({
             success: true
