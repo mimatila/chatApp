@@ -4,6 +4,7 @@ const app = express();
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const mysql = require("mysql2/promise");
+let quickMessagesTemplate = [];
 
 const pool = mysql.createPool({
   host: "localhost",
@@ -104,8 +105,6 @@ if (!ok) {
 });
 
 app.post("/create", async (req, res) => {
-   
-  let quickMessagesTemplate = [];
 
   const {
     boardName,
@@ -117,36 +116,23 @@ app.post("/create", async (req, res) => {
   } = req.body;
 
   if (!boardName || !boardName.trim()) {
+
     return res.status(400).json({
-        success: false,
-        message: "Board name is required"
+      success: false,
+      message: "Board name is required"
     });
-}
 
-if(boardType === "family"){  
-
-  quickMessagesTemplate = [
-    "Kaupassa",
-    "Töissä",
-    "Kotona",
-    "Nukkumassa",
-    "Syömässä",
-    "Tulossa",
-    "Myöhässä",
-    "Sairas",
-    "Tauolla",
-    "Kuntosalilla"
-  ];
-
-} 
+  }
 
   const reservedNames = ["admin"];
 
   if (reservedNames.includes(boardName.toLowerCase())) {
+
     return res.json({
-        success: false,
-        message: "BOARD_NAME_RESERVED"
+      success: false,
+      message: "BOARD_NAME_RESERVED"
     });
+
   }
 
   const connection = await pool.getConnection();
@@ -156,99 +142,127 @@ if(boardType === "family"){
     await connection.beginTransaction();
 
     // Onko board jo olemassa?
+
     const [boards] = await connection.query(
       "SELECT id FROM boards WHERE name = ?",
       [boardName]
     );
 
     if (boards.length > 0) {
+
       await connection.rollback();
 
       return res.status(400).json({
-      success: false,
-      message: "BOARD_EXISTS"
-  });
-}
+        success: false,
+        message: "BOARD_EXISTS"
+      });
+
+    }
 
     // Luo board
-const [boardResult] = await connection.query(
-  "INSERT INTO boards (name, boardType, noticeTemplate) VALUES (?, ?, ?)",
-  [
-    boardName,
-    boardType,
-    boardType === "notice" ? noticeTemplate : null
-  ]
-);
 
-const boardId = boardResult.insertId;
-
-  const autoDays = (boardType === "notice") ? 30 : 10;
-
-  // Luo settings oletusarvolla 10 päivää
-  await connection.query(
-  `INSERT INTO settings
-  (board_id, autoDeleteDays)
-  VALUES (?, ?)`,
-  [boardId, autoDays]
-  );
-
-  const hash = await bcrypt.hash(boardPassword, 10);
-  
-  // Luo owner
-  const [userResult] = await connection.query(
-  `INSERT INTO users
-   (board_id, username, password, email, role, token)
-   VALUES (?, ?, ?, ?, ?, ?)`,
-  [
-    boardId,
-    boardUsername,
-    hash,
-    ownerEmail,
-    "owner",
-    null
-  ]
-);
-
-const ownerId = userResult.insertId;
-
-if (boardType === "family") {
-
-  // Luo quickMessagesTemplate
-  for (const msg of quickMessagesTemplate) {
-
-    await connection.query(
-      `INSERT INTO quickMessagesTemplate
-       (board_id, message)
-       VALUES (?, ?)`,
+    const [boardResult] = await connection.query(
+      "INSERT INTO boards (name, boardType, noticeTemplate) VALUES (?, ?, ?)",
       [
-        boardId,
-        msg
+        boardName,
+        boardType,
+        boardType === "notice" ? noticeTemplate : null
       ]
     );
 
-  }
+    const boardId = boardResult.insertId;
 
-  // Kopioi template ownerin quickMessages-setiksi
-  await connection.query(
-    `INSERT INTO quickMessages
-     (board_id, user_id, message)
-     SELECT board_id, ?, message
-     FROM quickMessagesTemplate
-     WHERE board_id = ?`,
-    [
-      ownerId,
-      boardId
-    ]
-  );
+    const autoDays = (boardType === "notice") ? 30 : 10;
 
-} 
+    // Luo settings oletusarvolla
 
-  await connection.commit();
+    await connection.query(
+      `INSERT INTO settings
+       (board_id, autoDeleteDays)
+       VALUES (?, ?)`,
+      [boardId, autoDays]
+    );
 
-  res.json({
-  success: true,
-  message: "BOARD_CREATED"
-  });
+    const hash = await bcrypt.hash(boardPassword, 10);
+
+    // Luo owner
+
+    const [userResult] = await connection.query(
+      `INSERT INTO users
+       (board_id, username, password, email, role, token)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        boardId,
+        boardUsername,
+        hash,
+        ownerEmail,
+        "owner",
+        null
+      ]
+    );
+
+    const ownerId = userResult.insertId;
+
+    // Family-boardin quickMessages
+
+    if (boardType === "family") {
+
+      // Tarkista onko yhteinen template jo olemassa
+
+      const [templateRows] = await connection.query(
+        `SELECT id
+         FROM quickMessagesTemplate
+         LIMIT 1`
+      );
+
+      // Luo template vain ensimmäisellä kerralla
+
+      if (templateRows.length === 0) {
+
+        const quickMessagesTemplate = [
+        "At the store",
+        "At work",
+        "At home",
+        "Sleeping",
+        "Eating",
+        "Coming",
+        "Running late",
+        "On sick leave",
+        "On a break",
+        "At the gym"
+      ];
+
+        for (const msg of quickMessagesTemplate) {
+
+          await connection.query(
+            `INSERT INTO quickMessagesTemplate
+             (message)
+             VALUES (?)`,
+            [msg]
+          );
+
+        }
+
+      }
+
+      // Kopioi yhteinen template ownerin quickMessages-setiksi
+
+      await connection.query(
+        `INSERT INTO quickMessages
+         (board_id, user_id, message)
+         SELECT ?, ?, message
+         FROM quickMessagesTemplate`,
+        [boardId, ownerId]
+      );
+
+    }
+
+    await connection.commit();
+
+    res.json({
+      success: true,
+      message: "BOARD_CREATED"
+    });
 
   } catch (err) {
 
@@ -257,15 +271,16 @@ if (boardType === "family") {
     console.error(err);
 
     res.status(500).json({
-    success: false,
-    message: "DATABASE_ERROR"
-  });
+      success: false,
+      message: "DATABASE_ERROR"
+    });
 
   } finally {
 
     connection.release();
 
   }
+
 });
 
 app.delete("/delete/:boardName", async (req, res) => {
@@ -744,6 +759,7 @@ app.get("/board/:boardName", async (req, res) => {
     try {
 
         // Hae board
+
         const [boards] = await pool.query(
             "SELECT id, boardType, noticeTemplate FROM boards WHERE name = ?",
             [boardName]
@@ -761,7 +777,9 @@ app.get("/board/:boardName", async (req, res) => {
         const boardId = boards[0].id;
         const boardType = boards[0].boardType;
 
+
         // Hae settings
+
         const [settings] = await pool.query(
             "SELECT autoDeleteDays FROM settings WHERE board_id = ?",
             [boardId]
@@ -770,10 +788,9 @@ app.get("/board/:boardName", async (req, res) => {
         const autoDeleteDays =
             settings[0]?.autoDeleteDays ?? 30;
 
-        // await cleanup(boardId, autoDeleteDays);
-
 
         // Hae käyttäjät
+
         const [users] = await pool.query(
             `SELECT username, email, role, token
              FROM users
@@ -783,6 +800,7 @@ app.get("/board/:boardName", async (req, res) => {
 
 
         // Hae viestit
+
         const [boardMessages] = await pool.query(
             `SELECT id, author, time, text, type, category, topic, header
              FROM boardMessages
@@ -793,6 +811,7 @@ app.get("/board/:boardName", async (req, res) => {
 
 
         // Hae liittymispyynnöt
+
         const [pendingRequests] = await pool.query(
             `SELECT id, username, password, email, status, time
              FROM pendingRequests
@@ -801,38 +820,61 @@ app.get("/board/:boardName", async (req, res) => {
         );
 
 
-        // Hae quickMessagesTemplate vain family-boardille
         // Tunnista kirjautunut käyttäjä
-const user = await authUser(req, boardName);
 
-if (!user) {
-    return res.status(401).json({
-        success: false,
-        message: "LOGIN_AGAIN"
-    });
-}
+        const user = await authUser(req, boardName);
 
-// Hae käyttäjän omat quickMessages
-let quickMessages = [];
+        if (!user) {
 
-if (boardType === "family") {
+            return res.status(401).json({
+                success: false,
+                message: "LOGIN_AGAIN"
+            });
 
-    const [rows] = await pool.query(
-        `SELECT message
-         FROM quickMessages
-         WHERE board_id = ?
-         AND user_id = ?
-         ORDER BY id`,
-        [boardId, user.id]
-    );
+        }
 
-    quickMessages = rows.map(
-        q => q.message
-    );
-}
+
+        // Hae quickMessagesTemplate vain family-boardille
+
+        if (boardType === "family") {
+
+            const [templateRows] = await pool.query(
+                `SELECT message
+                 FROM quickMessagesTemplate
+                 ORDER BY id`
+            );
+
+            quickMessagesTemplate = templateRows.map(
+                q => q.message
+            );
+
+        }
+
+
+        // Hae käyttäjän omat quickMessages
+
+        let quickMessages = [];
+
+        if (boardType === "family") {
+
+            const [rows] = await pool.query(
+                `SELECT message
+                 FROM quickMessages
+                 WHERE board_id = ?
+                 AND user_id = ?
+                 ORDER BY id`,
+                [boardId, user.id]
+            );
+
+            quickMessages = rows.map(
+                q => q.message
+            );
+
+        }
 
 
         // Hae viimeksi nähdyt käyttäjät
+
         const [visitedUsers] = await pool.query(
             `SELECT name, lastSeen
              FROM visitedUsers
@@ -842,6 +884,7 @@ if (boardType === "family") {
 
 
         // Rakennetaan JSON
+
         const board = {
 
             boardType: boards[0].boardType,
@@ -861,8 +904,12 @@ if (boardType === "family") {
 
             quickMessages,
 
+            quickMessagesTemplate,
+
             visitedUsers
+
         };
+
 
         res.json(board);
 
@@ -1493,14 +1540,20 @@ app.post("/acceptRequest", async (req, res) => {
     const userId = userResult.insertId;
 
     // Kopioi quickMessagesTemplate käyttäjän quickMessages-setiksi
-    await connection.query(
-      `INSERT INTO quickMessages
-       (board_id, user_id, message)
-       SELECT board_id, ?, message
-       FROM quickMessagesTemplate
-       WHERE board_id = ?`,
-      [userId, request.board_id]
-    );
+
+await connection.query(
+
+  `INSERT INTO quickMessages
+   (board_id, user_id, message)
+   SELECT ?, ?, message
+   FROM quickMessagesTemplate`,
+
+  [
+    request.board_id,
+    userId
+  ]
+
+);
 
     // Poista liittymispyyntö
     await connection.query(

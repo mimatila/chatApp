@@ -928,6 +928,13 @@ input::placeholder {
   white-space: nowrap;
 }
 
+#openJoinBtn { 
+      font-size: 12px; 
+    }
+
+    #openCreateBtn {
+      font-size: 12px;
+    }
 
 .visited-users {
   padding: 6px 10px;
@@ -1200,12 +1207,12 @@ input::placeholder {
     }
 
     #openJoinBtn {
-      width: 100px;  
+        
       font-size: 10px; 
     }
 
     #openCreateBtn {
-      width: 100px;
+      
       font-size: 10px;
     }
 

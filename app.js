@@ -59,6 +59,16 @@ ${t("ADDITIONAL_INFO")}:`
 
 const messages = {
     fi: {   
+        QUICK_AT_STORE: "Kaupassa",
+        QUICK_AT_WORK: "Töissä",
+        QUICK_AT_HOME: "Kotona",
+        QUICK_SLEEPING: "Nukkumassa",
+        QUICK_EATING: "Syömässä",
+        QUICK_COMING: "Tulossa",
+        QUICK_LATE: "Myöhässä",
+        QUICK_SICK_LEAVE: "Sairaslomalla",
+        QUICK_BREAK: "Tauolla",
+        QUICK_GYM: "Punttisalilla",
         ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
         BOARD_NOT_FOUND: "Taulua ei löytynyt.",
         onlyOwnerCanWrite: "Vain omistaja voi kirjoittaa tähän ketjuun.",
@@ -190,6 +200,16 @@ const messages = {
         NOTICE_YHDISTYS: "yhdistys"
         },
     en: {
+        QUICK_AT_STORE: "At the store",
+        QUICK_AT_WORK: "At work",
+        QUICK_AT_HOME: "At home",
+        QUICK_SLEEPING: "Sleeping",
+        QUICK_EATING: "Eating",
+        QUICK_COMING: "Coming",
+        QUICK_LATE: "Running late",
+        QUICK_SICK_LEAVE: "On sick leave",
+        QUICK_BREAK: "On a break",
+        QUICK_GYM: "At the gym",
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
         BOARD_INFO: "Notice Board",
@@ -391,12 +411,12 @@ async function showCategories() {
     el.style.display = "grid";
     el.style.height = "100%";
 
+    document.getElementById("saunaBtn").style.display = "block";
+    document.getElementById("autoBtn").style.display = "block";
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "none";
-    document.getElementById("saunaBtn").style.display = "block";
-    document.getElementById("autoBtn").style.display = "block";
-
+    
     renderCategories();
     loadTopicCounts();
 
@@ -439,10 +459,10 @@ async function updateVisitedUsers() {
 function showTopics() {
     
     console.log("SHOW TOPICS CALLED");
-    document.getElementById("boardCategoriesView").style.display = "none";
     document.getElementById("boardTopicsView").style.display = "grid";
-    document.getElementById("boardMessagesDiv").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("boardCategoriesView").style.display = "none";   
+    document.getElementById("boardMessagesDiv").style.display = "none";   
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
     
@@ -450,9 +470,9 @@ function showTopics() {
 
 function showMessages() {
        
-    document.getElementById("boardCategoriesView").style.display = "none";
-    document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "block";
+    document.getElementById("boardCategoriesView").style.display = "none";
+    document.getElementById("boardTopicsView").style.display = "none";   
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
     backToCategoriesBtn.style.display = "block";
@@ -1029,9 +1049,14 @@ function backToCategories() {
     const noticeTemplate = localStorage.getItem("noticeTemplate");
 
     const location = document.getElementById("currentLocation");
+    const visited = document.getElementById("visitedUsers");
 
     if (location) {
       location.innerText = "";
+    }
+
+    if (visited) {
+      visited.innerHTML="";
     }
 
     if (msg) {
@@ -3504,14 +3529,33 @@ function renderQuickPopup(){
   console.log("SHOW QUICK MESSAGES CALLED");
 
   const saveBtn = document.getElementById("saveQuickBtn");
+
+  const defaultsOption = document.getElementById("quickDefaultsOption");
+
   const editMode = document.getElementById("editMode")?.checked;
 
+  const defaultsCheckbox = document.getElementById("quickDefaultsCheckbox");
+
   if (saveBtn) {
+
     saveBtn.style.display = editMode ? "inline-block" : "none";
+
+  }
+
+  if (defaultsOption) {
+
+    defaultsOption.style.display = editMode ? "block" : "none";
+
+  }
+
+  if (defaultsCheckbox) {
+    defaultsCheckbox.checked = false;
   }
 
   const boardName = localStorage.getItem("boardName");
+
   const el = document.getElementById("quickMessagesList");
+
   const popup = document.getElementById("quickMessagesPopup");
 
   if (!el || !popup) return;
@@ -3519,45 +3563,107 @@ function renderQuickPopup(){
   el.innerHTML = "";
 
   fetch(`http://localhost:3000/board/${boardName}`, {
+
     headers: {
+
       "Authorization": localStorage.getItem("token")
+
     }
+
   })
+
     .then(res => res.json())
+
     .then(board => {
 
       const quickMessages = board.quickMessages || [];
 
-      // ... loppu ennallaan
+      quickMessagesTemplate = board.quickMessagesTemplate || [];
+
+      const quickMessageKeys = {
+
+        "At the store": "QUICK_AT_STORE",
+        "At work": "QUICK_AT_WORK",
+        "At home": "QUICK_AT_HOME",
+        "Sleeping": "QUICK_SLEEPING",
+        "Eating": "QUICK_EATING",
+        "Coming": "QUICK_COMING",
+        "Running late": "QUICK_LATE",
+        "On sick leave": "QUICK_SICK_LEAVE",
+        "On a break": "QUICK_BREAK",
+        "At the gym": "QUICK_GYM"
+
+      };
 
       if (editMode) {
 
-        el.innerHTML =
-          quickMessages.map((msg) => `
-            <input class="quick-input" value="${msg}">
-          `).join("");
+  el.innerHTML = quickMessages.map((msg) => {
 
-      } else {
+    let displayMsg = msg;
 
-        el.innerHTML =
-          quickMessages.map((msg) => {
+    if (quickMessagesTemplate.includes(msg)) {
 
-            const shortMsg = msg.length > 39 
-              ? msg.substring(0, 39) + "..."
-              : msg;
+      const key = quickMessageKeys[msg];
 
-            return `
-              <div class="quick-row"
-                   onclick="sendQuickMessage(this)">
-                ${shortMsg}
-              </div>
-            `;
+      if (key) {
 
-          }).join("");
+        displayMsg = t(key);
+
       }
 
+    }
+
+    return `
+
+      <input class="quick-input" value="${displayMsg}">
+
+    `;
+
+  }).join("");
+
+} else {
+
+  el.innerHTML = quickMessages.map((msg) => {
+
+    let displayMsg = msg;
+
+    if (quickMessagesTemplate.includes(msg)) {
+
+      const key = quickMessageKeys[msg];
+
+      if (key) {
+
+        displayMsg = t(key);
+
+      }
+
+    }
+
+    const shortMsg = displayMsg.length > 39
+
+      ? displayMsg.substring(0, 39) + "..."
+
+      : displayMsg;
+
+    return `
+
+      <div class="quick-row"
+           onclick="sendQuickMessage(this)">
+
+        ${shortMsg}
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
       popup.style.display = "flex";
+
     });
+
 }
 
 function sendQuickMessage(el) {
@@ -3581,8 +3687,21 @@ function saveQuickMessages() {
 
   const inputs = document.querySelectorAll(".quick-input");
 
-  const quickMessages = Array.from(inputs)
-    .map(input => input.value.trim());
+  let quickMessages;
+
+  const defaultsCheckbox =
+    document.getElementById("quickDefaultsCheckbox");
+
+  if (defaultsCheckbox?.checked) {
+
+    quickMessages = quickMessagesTemplate.slice();
+
+  } else {
+
+    quickMessages = Array.from(inputs)
+      .map(input => input.value.trim());
+
+  }
 
   if (quickMessages.some(msg => msg === "")) {
     alert(t("QUICK_MESSAGE_EMPTY"));
@@ -3605,20 +3724,26 @@ function saveQuickMessages() {
   .then(res => res.json())
   .then(data => {
 
-  if (!data.success) {
-    alert(t(data.message || "SAVE_FAILED"));
-    return;
-  }
+    if (!data.success) {
+      alert(t(data.message || "SAVE_FAILED"));
+      return;
+    }
 
-  const edit = document.getElementById("editMode");
+    const edit = document.getElementById("editMode");
 
-  if (edit && edit.checked) {
-    edit.checked = false;
-    edit.dispatchEvent(new Event("change"));
-  }
+    if (edit && edit.checked) {
+      edit.checked = false;
+      edit.dispatchEvent(new Event("change"));
+    }
 
-  closeQuickMessages();
-  loadMessage(false);
+    const defaults = document.getElementById("quickDefaultsCheckbox");
+
+    if (defaults) {
+      defaults.checked = false;
+    }
+
+    closeQuickMessages();
+    loadMessage(false);
 
   })
   .catch(err => {

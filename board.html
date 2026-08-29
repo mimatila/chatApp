@@ -239,13 +239,36 @@
 </div>
 
 <div id="quickMessagesPopup" class="popup">
+
   <div class="popup-content">
-    <h3 >Quick Messages</h3>
+
+    <h3>Quick Messages</h3>
+
     <div id="quickMessagesList"></div>
+
     <br>
-    <button id="saveQuickBtn" class="light-blue-btn-90" onclick="saveQuickMessages()"> Save </button>
-    <button id="closeQuickBtn" class="light-blue-btn-90" onclick="closeQuickMessages()"> Close </button>
+
+    <div id="quickDefaultsOption" style="display: none;">
+      <label>
+        <input type="checkbox" id="quickDefaultsCheckbox">
+        Defaults
+      </label>
+    </div>
+
+    <button id="saveQuickBtn"
+            class="light-blue-btn-90"
+            onclick="saveQuickMessages()">
+      Save
+    </button>
+
+    <button id="closeQuickBtn"
+            class="light-blue-btn-90"
+            onclick="closeQuickMessages()">
+      Close
+    </button>
+
   </div>
+
 </div>
 
 <div id="createTopicPopup" class="popup">
