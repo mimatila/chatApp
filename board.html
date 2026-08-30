@@ -284,15 +284,21 @@
         <option value="notice">Tiedote</option>
     </select>
 </div></div>
-    <input id="cp_topic" placeholder="topic" maxlength="40">
+
     <select id="cp_informationTopic" style="display:none;">
-    <option value="general information">
-    General information
-    </option>
-    <option value="announcements">
-    Announcements
-    </option>
+      <option value="general information">
+      General information
+      </option>
+      <option value="announcements">
+      Announcements
+      </option>
     </select>
+    
+    <select id="cp_existingTopic" onchange="selectExistingTopic()"> style="display:none;">
+      <option value="">Valitse olemassa oleva aihe</option>
+    </select>
+    
+    <input id="cp_topic" placeholder="topic" maxlength="40">
     
     <input id="cp_header" type="text" placeholder="Header" maxlength="40">
 

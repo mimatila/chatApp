@@ -71,6 +71,8 @@ const messages = {
         QUICK_GYM: "Punttisalilla",
         ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
         BOARD_NOT_FOUND: "Taulua ei löytynyt.",
+        SELECT_EXISTING_TOPIC: "Valitse olemassa oleva aihe",
+        new_topic: "Uusi Aihe",
         onlyOwnerCanWrite: "Vain omistaja voi kirjoittaa tähän ketjuun.",
         PleaseSelectTopicFirst: "Valitse aihe ensin.",
         confirmRemoveMessage: "Haluatko poistaa tämän viestin?",
@@ -215,6 +217,7 @@ const messages = {
         BOARD_INFO: "Notice Board",
         WELCOME_TEXT: "Welcome to your board system!",
         PARKING_SLOTS_NOT_CREATED: "Parking spaces have not been created yet.",
+        new_topic: "New Info",
         onlyOwnerCanWrite: "Only the owner can write to this chain.",
         PleaseSelectTopicFirst: "Select topic first.",
         confirmRemoveMessage: "You want to remove this message?",
@@ -225,6 +228,7 @@ const messages = {
         NAME: "Name",
         ADDRESS: "Address",
         MESSAGES: "messages",
+        SELECT_EXISTING_TOPIC: "Select existing topic",
         PHONE: "Phone",
         EMAIL: "Email",
         SUBJECT: "Topic",
@@ -3092,14 +3096,32 @@ function openTopicPopup() {
   console.log("OPEN TOPIC POPUP CURRENT:", currentCategory);
 
   if (!editingTopicId) {
+
     document.getElementById("cp_header").value = "";
+
     document.getElementById("cp_topic").value = "";
+
     document.getElementById("cp_message").value = "";
+
     document.getElementById("cp_createBtn").innerText = t("CREATE_BTN");
+
   }
 
   document.getElementById("createTopicPopup").style.display = "flex";
+
   createTopicPopupCategoryChanged();
+
+  const role = localStorage.getItem("role");
+
+  if (
+    role === "owner" &&
+    (
+      currentCategory === "general information" ||
+      currentCategory === "announcements"
+    )
+  ) {
+    
+  }
 }
 
 function closeTopicPopup() {
@@ -3195,7 +3217,14 @@ function submitTopic() {
 
   let topic;
 
-  topic = document.getElementById("cp_topic").value;
+  const existingTopic =
+      document.getElementById("cp_existingTopic")?.value;
+
+  if (existingTopic) {
+      topic = existingTopic;
+  } else {
+      topic = document.getElementById("cp_topic").value;
+  }
 
   console.log("topic lenght: ", topic.length);
 
@@ -3860,15 +3889,17 @@ function createTopicPopupCategoryChanged() {
 
     const topicInput = document.getElementById("cp_topic");
 
-    topicInput.style.display = "block";
-    topicInput.placeholder = t("topic");
-
     const showOwnerTools =
         role === "owner" &&
         (
             category === "general information" ||
             category === "announcements"
         );
+
+    topicInput.style.display = "block";
+
+    topicInput.placeholder =
+        showOwnerTools ? t("new_topic") : t("topic");
 
     document.getElementById("cp_header").style.display =
         showOwnerTools ? "block" : "none";
@@ -3879,5 +3910,68 @@ function createTopicPopupCategoryChanged() {
         templateSection.style.display =
             showOwnerTools ? "block" : "none";
     }
+
+    const existingTopic = document.getElementById("cp_existingTopic");
+
+    if (existingTopic) {
+
+        if (showOwnerTools) {
+            loadTopicsForCreatePopup(category);
+        } else {
+            existingTopic.style.display = "none";
+        }
+
+    }
 }
 
+function loadTopicsForCreatePopup(category) {
+
+  const boardName = localStorage.getItem("boardName");
+
+  return fetch("http://localhost:3000/topics", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      boardName,
+      category
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+
+    const select = document.getElementById("cp_existingTopic");
+
+select.innerHTML = `
+  <option value="">${t("SELECT_EXISTING_TOPIC")}</option>
+`;
+
+    data.topics.forEach(item => {
+
+      const option = document.createElement("option");
+
+      option.value = item.topic;
+      option.textContent = item.topic;
+
+      select.appendChild(option);
+
+    });
+
+    select.style.display = "block";
+
+    return data;
+  });
+}
+
+function selectExistingTopic() {
+
+    const select = document.getElementById("cp_existingTopic");
+    const topicInput = document.getElementById("cp_topic");
+
+    if (select.value) {
+        topicInput.style.display = "none";
+    } else {
+        topicInput.style.display = "block";
+    }
+}

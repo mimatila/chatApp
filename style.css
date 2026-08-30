@@ -613,6 +613,16 @@ input[type="checkbox"]:checked {
     background-color: lightgreen;
 }
 
+#cp_existingTopic {
+    background-color: #d9ecff;
+    display: block;
+    margin: 10px auto;
+    height: 34px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
 .light-blue-btn {
     background-color: #d9ecff;
 }
