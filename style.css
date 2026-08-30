@@ -377,7 +377,7 @@ body.index-page {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin: 6px 0;
+  margin: 4px 0;
   padding: 8px 10px;
   background: #fff9d6;
   border: 1px solid #e6dca0;
@@ -431,8 +431,12 @@ body.index-page {
     padding: 4px 8px;
     border: 1px solid #e6dca0;
     background: #fff9d6;
-    margin-bottom: 10px;
+    margin-bottom: 3px;
 }
+
+.notice-row.owner-message{ 
+    margin-bottom: 6px;
+} 
 
 .notice-row .msg-content {
     display: flex;
@@ -591,7 +595,7 @@ input[type="checkbox"]:checked {
 
 .auto-edit-slot {
     display: grid;
-    grid-template-columns: 34px 120px;
+    grid-template-columns: 45px 110px;
     gap: 2px;
 }
 
@@ -1009,6 +1013,7 @@ input::placeholder {
 #quickMessagesPopup .popup-content {
   padding: 10px;
   box-sizing: border-box;
+  overflow-y: hidden;
   
   /*transform: translateY(-50px);*/
 }
