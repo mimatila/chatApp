@@ -274,16 +274,17 @@
 <div id="createTopicPopup" class="popup">
   <div class="popup-content">
     <h3 id="createTopicTitle">Create New Topic</h3>
-    <div id="categoryTemplateRow">
-    <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
-    </select>
-    <div id="templateSection">
-    <select id="messageTemplate" onchange="changeTemplate()">
+    <div id="categoryTemplateRow">    
+      <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
+      </select>
+      <div id="templateSection">
+      <select id="messageTemplate" onchange="changeTemplate()">
         <option value="general">Yleinen</option>
         <option value="contact">Yhteystiedot</option>
         <option value="notice">Tiedote</option>
-    </select>
-</div></div>
+      </select>
+      </div>
+    </div>
 
     <select id="cp_informationTopic" style="display:none;">
       <option value="general information">
@@ -299,12 +300,12 @@
     </select>
     
     <input id="cp_topic" placeholder="topic" maxlength="40">
-    
     <input id="cp_header" type="text" placeholder="Header" maxlength="40">
 
     <textarea id="cp_message"
-    placeholder="Write your message..."
-    rows="5"></textarea>
+      placeholder="Write your message..."
+      rows="5">
+    </textarea>
 
     <div class="topic-type-options">
     <label>
@@ -316,7 +317,7 @@
         <input type="checkbox" id="cp_info">
         Info
     </label>
-</div>
+    </div>
     <button class="light-blue-btn-90" id="cp_createBtn" onclick="submitTopic()">Create</button>
     <button class="light-blue-btn-90" id="cp_cancelBtn" onclick="closeTopicPopup()">Cancel</button>
   </div>

@@ -515,7 +515,7 @@ button {
     align-items: center;
     justify-content: center;
     gap: 20px;
-    margin: 10px 0;
+    margin: 0 0;
 }
 
 .topic-type-options label {
@@ -560,9 +560,10 @@ input[type="checkbox"]:checked {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
-    width: 100%;
+    width: 450px;
     box-sizing: border-box;
     border-top: 1px solid black;
+    margin: 0 auto;
 }
 
 .auto-edit-grid {
@@ -756,7 +757,7 @@ input::placeholder {
   width: 300px;
   margin: 100px auto;
   border-radius: 10px;
-  max-height: 95vh;
+  max-height: 90vh;
   overflow-y: auto;
 }
 
@@ -804,8 +805,8 @@ input::placeholder {
 }
 
 #saunaTable .saunaInput {
-    width: 100%;
-    height: 100%;
+    width: 95%;
+    height: 70%;
     box-sizing: border-box;
     background: white;
     border: none;

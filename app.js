@@ -1672,7 +1672,7 @@ function editAutoSlots() {
 
 let html = `
     <h3 class="h3">
-        Parking Spaces
+        ${t("AUTO_TITLE")}
     </h3>
 
     <div class="auto-edit-grid">
