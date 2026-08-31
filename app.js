@@ -69,6 +69,7 @@ const messages = {
         QUICK_SICK_LEAVE: "Sairaslomalla",
         QUICK_BREAK: "Tauolla",
         QUICK_GYM: "Punttisalilla",
+        Header: "Otsikko",
         ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
         BOARD_NOT_FOUND: "Taulua ei löytynyt.",
         SELECT_EXISTING_TOPIC: "Valitse olemassa oleva aihe",
@@ -212,6 +213,7 @@ const messages = {
         QUICK_SICK_LEAVE: "On sick leave",
         QUICK_BREAK: "On a break",
         QUICK_GYM: "At the gym",
+        Header: "Header",
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
         BOARD_INFO: "Notice Board",
@@ -1053,15 +1055,17 @@ function backToCategories() {
     const noticeTemplate = localStorage.getItem("noticeTemplate");
 
     const location = document.getElementById("currentLocation");
-    const visited = document.getElementById("visitedUsers");
+    //const visited = document.getElementById("visitedUsers");
 
     if (location) {
       location.innerText = "";
     }
 
+    /*
     if (visited) {
       visited.innerHTML="";
     }
+    */
 
     if (msg) {
         msg.style.display = "none";
@@ -1934,6 +1938,7 @@ function loadBoardLanguage() {
 
   setPlaceholder("cp_topic", "topic");
   setPlaceholder("cp_message", "writeMessage");
+  setPlaceholder("cp_header", "Header");
 
   setText("createTopicTitle", "CREATE_TOPIC_TITLE");
 
