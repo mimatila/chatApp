@@ -1371,13 +1371,13 @@ function renderSaunaCell(value, day, time) {
 
         return `
             <input
-                class="saunaInput"
+                class="saunaInput" maxlength="15"
                 data-day="${day}"
                 data-time="${time}"
                 value="${value.familyName === "-" ? "" : value.familyName}">
 
             <input
-                class="saunaInput"
+                class="saunaInput" maxlength="15"
                 data-day="${day}"
                 data-time="${time}"
                 value="${value.familyName2}">
@@ -1684,12 +1684,12 @@ autoSlots.forEach(slot => {
         <div class="auto-edit-slot">
 
             <input
-                value="${slot.slot_name || ""}"
+                value="${slot.slot_name || ""}" maxlength="15"
                 data-id="${slot.id}"
                 class="slot-input">
 
             <input
-                value="${slot.info || ""}"
+                value="${slot.info || ""}" maxlength="15"
                 data-id="${slot.id}"
                 class="info-input">
 
