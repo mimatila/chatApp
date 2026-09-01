@@ -1073,15 +1073,15 @@ input::placeholder {
 }
 
 #createTopicTitle {
-    text-decoration: underline;
+    color: red;
 }
 
 #joinTitle {
-    text-decoration: underline;
+    color: red;
 }
 
 #createBoardPopupTitle {
-    text-decoration: underline;
+    color: red;
 }
 
 .quick-row,

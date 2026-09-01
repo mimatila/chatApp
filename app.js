@@ -93,6 +93,16 @@ const messages = {
         ONLY_OWNER_EDIT: "Vain omistaja voi muuttaa.",
         SAVE: "Tallennettu.",
         HOME: "Koti",
+        SAUNA_SAVE: "Talleta",
+        SAUNA_EDIT: "Muokkaa",
+        SAUNA_DELETE: "Poista",
+        SAUNA_CLOSE: "Sulje",
+        AUTO_CREATE: "Luo",
+        AUTO_CLOSE: "Peru",
+        AUTO_EDIT: "Muokkaa",
+        AUTO_CLOSES: "Sulje",
+        AUTO_DELETE: "Poista",
+        AUTO_SAVE: "Talleta",
         LOGIN_AGAIN: "Kirjaudu uudelleen.",
         NO_PENDING: "Ei odottavia liittymis pyyntöjä.",
         NO_PERMISSION: "Ei oikeuksia.",
@@ -213,6 +223,16 @@ const messages = {
         QUICK_SICK_LEAVE: "On sick leave",
         QUICK_BREAK: "On a break",
         QUICK_GYM: "At the gym",
+        SAUNA_SAVE: "Save",
+        SAUNA_EDIT: "Edit",
+        SAUNA_DELETE: "Delete",
+        SAUNA_CLOSE: "Close",
+        AUTO_CREATE: "Create",
+        AUTO_CLOSE: "Close",
+        AUTO_EDIT: "Edit",
+        AUTO_CLOSES: "Close",
+        AUTO_DELETE: "Delete",
+        AUTO_SAVE: "Save",
         Header: "Header",
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
@@ -1541,7 +1561,7 @@ function showAutoCreate() {
 
     content.innerHTML = `
         <h3 class="h3">
-            Parking Slots
+            ${t("AUTO_TITLE")} 
         </h3>
 
         <input id="autoCountInput" type="number" value="5">
@@ -1549,13 +1569,13 @@ function showAutoCreate() {
         <button id="createAutoPopupBtn"
                 class="light-blue-btn-90"
                 onclick="createAutoSlots()">
-            Create
+           ${t("AUTO_CREATE")}       
         </button>
 
         <button id="closeAutoPopupBtn"
                 class="light-blue-btn-90"
                 onclick="closeAutoPopup()">
-            Cancel
+            ${t("AUTO_CLOSE")}  
         </button>
     `;
 
@@ -1638,11 +1658,11 @@ slots.forEach(slot => {
     html += `
         <div class="popup-buttons">
             <button id="editAutoPopupBtn" class="light-blue-btn-90" onclick="editAutoSlots()">
-                Edit
+                ${t("AUTO_EDIT")} 
             </button>
 
             <button id="closeAutoPopupBtn" class="light-blue-btn-90" onclick="closeAutoPopup()">
-                Close
+                ${t("AUTO_CLOSES")} 
             </button>
         </div>
     `;
@@ -1701,15 +1721,15 @@ autoSlots.forEach(slot => {
     html += `
         </div>
         <button id="saveAutoPopupBtn" class="light-blue-btn-90" onclick="saveAutoSlots()">
-            Save
+            ${t("AUTO_SAVE")}
         </button>
 
         <button id="deleteAutoPopupBtn" class="light-blue-btn-90" onclick="deleteAutoSlots()">
-                Delete
+                ${t("AUTO_DELETE")}
             </button>
 
         <button id="cancelAutoPopupBtn" class="light-blue-btn-90" onclick="renderAutoSlots(autoSlots)">
-            Cancel
+            ${t("AUTO_CLOSES")} 
         </button>
     `;
 
@@ -1953,6 +1973,12 @@ function loadBoardLanguage() {
   setText("cp_join", "CP_JOIN_TITLE");
   setText("cp_createBtn", "SAVE_BTN");
   setText("saunaTitle", "SAUNA_TITLE");
+  setText("saveSaunaBtn", "SAUNA_SAVE");
+  setText("editSaunaBtn", "SAUNA_EDIT");
+  setText("deleteSaunaBtn", "SAUNA_DELETE");
+  setText("closeSaunaBtn", "SAUNA_CLOSE");
+  setText("createAutoPopupBtn", "AUTO_CREATE");
+  setText("closeAutoPopupBtn", "AUTO_CLOSE");
   setText("cp_cancelBtn", "CANCEL");
   setText("homeBtn", "HOME");
   setText("topicBtn", "NEW_TOPIC");
