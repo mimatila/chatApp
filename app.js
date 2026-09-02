@@ -180,7 +180,6 @@ const messages = {
         PARKING_SLOTS_CREATED: "Autopaikkojen luonti onnistui.",
         PARKING_SLOTS_CREATE_FAILED: "Autopaikkojen luonti epäonnistui.",
         PASSWORD: "Salasana",
-        EMAIL: "Sähköposti",
         SEND_REQUEST: "Lähetä Pyyntö",
         SAUNA_SLOT_SAVE: "Saunavuorot talletettu.",
         SAUNA_SLOT_SAVE_FAILED: "Saunavuorojen talletus epäonnistui.",
@@ -341,7 +340,6 @@ const messages = {
         BOARD_NAME: "Board Name",
         USERNAME: "Username",
         PASSWORD: "Password",
-        EMAIL: "Email",
         SEND_REQUEST: "Send Request",
         CANCEL: "Cancel",
         CREATE_TOPIC_TITLE: "Create New Topic",
@@ -3499,7 +3497,7 @@ if (menuBtn && topMenu) {
   menuBtn.onclick = () => {
     topMenu.classList.toggle("open");
   };
-
+  /*
   document.addEventListener("click", function(e) {
 
     // Jos klikattiin menupainiketta, ei tehdä mitään
@@ -3509,7 +3507,14 @@ if (menuBtn && topMenu) {
     if (!topMenu.contains(e.target)) {
       topMenu.classList.remove("open");
     }
-  });
+  });*/
+  document.addEventListener("click", function(e) {
+
+  if (menuBtn.contains(e.target)) return;
+
+  topMenu.classList.remove("open");
+
+});
 }
 
 const quickMessagesPopup = document.getElementById("quickMessagesPopup");

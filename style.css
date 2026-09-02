@@ -104,6 +104,18 @@ body.index-page {
   column-gap: 50px; 
 }
 
+#mainCategories .category-card {
+  position: relative;
+}
+
+#mainCategories .category-card::after {
+  content: "👑";
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 13px;
+}
+
 #otherCategories {
   display: grid;
   grid-template-columns: repeat(3, 80px);
@@ -258,7 +270,7 @@ body.index-page {
     flex-direction: column;
     justify-content: center;
     align-items: center;   
-    height: 93vh;
+    height: 95vh;
     width: 95%;
     max-width: 700px;
     margin: 0 auto;
@@ -725,15 +737,17 @@ input::placeholder {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.5);
-  z-index: 9999;
+  /*z-index: 9999;*/
   cursor: default;
 }
 
 .popup-content {
-  background: lightblue;
+  background: #2b6cb0;
   padding: 20px;
   width: 300px;
   margin: 100px auto;
+  color: black;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   border-radius: 10px;
   max-height: 90vh;
   overflow-y: auto;
@@ -744,9 +758,36 @@ input::placeholder {
     max-width: 90vw;   
 }
 
+#autoPopup .popup-content {
+    width: 540px;
+    max-width: 90vw;
+    box-sizing: border-box;
+}
+
+.popup-content select,
+.popup-content input,
+.popup-content textarea,
+.popup-content button {
+    margin-bottom: 10px;
+}
+
+
+#quickMessagesPopup .popup-content {
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: hidden;
+}
+
 #saunaButtons {
     display: flex;
     justify-content: center;
+    gap: 10px;
+}
+
+.popup-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;   
     gap: 10px;
 }
 
@@ -793,17 +834,6 @@ input::placeholder {
     text-align: center;
 }
 
-.popup-buttons {
-    display: flex;
-    justify-content: center;
-    width: 100%;   
-    gap: 10px;
-}
-#autoPopup .popup-content {
-    width: 540px;
-    max-width: 90vw;
-    box-sizing: border-box;
-}
 
 .auto-grid .popup-buttons {
     display: flex;
@@ -828,20 +858,6 @@ input::placeholder {
 
 .info-input {
     width: 120px;
-}
-
-.popup-content select,
-.popup-content input,
-.popup-content textarea,
-.popup-content button {
-    margin-bottom: 10px;
-}
-
-#settingsPopup .popup-content {
-  background: #2b6cb0;
-  color: white;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
 #boardNewMsg {
@@ -871,11 +887,11 @@ input::placeholder {
 
 #topMenu.open {
   position: absolute;
+  display: flex;
+  flex-direction: column;
   top: 50px;
   right: 10px;
   left: auto;
-  display: flex;
-  flex-direction: column;
   background-color: lightblue;
   padding: 10px;
   border: 1px solid #ccc;
@@ -923,11 +939,11 @@ input::placeholder {
 
 #openJoinBtn { 
       font-size: 12px; 
-    }
+}
 
     #openCreateBtn {
       font-size: 12px;
-    }
+}
 
 .visited-users {
   padding: 6px 10px;
@@ -985,30 +1001,8 @@ input::placeholder {
     font-size: 0.9em;
 }
 
-#membersPopup .popup-content {
-  background: #2b6cb0;
-  color: white;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-#requestsPopup .popup-content {
-  background: #2b6cb0;
-  color: white;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  }
-
-#quickMessagesPopup .popup-content {
-  padding: 10px;
-  box-sizing: border-box;
-  overflow-y: hidden;
-  
-  /*transform: translateY(-50px);*/
-}
-
 .h3{ 
-    color: red;
+    color: lightgreen;
 } 
 
 #quickMessagesPopup h3 {
@@ -1017,10 +1011,9 @@ input::placeholder {
 }
 
 #boardCount{
-    background-color: lightpink;
+    background-color: lightgreen;
   } 
   
-
 #loginTitle {
   color: yellow;
   text-decoration: underline;
@@ -1029,15 +1022,15 @@ input::placeholder {
 }
 
 #createTopicTitle {
-    color: red;
+    color: lightgreen;
 }
 
 #joinTitle {
-    color: red;
+    color: lightgreen;
 }
 
 #createBoardPopupTitle {
-    color: red;
+    color: lightgreen;
 }
 
 .quick-row,
@@ -1151,11 +1144,11 @@ input::placeholder {
 
 .left-actions button {
     display:flex;
-    height:34px;
-    flex-shrink:1;
-    white-space:nowrap;
-    align-items:center;
     justify-content:center;
+    flex-shrink:1;
+    height:34px;   
+    white-space:nowrap;
+    align-items:center;   
     padding:0 10px;
     line-height:1;
 }
@@ -1173,10 +1166,10 @@ input::placeholder {
 
 .clearBtn {
     display:flex;
-    height:34px;
-    align-items:center;
     justify-content:center;
-    background-color:red;
+    align-items:center;
+    height:34px;  
+    background-color: red;
 }
 
 @media (max-width: 600px) {
@@ -1189,6 +1182,25 @@ input::placeholder {
     .index-container {
     width:360px;
     height: 540px; 
+}
+
+#boardMessagesDiv {
+    display: block;
+    height: 62vh;
+    max-width: var(--content-width);
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    overflow-y: auto;
+    overflow-x: auto;   
+    font-family: monospace;
+    text-align: left;
+    padding: 9px 25px 5px 9px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #e8e9eb;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
     .left-actions button,
