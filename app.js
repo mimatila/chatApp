@@ -2463,9 +2463,18 @@ function loginWithPassword() {
     boardPassword
   })
     })
-  .then(res => res.json())
+  //.then(res => res.json())
+  .then(res => {
+
+    //console.log("Response:", res);
+    //console.log("Status:", res.status);
+    //console.log("OK:", res.ok);
+
+    return res.json();
+  })
   .then(async data => {
 
+    console.log("opa tutkii: ", data.token);
     if (!data.success) {
       return alert(t("LOGIN_FAILED"));
     }
@@ -2481,8 +2490,8 @@ function loginWithPassword() {
     await fetch("http://localhost:3000/visit", {
       method: "POST",
       headers: {
-  "Content-Type": "application/json"
-  },
+      "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         boardName,
         boardUsername
@@ -2515,13 +2524,12 @@ function deleteBoard() {
         }
     })
     .then(async (res) => {
+      const data = await res.json().catch(() => null);
 
-    const data = await res.json().catch(() => null);
-
-    if (!res.ok || !data?.success) {
+      if (!res.ok || !data?.success) {
         alert(t(data?.message || "DELETE_FAILED"));
         return;
-    }
+      }
 
     alert(t(data.message || "DELETE_SUCCESS"));
 
@@ -2602,13 +2610,13 @@ async function clearTable() {
 
   if (!confirm(t("confirmRemoveMessage"))) {
     return;
-}
+  }
 
-} else if (boardType === "notice") {
-   if (!confirm(t("confirmRemoveMessages"))) {
-    return;
-}
-}
+  } else if (boardType === "notice") {
+    if (!confirm(t("confirmRemoveMessages"))) {
+      return;
+  }
+  }
 
   await fetch(`http://localhost:3000/clear/${boardName}`, {
     method: "DELETE",
@@ -2625,14 +2633,22 @@ async function clearTable() {
   .then(data => {
 
     if (data.success) {
-      
-     loadTopicsFromDatabase(currentCategory);
-     loadTopicCounts();
-     loadMessage(true);
+
+        loadTopicsFromDatabase(currentCategory);
+        loadTopicCounts();
+        loadMessage(true);
+
+        setTimeout(() => alert(t(data.message)), 200);
+
+        backToCategories();
+
+    } else {
+
+        alert(t(data.message || "CLEAR_FAILED"));
+
     }
-    //setTimeout(() => alert(t(data.message)), 100);
-    setTimeout(() => alert(t(data.message)), 200);
-  });
+
+});
 
   backToCategories();
 }
@@ -2745,9 +2761,9 @@ function loadBoardCount() {
     .catch(() => {
 
       if (lang === "fi") {
-        el.innerText = "Taulujen haku epäonnistui";
+        el.innerText = "Taulujen haku epäonnistui!";
       } else {
-        el.innerText = "Cannot get Boards";
+        el.innerText = "Cannot get Boards!";
       }
     });
 }

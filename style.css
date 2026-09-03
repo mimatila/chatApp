@@ -351,8 +351,8 @@ body.index-page {
 }  
 
 .edit-btn {
-    position: absolute;
-    all: unset;   
+    all: unset; 
+    position: absolute;    
     top: 0;
     right: 20px;
     border: none;
@@ -363,12 +363,12 @@ body.index-page {
 }
 
 .trash-btn {
-  position: absolute;
-  all: unset;
-  top: 0;
-  right: 0;
-  cursor: pointer;
-  font-size: 12px;
+    all: unset;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 .msg-content {
@@ -731,13 +731,13 @@ input::placeholder {
 }
 
 .popup {
+  position: fixed;
   display: none;
   justify-content: center;
   align-items: center;
-  position: fixed;
   inset: 0;
   background: rgba(0,0,0,.5);
-  /*z-index: 9999;*/
+  z-index: 9999;
   cursor: default;
 }
 

@@ -34,6 +34,7 @@ app.use(express.json());
 
 app.post("/login", async (req, res) => {
 
+  //console.log("heh: ", res);
   const { boardName, boardUsername, boardPassword } = req.body;
 
   try {
