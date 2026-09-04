@@ -1202,13 +1202,14 @@ app.delete("/message/:boardName/:id", async (req, res) => {
     // Hae viesti
     const [rows] = await pool.query(
       `SELECT
-      boardMessages.author,
-      boardMessages.board_id
-      FROM boardMessages
-      JOIN boards
-        ON boardMessages.board_id = boards.id
-      WHERE boards.name = ?
-      AND boardMessages.id = ?`,
+        boardMessages.author,
+        boardMessages.board_id,
+        boardMessages.topic
+       FROM boardMessages
+       JOIN boards
+         ON boardMessages.board_id = boards.id
+       WHERE boards.name = ?
+       AND boardMessages.id = ?`,
       [boardName, id]
     );
 
@@ -1239,8 +1240,17 @@ app.delete("/message/:boardName/:id", async (req, res) => {
       [id]
     );
 
+    // Tarkista jäikö topicille enää viestejä
+    const [remaining] = await pool.query(
+      `SELECT COUNT(*) AS count
+       FROM boardMessages
+       WHERE board_id = ? AND topic = ?`,
+      [message.board_id, message.topic]
+    );
+
     res.json({
-      success: true
+      success: true,
+      topicEmpty: remaining[0].count === 0
     });
 
   } catch (err) {
@@ -1251,7 +1261,9 @@ app.delete("/message/:boardName/:id", async (req, res) => {
       success: false,
       message: "Database error"
     });
+
   }
+
 });
 
 app.post("/visit", async (req, res) => {

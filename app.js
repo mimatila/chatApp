@@ -51,7 +51,7 @@ function getMessageTemplates() {
         },
 
         notice: {
-            title: `${t("NOTICE_TITLE")}`,
+            title: "",
             header: `${t("NOTICE_HEADER")}`,
             text:
 `${t("SUBJECT")}:
@@ -167,7 +167,7 @@ const messages = {
         PHONE: "Puhelin",
         MESSAGES: "viestit",
         EMAIL: "Sähköposti",
-        SUBJECT: "Aihe",
+        SUBJECT: "Kuvaus",
         ADDITIONAL_INFO: "Lisätiedot",
         announcements: "Tiedotteet",
         MEMBERS_TITLE: "Jäsenet",
@@ -260,7 +260,7 @@ const messages = {
         SELECT_EXISTING_TOPIC: "Select existing topic",
         PHONE: "Phone",
         EMAIL: "Email",
-        SUBJECT: "Topic",
+        SUBJECT: "Description",
         ADDITIONAL_INFO: "Addition info",
         SAUNA: "Sauna List",
         AUTO: "Parking Slots",
@@ -335,7 +335,7 @@ const messages = {
         training: "training",
         meetings: "meetings",
         "select topic": "select topic",
-        "general information": "Info",
+        "general information": "Information",
         announcements: "Notices",
         LOGIN_TITLE: "Login Board",
         SAUNA_DELETED: "Sauna slots deleted.",
@@ -447,6 +447,7 @@ async function showCategories() {
 
     document.getElementById("saunaBtn").style.display = "block";
     document.getElementById("autoBtn").style.display = "block";
+    document.getElementById("clearBtn").style.display = "none";
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "none";
@@ -499,6 +500,7 @@ function showTopics() {
     document.getElementById("boardMessagesDiv").style.display = "none";   
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
+    document.getElementById("clearBtn").style.display = "none";
     
 }
 
@@ -509,8 +511,16 @@ function showMessages() {
     document.getElementById("boardTopicsView").style.display = "none";   
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
+
+    const role = localStorage.getItem("role");
+    const editMode = document.getElementById("editMode")?.checked;
+
+    document.getElementById("clearBtn").style.display =
+        (role === "owner" && editMode)
+        ? ""
+        : "none";
+      
     backToCategoriesBtn.style.display = "block";
-    
 }
 
 function editMessage(msg) {
@@ -1106,6 +1116,7 @@ function backToCategories() {
     backToCategoriesBtn.style.display = "none";
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
+    document.getElementById("clearBtn").style.display = "none";
 
     if (
         boardType === "notice" &&
@@ -2807,7 +2818,13 @@ if (edit) {
     edit.dispatchEvent(new Event("change"));
 }
     loadTopicCounts();
-    loadMessage(true);
+
+if (data.topicEmpty) {
+    backToCategories();
+    return;
+}
+
+loadMessage(true);
   });
 }
 
@@ -3878,7 +3895,9 @@ function updateEditModeUI() {
   }
 
   clearBtn.style.display =
-    (role === "owner" && editMode)
+    (role === "owner" &&
+     editMode &&
+     document.getElementById("boardMessagesDiv").style.display !== "none")
     ? ""
     : "none";
 
