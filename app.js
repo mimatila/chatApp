@@ -33,22 +33,26 @@ const boardDescriptions = {
 
 function getMessageTemplates() {
     return {
+
         general: {
             title: "",
+            header: "",
             text: ""
         },
 
         contact: {
             title: `${t("CONTACT_TITLE")}`,
+            header: `${t("CONTACT_HEADER")}`,
             text:
-`${t("NAME")}:
-${t("ADDRESS")}:
-${t("PHONE")}:
-${t("EMAIL")}:`
+`👤 ${t("NAME")}:
+🏠 ${t("ADDRESS")}:
+📞 ${t("PHONE")}:
+✉️ ${t("EMAIL")}:`
         },
 
         notice: {
             title: `${t("NOTICE_TITLE")}`,
+            header: `${t("NOTICE_HEADER")}`,
             text:
 `${t("SUBJECT")}:
 
@@ -156,6 +160,8 @@ const messages = {
         "general information": "Info",
         CONTACT_TITLE: "Yhteystiedot",
         NOTICE_TITLE: "Tiedotteet",
+        NOTICE_HEADER: "Tiedote",
+        CONTACT_HEADER: "Yhteystieto",
         NAME: "Nimi",
         ADDRESS: "Osoite",
         PHONE: "Puhelin",
@@ -244,8 +250,10 @@ const messages = {
         confirmRemoveMessage: "You want to remove this message?",
         confirmRemoveMessages: "You want to remove this message chain?",
         LOGIN_FAILED: "Login failed.",
-        CONTACT_TITLE: "Contact info",
-        NOTICE_TITLE: "Announcements",
+        CONTACT_TITLE: "Contact infos",
+        NOTICE_TITLE: "Notices",
+        NOTICE_HEADER: "Notice",
+        CONTANT_HEADER: "Contact info",
         NAME: "Name",
         ADDRESS: "Address",
         MESSAGES: "messages",
@@ -415,13 +423,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function changeTemplate() {
+
     const type = document.getElementById("messageTemplate").value;
 
     const templates = getMessageTemplates();
     const template = templates[type];
 
     document.getElementById("cp_topic").value = template.title;
-    document.getElementById("cp_header").value = template.title;   
+    document.getElementById("cp_header").value = template.header;
     document.getElementById("cp_message").value = template.text;
 }
 
@@ -2412,6 +2421,7 @@ if (
 
     document.getElementById("importantMode").checked = false;
     document.getElementById("infoMode").checked = false;
+    
     type="normal";
   });  
 }
@@ -2790,7 +2800,13 @@ function deleteMessage(id) {
   })
   .then(res => res.json())
   .then(data => {
-    document.getElementById("editMode").checked = false;
+    const edit = document.getElementById("editMode");
+
+if (edit) {
+    edit.checked = false;
+    edit.dispatchEvent(new Event("change"));
+}
+    loadTopicCounts();
     loadMessage(true);
   });
 }
@@ -3142,6 +3158,8 @@ function openTopicPopup() {
   console.log("OPEN TOPIC POPUP CURRENT:", currentCategory);
 
   if (!editingTopicId) {
+
+    document.getElementById("cp_category").value = "general";
 
     document.getElementById("cp_header").value = "";
 
@@ -3945,6 +3963,7 @@ function createTopicPopupCategoryChanged() {
 function createTopicPopupCategoryChanged() {
 
     const category = document.getElementById("cp_category").value;
+    currentCategory=category;
     const role = localStorage.getItem("role");
 
     const topicInput = document.getElementById("cp_topic");
@@ -3982,6 +4001,7 @@ function createTopicPopupCategoryChanged() {
         }
 
     }
+    document.getElementById("messageTemplate").value="general";
 }
 
 function loadTopicsForCreatePopup(category) {
