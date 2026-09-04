@@ -39,7 +39,7 @@ function getMessageTemplates() {
         },
 
         contact: {
-            title: `${t("CONTACT_TITLE")}:`,
+            title: `${t("CONTACT_TITLE")}`,
             text:
 `${t("NAME")}:
 ${t("ADDRESS")}:
@@ -48,7 +48,7 @@ ${t("EMAIL")}:`
         },
 
         notice: {
-            title: `${t("NOTICE_TITLE")}:`,
+            title: `${t("NOTICE_TITLE")}`,
             text:
 `${t("SUBJECT")}:
 
@@ -420,7 +420,8 @@ function changeTemplate() {
     const templates = getMessageTemplates();
     const template = templates[type];
 
-    document.getElementById("cp_header").value = template.title;
+    document.getElementById("cp_topic").value = template.title;
+    document.getElementById("cp_header").value = template.title;   
     document.getElementById("cp_message").value = template.text;
 }
 
@@ -3183,6 +3184,9 @@ function closeTopicPopup() {
 
   document.getElementById("cp_important").checked = false;
   document.getElementById("cp_info").checked = false;
+
+  document.getElementById("messageTemplate").value="general";
+
 }
 
 async function updateTopic(id) {
@@ -3324,6 +3328,10 @@ if (data.success) {
         loadTopicCounts();
     }
 
+    document.getElementById("cp_header").value = "";
+    document.getElementById("cp_topic").value = "";
+    document.getElementById("cp_message").value = "";
+    document.getElementById("messageTemplate").value="general";
     closeTopicPopup();
 }
   });
