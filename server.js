@@ -741,6 +741,18 @@ await cleanup(boardId, autoDeleteDays);
     ]
   );
 
+  const [testMessages] = await pool.query(
+    `
+    SELECT id, text, time
+    FROM boardMessages
+    WHERE board_id = ?
+    ORDER BY time
+    `,
+    [boardId]
+);
+
+console.log("AFTER INSERT:", testMessages);
+
 
   res.json({
     success: true,
@@ -811,6 +823,10 @@ app.get("/board/:boardName", async (req, res) => {
         );
 
 
+        console.log(
+    "GET MESSAGES:",
+    boardMessages.map(m => m.text)
+);
         // Hae liittymispyynnöt
 
         const [pendingRequests] = await pool.query(

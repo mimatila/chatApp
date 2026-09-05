@@ -73,6 +73,9 @@ const messages = {
         QUICK_SICK_LEAVE: "Sairaslomalla",
         QUICK_BREAK: "Tauolla",
         QUICK_GYM: "Punttisalilla",
+        YLEINEN_: "Yleinen",
+        YHTEYS_: "Yhteystiedot",
+        TIEDOTE_: "Tiedote",
         Header: "Otsikko",
         ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
         BOARD_NOT_FOUND: "Taulua ei löytynyt.",
@@ -135,6 +138,8 @@ const messages = {
         USER_REMOVED: "Käyttäjä poistettu.",
         DELETE_FAILED: "poisto epäonnistui. (ei oikeuksia tai virhe serverillä).",
         NETWORK_ERROR: "Verkkovirhe.",
+        DESCRIPTION: "Kuvaus",
+        ADDITIONAL_INFO: "Lisätiedot",
         BACK_CATEGORIES: "Kategoriat",
         BOARD_TYPE_FAMILY: "perhe",
         BOARD_TYPE_NOTICE: "ilmoitus",
@@ -167,7 +172,7 @@ const messages = {
         PHONE: "Puhelin",
         MESSAGES: "viestit",
         EMAIL: "Sähköposti",
-        SUBJECT: "Kuvaus",
+        SUBJECT: "Kuvaus",       
         ADDITIONAL_INFO: "Lisätiedot",
         announcements: "Tiedotteet",
         MEMBERS_TITLE: "Jäsenet",
@@ -239,6 +244,11 @@ const messages = {
         AUTO_DELETE: "Delete",
         AUTO_SAVE: "Save",
         Header: "Header",
+        DESCRIPTION: "Description",
+        ADDITIONAL_INFO: "Additional info",
+        YLEINEN_: "General",
+        YHTEYS_: "Contact info",
+        TIEDOTE_: "Notice",
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
         BOARD_INFO: "Notice Board",
@@ -1111,6 +1121,10 @@ function backToCategories() {
     }
 
     document.getElementById("boardCategoriesView").style.display = "grid";
+    console.log(
+    "CATEGORY DISPLAY:",
+    document.getElementById("boardCategoriesView").style.display
+);
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardTopicsView").innerHTML = "";
     backToCategoriesBtn.style.display = "none";
@@ -1987,6 +2001,13 @@ function loadBoardLanguage() {
   document.querySelector("#cp_informationTopic option[value='announcements']").textContent =
       t("announcements");
 
+  document.querySelector("#messageTemplate option[value='general']").textContent =
+      t("YLEINEN_");
+  document.querySelector("#messageTemplate option[value='contact']").textContent =
+      t("YHTEYS_");
+  document.querySelector("#messageTemplate option[value='notice']").textContent =
+      t("TIEDOTE_");
+
   setText("cp_createBtn", "CREATE_BTN");
   setText("cp_members", "MEMBERS_TITLE");
   setText("cp_join", "CP_JOIN_TITLE");
@@ -2055,7 +2076,8 @@ fetch(`http://localhost:3000/board/${boardName}`, {
 
 function loadMessage(forceScroll = false) {
 
-  console.log("LOAD MESSAGES CALLED");
+  //console.log("LOAD MESSAGES CALLED");
+  console.trace("LOAD MESSAGES CALLED");
   
   const box = document.getElementById("boardMessagesDiv");
   if (!box) return;
@@ -2081,6 +2103,8 @@ function loadMessage(forceScroll = false) {
 })
   .then(res => res.json())
   .then(data => {
+
+    console.log("MESSAGES FROM SERVER:", data.boardMessages);
 
     const boardType = data.boardType;
     const noticeTemplate = data.noticeTemplate;
@@ -2151,6 +2175,8 @@ let showTopicInsideMessage =
     data.boardType === "notice" &&
     ownerCategories.includes(currentCategory);
 
+    console.log("MESSAGES TO RENDER:", messages);
+
 messages.forEach(msg => {
 
   const div = document.createElement("div");
@@ -2212,33 +2238,45 @@ if (msg.type === "info") {
   author.innerText = `${msg.author}:`;
 
   const body = document.createElement("div");
-body.className = "msg-body";
+  body.className = "msg-body";
 
-const lines = msg.text.split("\n");
+  const lines = msg.text.split("\n");
+
+  const descriptionLabel = t("DESCRIPTION") + ":";
+const additionalInfoLabel = t("ADDITIONAL_INFO") + ":";
 
 lines.forEach(line => {
-    if (line.startsWith("Kuvaus:")) {
+
+    if (line.startsWith(descriptionLabel)) {
+
         const label = document.createElement("span");
         label.className = "notice-label";
-        label.innerText = "Kuvaus:";
+        label.innerText = descriptionLabel;
 
         body.appendChild(label);
         body.appendChild(
-            document.createTextNode(line.substring(7))
+            document.createTextNode(
+                line.substring(descriptionLabel.length)
+            )
         );
 
-    } else if (line.startsWith("Lisätiedot:")) {
+    } else if (line.startsWith(additionalInfoLabel)) {
+
         const label = document.createElement("span");
         label.className = "notice-label";
-        label.innerText = "Lisätiedot:";
+        label.innerText = additionalInfoLabel;
 
         body.appendChild(label);
         body.appendChild(
-            document.createTextNode(line.substring(11))
+            document.createTextNode(
+                line.substring(additionalInfoLabel.length)
+            )
         );
 
     } else {
+
         body.appendChild(document.createTextNode(line));
+
     }
 
     body.appendChild(document.createElement("br"));
@@ -2449,6 +2487,8 @@ if (
   })
   .then(res => res.json())
   .then(data => {
+
+    console.log("MESSAGE SAVED:", data);
      
     if (!data.success) {
     return alert(t(data.message));
@@ -2685,13 +2725,24 @@ async function clearTable() {
 
     if (data.success) {
 
+      if (boardType === "notice") {
         loadTopicsFromDatabase(currentCategory);
         loadTopicCounts();
-        loadMessage(true);
+        //loadMessage(true);
+      } 
+      loadMessage(true);
+
+      
+        if (editMode) {
+        
+        editMode.checked = false;
+        updateEditModeUI();
+    }
 
         setTimeout(() => alert(t(data.message)), 200);
-
+        if (boardType === "notice") {
         backToCategories();
+        } 
 
     } else {
 
@@ -2701,7 +2752,9 @@ async function clearTable() {
 
 });
 
+   if (boardType === "notice") {
   backToCategories();
+   } 
 }
 
 //UCF
@@ -3831,6 +3884,7 @@ function sendQuickMessage(el) {
 
     setTimeout(() => {
         document.getElementById("boardNewMsg").value = msg;
+        console.log("QUICK MESSAGE:", msg);
         updateMessage();
         closeQuickMessages();
     }, 800);
