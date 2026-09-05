@@ -2212,8 +2212,37 @@ if (msg.type === "info") {
   author.innerText = `${msg.author}:`;
 
   const body = document.createElement("div");
-  body.className = "msg-body";
-  body.innerText = msg.text;
+body.className = "msg-body";
+
+const lines = msg.text.split("\n");
+
+lines.forEach(line => {
+    if (line.startsWith("Kuvaus:")) {
+        const label = document.createElement("span");
+        label.className = "notice-label";
+        label.innerText = "Kuvaus:";
+
+        body.appendChild(label);
+        body.appendChild(
+            document.createTextNode(line.substring(7))
+        );
+
+    } else if (line.startsWith("Lisätiedot:")) {
+        const label = document.createElement("span");
+        label.className = "notice-label";
+        label.innerText = "Lisätiedot:";
+
+        body.appendChild(label);
+        body.appendChild(
+            document.createTextNode(line.substring(11))
+        );
+
+    } else {
+        body.appendChild(document.createTextNode(line));
+    }
+
+    body.appendChild(document.createElement("br"));
+});
 
 if (
     data.boardType === "notice" &&

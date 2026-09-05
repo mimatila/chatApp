@@ -145,9 +145,10 @@ body.index-page {
   overflow-wrap: anywhere;
 }
 
+/*
 .category-card:hover {
     background: #245a96;
-}
+}*/
 
 .category-card.pressed {
     background: #1f4d80;
@@ -206,10 +207,10 @@ body.index-page {
     overflow-wrap: anywhere;
 }
 
-.topic-card:hover {
-    /*transform: scale(1.03);*/
+/*
+.topic-card:hover {  
    background: #245a96;
-}
+}*/
 
 .topic-card.pressed {
     background: #1f4d80;
@@ -334,6 +335,13 @@ body.index-page {
     box-sizing: border-box;
 }
 
+.notice-row.owner-message .msg-text {
+    border: 1px solid black;
+    padding: 15px;
+}
+
+
+
 .owner-message .msg-body {
     width: fit-content;
     max-width: 100%;
@@ -393,6 +401,10 @@ body.index-page {
     color: blue;
     font-weight: bold;
     white-space: pre-wrap;
+}
+
+.notice-label {
+    color: black;
 }
 
 .msg-row {
@@ -458,6 +470,7 @@ body.index-page {
 
 .notice-row.owner-message{ 
     margin-bottom: 6px;
+    
 } 
 
 .notice-row .msg-content {
@@ -1116,6 +1129,11 @@ input::placeholder {
     background-color: #d9ecff;
 }
 
+#contact-card{
+    color:red;
+    border: 1px solid black; 
+} 
+
 
 #cp_informationTopic {
     min-height: 0;
@@ -1263,12 +1281,6 @@ input::placeholder {
       height: 10px;
       font-size: 10px;
     }
-
-    .owner-message .msg-text {
-   
-    margin: 0 10px;
-    
-}
 
     .message-options {
         justify-content: center;
