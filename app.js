@@ -769,9 +769,6 @@ function initBoard() {
     document.documentElement.scrollHeight
 );
 
-console.log("1: ", window.innerHeight);
-console.log("2: ",document.documentElement.scrollHeight);
-
   let boardName = localStorage.getItem("boardName");
 
   /*
@@ -1121,10 +1118,6 @@ function backToCategories() {
     }
 
     document.getElementById("boardCategoriesView").style.display = "grid";
-    console.log(
-    "CATEGORY DISPLAY:",
-    document.getElementById("boardCategoriesView").style.display
-);
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardTopicsView").innerHTML = "";
     backToCategoriesBtn.style.display = "none";
@@ -1147,7 +1140,7 @@ function backToCategories() {
     localStorage.removeItem("currentCategory");
     localStorage.removeItem("currentTopic");
 
-    //document.getElementById("currentLocation").style.display = "none";
+    document.getElementById("currentLocation").style.display = "none";
 
     //updateCurrentLocation();
 }
@@ -2076,8 +2069,7 @@ fetch(`http://localhost:3000/board/${boardName}`, {
 
 function loadMessage(forceScroll = false) {
 
-  //console.log("LOAD MESSAGES CALLED");
-  console.trace("LOAD MESSAGES CALLED");
+  console.log("LOAD MESSAGES CALLED");
   
   const box = document.getElementById("boardMessagesDiv");
   if (!box) return;
@@ -2103,8 +2095,6 @@ function loadMessage(forceScroll = false) {
 })
   .then(res => res.json())
   .then(data => {
-
-    console.log("MESSAGES FROM SERVER:", data.boardMessages);
 
     const boardType = data.boardType;
     const noticeTemplate = data.noticeTemplate;
@@ -2174,8 +2164,6 @@ const ownerCategories = [
 let showTopicInsideMessage =
     data.boardType === "notice" &&
     ownerCategories.includes(currentCategory);
-
-    console.log("MESSAGES TO RENDER:", messages);
 
 messages.forEach(msg => {
 
@@ -2565,7 +2553,6 @@ function loginWithPassword() {
   })
   .then(async data => {
 
-    console.log("opa tutkii: ", data.token);
     if (!data.success) {
       return alert(t("LOGIN_FAILED"));
     }
@@ -2814,6 +2801,7 @@ function home() {
 
 function clearLoginFields() {
     console.log("CLEAR LOGIN FIELDS CALLED");
+
     const boardName = document.getElementById("boardName");
     const boardUsername = document.getElementById("boardUsername");
     const boardPassword = document.getElementById("boardPassword");
@@ -2916,12 +2904,6 @@ function renderVisitedUsers(users) {
 
   console.log("RENDER VISITED CALLED");
 
-  console.log(
-    "BEFORE VISITED",
-    document.querySelector(".board").getBoundingClientRect().height
-);
-
-
   const el = document.getElementById("visitedUsers");
   if (!el) return;
 
@@ -2946,10 +2928,6 @@ function renderVisitedUsers(users) {
   `👤 ${labels.loggedIn}: <b>${loggedUser}</b>&nbsp;&nbsp;&nbsp;&nbsp;🟢 ${labels.lastVisited}: ` +
   sorted.map(u => u.name).join(", ");
 
-  console.log(
-    "AFTER VISITED",
-    document.querySelector(".board").getBoundingClientRect().height
-);
 }
 
 function updateVisitedUI(data) {
@@ -3049,6 +3027,7 @@ if (infoMode) {
 }
 
 document.getElementById("editMode")?.addEventListener("change", () => {
+  console.log("miksi tänne");
     updateEditModeUI();
     loadMessage(false);
 });
@@ -3518,7 +3497,8 @@ function openRequests() {
 }
 
 function closeRequests() {
-  console.trace("CLOSE REQUESTS");
+  console.log("CLOSE REQUESTS CALLED");
+
   document.getElementById("requestsPopup").style.display = "none";
 }
 
@@ -3720,14 +3700,29 @@ function openQuickMessages() {
   renderQuickPopup();
 }
 
+document.getElementById("closeQuickBtn")?.addEventListener("click", () => {
+
+    closeQuickMessages();
+
+    const edit = document.getElementById("editMode");
+
+    if (edit) {
+        edit.checked = false;
+        edit.dispatchEvent(new Event("change"));
+    }
+
+});
+
 function closeQuickMessages() {
+
   document.getElementById("quickMessagesPopup").style.display = "none";
+
   const edit = document.getElementById("editMode");
 
   if (edit) {
     edit.checked = false;
-    edit.dispatchEvent(new Event("change"));
   }
+
 }
 
 function renderQuickPopup(){

@@ -1158,6 +1158,7 @@ input::placeholder {
     display: flex;
     gap: 8px;
     min-width: 0;
+    min-height: 34px;
 }
 
 .left-actions button {
@@ -1186,7 +1187,7 @@ input::placeholder {
     display:flex;
     justify-content:center;
     align-items:center;
-    height:34px;  
+    height:34px; 
     background-color: red;
 }
 
