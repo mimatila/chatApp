@@ -202,7 +202,7 @@ const messages = {
         SAUNA: "Saunavuorot",
         NEW_TOPIC: "Uusi Info",
         SEND: "Lähetä",
-        CLEAR: "Tyhjennä",
+        CLEAR: "Poista",
         SETTINGS: "Asetukset",
         MEMBERS: "Jäsenet",
         BOARD_COUNT: "Taulut",
@@ -365,7 +365,7 @@ const messages = {
         SAVE_BTN: "Save",
         NEW_TOPIC: "New Topic",
         SEND: "Send",
-        CLEAR: "Clear",
+        CLEAR: "Delete",
         SETTINGS: "Settings",
         MEMBERS: "Members",
         LEAVE_BOARD: "Leave Board",
@@ -457,10 +457,13 @@ async function showCategories() {
 
     document.getElementById("saunaBtn").style.display = "block";
     document.getElementById("autoBtn").style.display = "block";
+    document.getElementById("currentLocation").style.display = "block";
+    document.getElementById("currentLocation").style.visibility = "hidden";
+    document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("backToCategoriesBtn").style.visibility = "visible";
     document.getElementById("clearBtn").style.display = "none";
     document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("boardMessagesDiv").style.display = "none";
-    document.getElementById("backToCategoriesBtn").style.display = "none";
     
     renderCategories();
     loadTopicCounts();
@@ -506,6 +509,10 @@ function showTopics() {
     console.log("SHOW TOPICS CALLED");
     document.getElementById("boardTopicsView").style.display = "grid";
     document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("currentLocation").style.display = "block";
+    document.getElementById("currentLocation").style.visibility = "hidden";
+    document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("backToCategoriesBtn").style.visibility = "visible";
     document.getElementById("boardCategoriesView").style.display = "none";   
     document.getElementById("boardMessagesDiv").style.display = "none";   
     document.getElementById("saunaBtn").style.display = "none";
@@ -521,6 +528,11 @@ function showMessages() {
     document.getElementById("boardTopicsView").style.display = "none";   
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
+    document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("backToCategoriesBtn").style.visibility = "visible";
+    document.getElementById("currentLocation").style.display = "block";
+    document.getElementById("currentLocation").style.visibility = "visible";
+  
 
     const role = localStorage.getItem("role");
     const editMode = document.getElementById("editMode")?.checked;
@@ -530,7 +542,7 @@ function showMessages() {
         ? ""
         : "none";
       
-    backToCategoriesBtn.style.display = "block";
+    
 }
 
 function editMessage(msg) {
@@ -911,6 +923,8 @@ updateTemplateVisibility();
  if (boardType === "notice") {
 
     document.getElementById("topicBtn").style.display = "block";
+    document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("backToCategoriesBtn").style.visibility = "visible";
 
     if (noticeTemplate === "taloyhtio") {
 
@@ -934,8 +948,8 @@ updateTemplateVisibility();
 
 function initFamilyBoard() {
 
-    //topicSummary.style.display = "none";
-    
+    //topicSummary.style.display = "none";   
+    document.querySelector(".message-options").classList.add("message-options-family");
     updateRequestBadge();
     loadMessage(true);
     
@@ -1118,9 +1132,12 @@ function backToCategories() {
     }
 
     document.getElementById("boardCategoriesView").style.display = "grid";
-    document.getElementById("boardTopicsView").style.display = "none";
+    document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("backToCategoriesBtn").style.visibility = "visible";
+    document.getElementById("currentLocation").style.display = "block";
+    document.getElementById("currentLocation").style.visibility = "hidden";
     document.getElementById("boardTopicsView").innerHTML = "";
-    backToCategoriesBtn.style.display = "none";
+    document.getElementById("boardTopicsView").style.display = "none";
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
     document.getElementById("clearBtn").style.display = "none";
@@ -1139,8 +1156,6 @@ function backToCategories() {
     
     localStorage.removeItem("currentCategory");
     localStorage.removeItem("currentTopic");
-
-    document.getElementById("currentLocation").style.display = "none";
 
     //updateCurrentLocation();
 }
