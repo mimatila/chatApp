@@ -200,19 +200,12 @@ const messages = {
         CREATE_BTN: "Luo",
         SAVE_BTN: "Talleta",
         SAUNA: "Saunavuorot",
-        NEW_TOPIC: "Uusi Info",
-        SEND: "Lähetä",
-        CLEAR: "Poista",
         SETTINGS: "Asetukset",
         MEMBERS: "Jäsenet",
         BOARD_COUNT: "Taulut",
-        TODAY: "tänään",
-        EDIT: "muokkaa",
         SAUNALIST_LOAD_NO_SUCCESS:"Saunavuoro listan lataaminen epäonnistui.",
         PARKING_SLOTS_NOT_CREATED: "Autopaikkoja ei ole vielä luotu.",
         SELECT_TOPIC: "Valitse aihe ensin.",
-        IMPORTANT: "tärkeä",
-        INFO: "info",
         LOGOUT: "Kirjaudu ulos",
         DELETE_BOARD: "Poista taulu",
         REQUESTS: "Pyynnöt",
@@ -363,16 +356,9 @@ const messages = {
         CREATE_TOPIC_TITLE: "Create New Topic",
         CREATE_BTN: "Create",
         SAVE_BTN: "Save",
-        NEW_TOPIC: "New Topic",
-        SEND: "Send",
-        CLEAR: "Delete",
         SETTINGS: "Settings",
         MEMBERS: "Members",
         LEAVE_BOARD: "Leave Board",
-        TODAY: "today",
-        EDIT: "edit",
-        IMPORTANT: "important",
-        INFO: "info",
         LOGOUT: "Logout",
         DELETE_BOARD: "Delete Board",
         REQUESTS: "Requests",
@@ -2029,23 +2015,15 @@ function loadBoardLanguage() {
   setText("closeAutoPopupBtn", "AUTO_CLOSE");
   setText("cp_cancelBtn", "CANCEL");
   setText("homeBtn", "HOME");
-  setText("topicBtn", "NEW_TOPIC");
   setText("leaveBoardBtn", "LEAVE_BOARD");
-  setText("sendBtn", "SEND");
-  setText("clearBtn", "CLEAR");
   setText("saunaBtn", "SAUNA");
   setText("settingsBtn", "SETTINGS");
   setText("members", "MEMBERS");
-  setText("todayModeText", "TODAY");
-  setText("editModeText", "EDIT");
   setText("autoBtn", "AUTO");
-  setText("importantModeText", "IMPORTANT");
-  setText("infoModeText", "INFO");
   setText("logout", "LOGOUT");
   setText("deleteBoardBtn", "DELETE_BOARD");
   setText("requestsBtn", "REQUESTS");
   setPlaceholder("boardNewMsg", "writeMessage");
-  setText("backToCategoriesBtn", "BACK_CATEGORIES");
 } 
 
 function updateRequestBadge() {
@@ -3979,6 +3957,8 @@ function updateEditModeUI() {
     const deleteBoardBtn = document.getElementById("deleteBoardBtn");
 
   if (!sendBtn) return;
+
+  
 
   if (leaveBtn) {
     leaveBtn.style.display =
