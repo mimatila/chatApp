@@ -1795,10 +1795,6 @@ app.post("/createTopic", async (req, res) => {
     type
   } = req.body;
 
-  const allowSameTopic =
-    category === "general information" ||
-    category === "announcements";
-
   if (topic.length > 40) {
     return res.json({
       success: false,
@@ -1822,33 +1818,6 @@ app.post("/createTopic", async (req, res) => {
     }
 
     const boardId = boards[0].id;
-
-    if (!allowSameTopic) {
-
-    const [existing] = await pool.query(
-        `
-        SELECT id
-        FROM boardMessages
-        WHERE board_id = ?
-        AND category = ?
-        AND topic = ?
-        LIMIT 1
-        `,
-        [
-            boardId,
-            category,
-            topic
-        ]
-    );
-
-    if (existing.length > 0) {
-        return res.json({
-            success: false,
-            message: "TOPIC_ALREADY_EXISTS"
-        });
-    }
-}
-
 
     // Hae käyttäjän rooli
     const [users] = await pool.query(

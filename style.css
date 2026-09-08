@@ -960,7 +960,7 @@ input::placeholder {
     justify-content: center;
     min-height: 34px;
     padding-left: 18px;
-    gap: 12px;
+    gap: 15px;
     margin-top: 10px;
 }
 
@@ -1188,7 +1188,7 @@ input::placeholder {
 
 .left-actions {
     display: flex;
-    gap: 8px;
+    gap: 15px;
     min-width: 0;
     /*min-height: 34px;*/
 }

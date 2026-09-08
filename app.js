@@ -41,13 +41,13 @@ function getMessageTemplates() {
         },
 
         contact: {
-            title: `${t("CONTACT_TITLE")}`,
+            title: "",
             header: `${t("CONTACT_HEADER")}`,
             text:
-`👤 ${t("NAME")}:
-🏠 ${t("ADDRESS")}:
-📞 ${t("PHONE")}:
-✉️ ${t("EMAIL")}:`
+`👤 ${t("NAME")}: 
+🏠 ${t("ADDRESS")}: 
+📞 ${t("PHONE")}: 
+✉️ ${t("EMAIL")}: `
         },
 
         notice: {
@@ -166,7 +166,7 @@ const messages = {
         CONTACT_TITLE: "Yhteystiedot",
         NOTICE_TITLE: "Tiedotteet",
         NOTICE_HEADER: "Tiedote",
-        CONTACT_HEADER: "Yhteystieto",
+        CONTACT_HEADER: "Yhteystiedot",
         NAME: "Nimi",
         ADDRESS: "Osoite",
         PHONE: "Puhelin",
@@ -238,6 +238,7 @@ const messages = {
         AUTO_SAVE: "Save",
         Header: "Header",
         DESCRIPTION: "Description",
+        CONTACT_HEADER: "Contact Information",
         ADDITIONAL_INFO: "Additional info",
         YLEINEN_: "General",
         YHTEYS_: "Contact info",
@@ -247,13 +248,13 @@ const messages = {
         BOARD_INFO: "Notice Board",
         WELCOME_TEXT: "Welcome to your board system!",
         PARKING_SLOTS_NOT_CREATED: "Parking spaces have not been created yet.",
-        new_topic: "New Info",
+        new_topic: "New Topic",
         onlyOwnerCanWrite: "Only the owner can write to this chain.",
         PleaseSelectTopicFirst: "Select topic first.",
         confirmRemoveMessage: "You want to remove this message?",
         confirmRemoveMessages: "You want to remove this message chain?",
         LOGIN_FAILED: "Login failed.",
-        CONTACT_TITLE: "Contact infos",
+        CONTACT_TITLE: "Contact Information",
         NOTICE_TITLE: "Notices",
         NOTICE_HEADER: "Notice",
         CONTANT_HEADER: "Contact info",
@@ -4059,13 +4060,18 @@ function createTopicPopupCategoryChanged() {
     const role = localStorage.getItem("role");
 
     const topicInput = document.getElementById("cp_topic");
+    //console.log("test: ", document.getElementById("cp_message").value);
+    document.getElementById("cp_header").value = "";
+    document.getElementById("cp_topic").value = "";
+    document.getElementById("cp_message").value = "";
 
     const showOwnerTools =
-        role === "owner" &&
-        (
-            category === "general information" ||
-            category === "announcements"
-        );
+    role === "owner" &&
+    (
+        category === "general information" ||
+        category === "announcements"
+    );
+
 
     topicInput.style.display = "block";
 
@@ -4085,13 +4091,7 @@ function createTopicPopupCategoryChanged() {
     const existingTopic = document.getElementById("cp_existingTopic");
 
     if (existingTopic) {
-
-        if (showOwnerTools) {
-            loadTopicsForCreatePopup(category);
-        } else {
-            existingTopic.style.display = "none";
-        }
-
+      loadTopicsForCreatePopup(category);
     }
     document.getElementById("messageTemplate").value="general";
 }
