@@ -509,6 +509,8 @@ function showTopics() {
 }
 
 function showMessages() {
+
+  console.log("hdhdh");
        
     document.getElementById("boardMessagesDiv").style.display = "block";
     document.getElementById("boardCategoriesView").style.display = "none";
@@ -928,6 +930,7 @@ updateTemplateVisibility();
 } else {
 
     document.getElementById("topicBtn").style.display = "none";
+    document.getElementById("backToCategoriesBtn").style.display = "none";
     document.getElementById("saunaBtn").style.display = "none";
     document.getElementById("autoBtn").style.display = "none";
 }
@@ -2015,13 +2018,13 @@ function loadBoardLanguage() {
   setText("createAutoPopupBtn", "AUTO_CREATE");
   setText("closeAutoPopupBtn", "AUTO_CLOSE");
   setText("cp_cancelBtn", "CANCEL");
-  setText("homeBtn", "HOME");
+  //setText("homeBtn", "HOME");
   setText("leaveBoardBtn", "LEAVE_BOARD");
   setText("saunaBtn", "SAUNA");
   setText("settingsBtn", "SETTINGS");
   setText("members", "MEMBERS");
   setText("autoBtn", "AUTO");
-  setText("logout", "LOGOUT");
+  //setText("logout", "LOGOUT");
   setText("deleteBoardBtn", "DELETE_BOARD");
   setText("requestsBtn", "REQUESTS");
   setPlaceholder("boardNewMsg", "writeMessage");
@@ -2096,7 +2099,9 @@ function loadMessage(forceScroll = false) {
     localStorage.setItem("boardType", boardType);
     localStorage.setItem("noticeTemplate", noticeTemplate);
 
+    if (boardType === "notice") {
     categories = getCategories(boardType, noticeTemplate);
+}
 
     if (boardType === "notice" && !currentTopic) {
       clearMessages();
@@ -3036,6 +3041,38 @@ if (membersPopup) {
   });
 }
 
+const saunaPopup = document.getElementById("saunaPopup");
+
+if (saunaPopup) {
+
+  saunaPopup.addEventListener("click", (e) => {
+
+    if (e.target.id === "saunaPopup") {
+
+      closeSauna();
+
+    }
+
+  });
+
+}
+
+const autoPopup = document.getElementById("autoPopup");
+
+if (autoPopup) {
+
+  autoPopup.addEventListener("click", (e) => {
+
+    if (e.target.id === "autoPopup") {
+
+      closeAutoPopup();
+
+    }
+
+  });
+
+}
+
 const settingsPopup = document.getElementById("settingsPopup");
 
 if (settingsPopup) {
@@ -3958,8 +3995,6 @@ function updateEditModeUI() {
     const deleteBoardBtn = document.getElementById("deleteBoardBtn");
 
   if (!sendBtn) return;
-
-  
 
   if (leaveBtn) {
     leaveBtn.style.display =

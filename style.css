@@ -632,6 +632,8 @@ button {
 
 #topicBtn {
     background-color: lightgreen;
+    height:34px;
+    width: 40px;
 }
 
 #cp_existingTopic {
@@ -794,6 +796,7 @@ input::placeholder {
   padding: 10px;
   box-sizing: border-box;
   overflow-y: hidden;
+  background-color: #d9ecff;
 }
 
 #saunaButtons {
@@ -1206,12 +1209,57 @@ input::placeholder {
 
 #cp_createBtn,
 #cp_cancelBtn {
-    margin-top: 20px;
+    margin-top: 15px;
+}
+
+#createAutoPopupBtn,
+#closeAutoPopupBtn {
+    margin-top: 15px;
+}
+
+#editSaunaBtn,
+#closeSaunaBtn {
+    margin-top: 15px;
+}
+
+#editSaunaBtn,
+#closeSaunaBtn {
+    margin-top: 15px;
+}
+
+#saveSaunaBtn,
+#deleteSaunaBtn {
+    margin-top: 15px;
+}
+
+#cp_createBtn {
+    margin-right: 8px;
+}
+
+#createAutoPopupBtn {
+    margin-right: 8px;
+}
+
+#editSaunaBtn {
+    margin-right: 8px;
+}
+
+#saveSaunaBtn {
+    margin-right: 8px;
+}
+
+#deleteSaunaBtn {
+    margin-right: 8px;
+}
+
+#saveSettingsBtn {
+    margin-right: 8px;
 }
 
 #backToCategoriesBtn {
     display:none;
     height:34px;
+    width: 40px;
     background-color: #d9ecff;
 }
 
