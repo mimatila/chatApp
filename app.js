@@ -54,9 +54,9 @@ function getMessageTemplates() {
             title: "",
             header: `${t("NOTICE_HEADER")}`,
             text:
-`${t("SUBJECT")}:
+`${t("SUBJECT")} :
 
-${t("ADDITIONAL_INFO")}:`
+${t("ADDITIONAL_INFO")} :`
         }
     };
 }

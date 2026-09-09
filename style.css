@@ -275,7 +275,7 @@ body.index-page {
     width: 95%;
     max-width: 700px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 12px;
     box-sizing: border-box;
     background: #d0d0d0;
     border-radius: 12px;
@@ -283,7 +283,7 @@ body.index-page {
 }
 
 .board-content {
-    width: 95%;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -399,6 +399,7 @@ body.index-page {
 
 .msg-body {
     color: blue;
+    font-size: 12px;
     font-weight: bold;
     white-space: pre-wrap;
 }
@@ -636,6 +637,24 @@ button {
     width: 40px;
 }
 
+#topicBtn span {
+    display: block;
+    transform: translate(-1px, -1px);
+    font-size: 17px;
+}
+
+#backToCategoriesBtn {
+    display:none;
+    height:34px;
+    width: 40px;
+    background-color: lightgreen;
+}
+
+#backToCategoriesBtn span {
+    display: block;
+    transform: translate(-1px, -2px);
+}
+
 #cp_existingTopic {
     background-color: #d9ecff;
     display: block;
@@ -716,13 +735,14 @@ button {
   display: flex;
   gap: 10px;
   align-items: center;
+  padding-left: 10px;
   max-width: 500px;
   margin: 0 auto;   /* 🔥 keskittää vaakasuunnassa */
 }
 
 .input-row button {
   width: 90px !important;
-  flex: 0 0 120px;
+  flex: 0 0 90px;
   box-sizing: border-box;
 }
 
@@ -884,7 +904,8 @@ input::placeholder {
 #boardNewMsg {
   flex: 1;
   min-width: 0;
-  margin: 10px 0;
+  margin-top: 10px;
+  margin-right: 2px;
   font-size: 0.9rem;
   font-weight: bold;
   text-align: left;
@@ -947,33 +968,27 @@ input::placeholder {
     padding-left: 0;
 }
 
-.message-options {
-    position: relative;
-}
-
 .right-action {
     position: absolute;
     min-height: 34px;
-    right: 18px;
+    right: 20px;
 }
 
 .message-options {
-    display: flex;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: center;
     min-height: 34px;
-    padding-left: 18px;
-    gap: 15px;
     margin-top: 10px;
+    padding: 0 8px;
 }
 
-.message-options label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.9em;   /* tai 11px, 0.8rem jne. */
-  cursor: pointer;
-}
+.message-options input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+        margin: 0;
+    }
 
 .msg-time {
   position: absolute;
@@ -1191,20 +1206,37 @@ input::placeholder {
 
 .left-actions {
     display: flex;
-    gap: 15px;
-    min-width: 0;
-    /*min-height: 34px;*/
+    justify-self: start;
+    gap: 12px;
+    padding-left: 12px;
 }
 
 .left-actions button {
     display:flex;
-    justify-content:center;
-    flex-shrink:1;
-    height:34px;   
+    justify-content: center;
+    flex-shrink:1;  
     white-space:nowrap;
-    align-items:center;   
-    padding:0 10px;
-    line-height:1;
+    align-items: center;   
+    padding: 0 10px;  
+}
+
+.checkbox-actions {
+    display: flex;
+    background-color: black;
+    padding: 7px;
+    border-radius: 8px;
+    justify-self: center;   
+    align-items: center;
+    font-size: 13px;
+    gap: 12px;
+}
+
+#importantModeText,
+#infoModeText,
+#todayModeText,
+#editModeText {
+    display: inline-block;
+    transform: translateY(-2px);
 }
 
 #cp_createBtn,
@@ -1256,13 +1288,6 @@ input::placeholder {
     margin-right: 8px;
 }
 
-#backToCategoriesBtn {
-    display:none;
-    height:34px;
-    width: 40px;
-    background-color: #d9ecff;
-}
-
 .clearBtn {
     display:flex;
     justify-content:center;
@@ -1274,63 +1299,94 @@ input::placeholder {
 @media (max-width: 600px) {
 
     body.index-page {
-        height: 100dvh;
-        margin: 0;       
+      height: 100dvh;
+      margin: 0; 
     }
-
+     
     .index-container {
-    width:360px;
-    height: 540px; 
-}
-
-@media (max-width: 600px) {
+      width:360px;
+      height: 540px;
+    } 
 
     #boardTopicsView {
-        grid-template-columns: 1fr;
+      grid-template-columns: 1fr;
     }
 
-}
+    #boardMessagesDiv {
+        display: block;
+        height: 62vh;
+        max-width: var(--content-width);
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0 auto;
+        overflow-y: auto;
+        overflow-x: auto;   
+        font-family: monospace;
+        text-align: left;
+        padding: 9px 25px 5px 9px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #e8e9eb;
+        font-size: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-#boardMessagesDiv {
-    display: block;
-    height: 62vh;
-    max-width: var(--content-width);
-    width: 100%;
-    box-sizing: border-box;
-    margin: 0 auto;
-    overflow-y: auto;
-    overflow-x: auto;   
-    font-family: monospace;
-    text-align: left;
-    padding: 9px 25px 5px 9px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background: #e8e9eb;
-    font-size: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+    .message-options {
+        justify-content: left;
+        gap: 12px;
+        margin-top: 10px;
+        padding-left: 0px;
+        max-width: 100%;
+    }
+ 
+    .message-options label {
+        gap: 4px;
+        font-size: 10px;
+    }
 
-.right-action {
-    position: absolute;
-    min-height: 34px;
-    right: 8px;
-}
+    .message-options input[type="checkbox"] {
+        width: 13px;
+        height: 13px;
+        margin: 0;
+    }
 
-#clearBtn {
-    height: 30px;
-    width: 40px;
-    flex: 0 0 40px;
-    padding: 0 7px;
-    font-size: 10px;
-}
+    .left-actions {
+        display: flex;
+        justify-self: start;
+        gap: 7px;
+        padding-left: 0px;
+    }
+
+    .checkbox-actions {
+        display: flex;
+        background-color: black;
+        padding: 7px;
+        border-radius: 8px;
+        justify-self: center;
+        align-items: center;
+        font-size: 13px;
+        gap: 12px;
+    }
+
+    .right-action {
+        position: absolute;
+        min-height: 34px;
+        right: 0px;
+    }
+
+    #clearBtn {
+        height: 30px;
+        width: 40px;
+        flex: 0 0 40px;
+        padding: 0 7px;
+        font-size: 10px;
+    }
 
     #openJoinBtn {
-        
       font-size: 10px; 
     }
 
-    #openCreateBtn {
-      
+    #openCreateBtn{  
       font-size: 10px;
     }
 
@@ -1366,7 +1422,7 @@ input::placeholder {
     }
 
     .topic-card {
-      font-size: 11px;
+      font-size: 10px;
     } 
 
     .slot-input {
@@ -1381,6 +1437,14 @@ input::placeholder {
       font-size: 10px;
     }
 
+    .msg-body {
+      font-size: 10px;
+    }
+
+    .msg-time {
+      font-size: 9px;
+    }
+
     .owner-message .msg-text {
     display: grid;
     grid-template-columns: 1fr;
@@ -1389,41 +1453,27 @@ input::placeholder {
     min-width: 0;
     margin: 0 5px;
     box-sizing: border-box;
-}
-
-.msg-content {
-  flex: 1;
-  position: relative;
-  padding: 6px 0 14px 0px;
-}
-
-    .message-options {
-        justify-content: left;
-        gap: 12px;
-        margin-top: 10px;
-        padding-left: 8px;
-        max-width: 100%;
-    }
- 
-
-    .message-options label {
-        gap: 4px;
-        font-size: 10px;
     }
 
-    .message-options input[type="checkbox"] {
-        width: 12px;
-        height: 12px;
-        margin: 0;
+    .msg-content {
+    flex: 1;
+    position: relative;
+    padding: 6px 0 14px 0px;
     }
 
     #boardNewMsg {
         height: 15px;
-        font-size: 13px;
+        font-size: 10px;
+        margin-right: 5px;
+    }
+
+     #boardNewMsg {
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     #boardTitle {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     #boardDescription {
@@ -1449,78 +1499,92 @@ input::placeholder {
 
     #mainCategories,
     #otherCategories {
-    grid-template-columns: 70px;
-    justify-content: center;
-    align-content: center;
-    gap: 10px;
-}
-
-#mainCategories > *,
-#otherCategories > * {
-    width: 80px;
-    height: 80px;
-}
-
-    .category-card {
-        font-size: 10px;
-        padding: 5px;
+      grid-template-columns: 70px;
+      justify-content: center;
+      align-content: center;
+      gap: 10px;
     }
 
-    #boardTopicsView {
-   
-    height: 65vh;
-    
-}
+    #mainCategories > *,
+    #otherCategories > * {
+      width: 80px;
+      height: 80px;
+    }
 
-.notice-board #boardCategoriesView {
-    
-    row-gap: 15px;
-   
-}
+    .category-card {
+      font-size: 10px;
+      padding: 5px;
+    }
 
-.board {
-    height: 65vh;
+    #boardTopicsView {   
+      height: 65vh;    
+    }
 
-}
+    .notice-board #boardCategoriesView {        
+      row-gap: 15px;    
+    }
+
+    .board {
+      height: 65vh;
+    }
+
+    .owner-topic-title {   
+      font-size: 12px;    
+    }
 
     .message-area {
         position: relative;
-        width: 80vw;
+        width: 85vw;
         max-width: none;
         margin: 0 auto;
+        margin-right: 0;
         padding: 0;
         box-sizing: border-box;
+    }
+
+    .notice-board .message-area {
+      width: 90vw;
     }
 
     .input-row {
         width: 100%;
         max-width: none;
         margin: 0;
-        gap: 5px;
+        gap: 3px;
+        padding-left: 10px;
+        box-sizing: border-box;
+    }
+
+    .notice-board .input-row {
+        width: 97%;
+        max-width: none;
+        margin: 0;
+        gap: 3px;
+        padding-left: 0px;
         box-sizing: border-box;
     }
 
     .input-row #sendBtn {
-    width: 40px !important;
-    flex: 0 0 50px;
-}
-
-    #boardNewMsg {
-        flex: 1 1 auto;
-        min-width: 0;
+      height: 40px;
+      width: 40px !important;
+      flex: 0 0 50px;
     }
 
     #quickMessagesBtn {
         position: absolute;
-        left: -27px;
+        left: -19px;
         top: 50%;
-        font-size: 18px;
+        font-size: 20px;
         z-index: 9999;
     }
 
+    button{
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+
     #currentLocation {
-      font-size: 10px;   
-      
+      font-size: 10px;         
     }
 
     .auto-grid {
@@ -1544,14 +1608,14 @@ input::placeholder {
     }
 
     .auto-slot {
-    display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 0;
-    /*border-right: 1px solid black;*/
-    border-bottom: 1px solid black;
-    box-sizing: border-box;
-    min-height: 36px;
-}
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 0;
+        /*border-right: 1px solid black;*/
+        border-bottom: 1px solid black;
+        box-sizing: border-box;
+        min-height: 36px;
+    }
 
     .auto-edit-slot {
       grid-template-columns: 34px 110px;
@@ -1564,29 +1628,341 @@ input::placeholder {
     .info-input {
       font-size: 10px;   
     }
-
 }
+
+
+
 
 @media (max-width: 360px) {
 
+    body.index-page {
+      height: 100dvh;
+      margin: 0; 
+    }
+     
+    .index-container {
+      width:360px;
+      height: 540px;
+    } 
+
+    #boardTopicsView {
+      grid-template-columns: 1fr;
+    }
+
+    #boardMessagesDiv {
+        display: block;
+        height: 62vh;
+        max-width: var(--content-width);
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0 auto;
+        overflow-y: auto;
+        overflow-x: auto;   
+        font-family: monospace;
+        text-align: left;
+        padding: 9px 25px 5px 9px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #e8e9eb;
+        font-size: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .message-options {
+        justify-content: left;
+        gap: 12px;
+        margin-top: 10px;
+        padding-left: 0px;
+        max-width: 100%;
+    }
+ 
+    .message-options label {
+        gap: 4px;
+        font-size: 10px;
+    }
+
+    .message-options input[type="checkbox"] {
+        width: 13px;
+        height: 13px;
+        margin: 0;
+    }
+
+    .left-actions {
+        display: flex;
+        justify-self: start;
+        gap: 7px;
+        padding-left: 0px;
+    }
+
+    .checkbox-actions {
+        display: flex;
+        background-color: black;
+        padding: 7px;
+        border-radius: 8px;
+        justify-self: center;
+        align-items: center;
+        font-size: 13px;
+        gap: 12px;
+    }
+
+    .right-action {
+        position: absolute;
+        min-height: 34px;
+        right: 0px;
+    }
+
+    #clearBtn {
+        height: 30px;
+        width: 40px;
+        flex: 0 0 40px;
+        padding: 0 7px;
+        font-size: 10px;
+    }
+
+    #openJoinBtn {
+      font-size: 10px; 
+    }
+
+    #openCreateBtn{  
+      font-size: 10px;
+    }
+
+    #backToCategoriesBtn {
+      height:30px;
+      font-size: 10px;
+    }
+
+     #topicBtn {
+      height:30px;
+      font-size: 10px;
+    }
+    
+    #saunaTable input {
+      min-width: 45px;
+      height: 15px;
+    }
+
+    #saunaTable td:not(:first-child) {
+      min-width: 45px;
+    }   
+
+    #saunaTable {
+      font-size: 9px;
+    }
+
+    #saunaTable .saunaInput {
+      padding: 2px;
+    }
+
+    #saunaTable td:has(.saunaInput) {
+      padding: 2px 5px;
+    }
+
+    .topic-card {
+      font-size: 10px;
+    } 
+
+    .slot-input {
+      width: 40px;
+      height: 10px;
+      font-size: 10px;
+    }
+
+    .info-input {
+      width: 120px;
+      height: 10px;
+      font-size: 10px;
+    }
+
+    .msg-body {
+      font-size: 10px;
+    }
+
+    .msg-time {
+      font-size: 9px;
+    }
+
+    .owner-message .msg-text {
+    display: grid;
+    grid-template-columns: 1fr;
+    flex: 1;
+    font-size: 10px;
+    min-width: 0;
+    margin: 0 5px;
+    box-sizing: border-box;
+    }
+
+    .msg-content {
+    flex: 1;
+    position: relative;
+    padding: 6px 0 14px 0px;
+    }
+
+    #boardNewMsg {
+        height: 15px;
+        font-size: 10px;
+        margin-right: 5px;
+    }
+
+     #boardNewMsg {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #boardTitle {
+        font-size: 12px;
+    }
+
+    #boardDescription {
+        font-size: 10px;
+    }
+
+    #visitedUsers {
+        font-size: 10px;
+    }
+
+    /*
     #mainCategories {
-    grid-template-columns: repeat(2, 80px);
-    column-gap: 8px;
+        grid-template-columns: repeat(2, 100px);
+        column-gap: 8px;
     }
 
     #otherCategories {
-        grid-template-columns: repeat(3, 80px);
+        grid-template-columns: repeat(3, 100px);
         column-gap: 8px;
         justify-content: start;
+    }
+    */
+
+    #mainCategories,
+    #otherCategories {
+      grid-template-columns: 70px;
+      justify-content: center;
+      align-content: center;
+      gap: 10px;
+    }
+
+    #mainCategories > *,
+    #otherCategories > * {
+      width: 70px;
+      height: 70px;
+    }
+
+    .category-card {
+      font-size: 10px;
+      padding: 5px;
+    }
+
+    #boardTopicsView {   
+      height: 65vh;    
+    }
+
+    .notice-board #boardCategoriesView {        
+      row-gap: 15px;    
+    }
+
+    .board {
+      height: 65vh;
+    }
+
+    .owner-topic-title {   
+      font-size: 12px;    
+    }
+
+    .message-area {
+        position: relative;
+        width: 85vw;
+        max-width: none;
+        margin: 0 auto;
+        margin-right: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .notice-board .message-area {
+      width: 90vw;
+    }
+
+    .input-row {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        gap: 3px;
+        padding-left: 10px;
+        box-sizing: border-box;
+    }
+
+    .notice-board .input-row {
+        width: 97%;
+        max-width: none;
+        margin: 0;
+        gap: 3px;
+        padding-left: 0px;
+        box-sizing: border-box;
+    }
+
+    .input-row #sendBtn {
+      height: 40px;
+      width: 40px !important;
+      flex: 0 0 50px;
     }
 
     #quickMessagesBtn {
         position: absolute;
-        left: -27px;
+        left: -18px;
         top: 50%;
-        transform: translateY(-50%);
-        font-size: 18px;
-        display: block !important;
+        font-size: 20px;
         z-index: 9999;
+    }
+
+    button{
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+
+    #currentLocation {
+      font-size: 10px;         
+    }
+
+    .auto-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .auto-edit-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .auto-grid .auto-slot {
+        border-left: none;
+    }
+
+    .auto-grid .auto-slot:nth-child(2n + 1) {
+        border-left: 1px solid black;
+    }
+
+    .auto-slot {
+      grid-template-columns: 32px 80px;
+    }
+
+    .auto-slot {
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 0;
+        /*border-right: 1px solid black;*/
+        border-bottom: 1px solid black;
+        box-sizing: border-box;
+        min-height: 36px;
+    }
+
+    .auto-edit-slot {
+      grid-template-columns: 34px 110px;
+    }
+
+    .slot-input {
+      font-size: 10px;
+    }
+
+    .info-input {
+      font-size: 10px;   
     }
 }

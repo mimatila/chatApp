@@ -43,25 +43,30 @@
 
 <div class="message-options">
   <div class="left-actions"> 
-  <button id="topicBtn" onclick="openTopicPopup()">📝</button>
-      <button id="backToCategoriesBtn" onclick="backToCategories()">◀</button> 
+    <button id="topicBtn" onclick="openTopicPopup()"><span>📝</span></button>
+    <button id="backToCategoriesBtn" onclick="backToCategories()"><span>◀</span></button> 
   </div>
+  <div class="checkbox-actions"> 
   <label>
-  <input type="checkbox" class="checkbox" id="importantMode">
- <span id="importantModeText">⚠️</span>
-  </label>
-  <label>
-  <input type="checkbox" class="checkbox" id="infoMode">
-  <span id="infoModeText">ℹ️</span>
-  </label>
-  <label>
-  <input type="checkbox" class="checkbox" id="todayMode">
-  <span id="todayModeText">📅</span>
-  </label>
-  <label>
-  <input type="checkbox" class="checkbox" id="editMode">
-  <span id="editModeText">⚙️</span>
-  </label>
+    <input type="checkbox" class="checkbox" id="importantMode">
+    <span id="importantModeText">⚠️</span>
+</label>
+
+<label>
+    <input type="checkbox" class="checkbox" id="infoMode">
+    <span id="infoModeText">ℹ️</span>
+</label>
+
+<label>
+    <input type="checkbox" class="checkbox" id="todayMode">
+    <span id="todayModeText">📅</span>
+</label>
+
+<label>
+    <input type="checkbox" class="checkbox" id="editMode">
+    <span id="editModeText">⚙️</span>
+</label>
+  </div>
   <div class="right-action"> 
     <button id="clearBtn" class="clearBtn" onclick="clearTable()">🗑️</button>
 </div>
