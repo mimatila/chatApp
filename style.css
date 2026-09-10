@@ -910,6 +910,7 @@ input::placeholder {
   font-weight: bold;
   text-align: left;
   color: blue;
+  border-radius: 5px;
   background-color: #fff9d6;
 }
 
@@ -971,7 +972,7 @@ input::placeholder {
 .right-action {
     position: absolute;
     min-height: 34px;
-    right: 20px;
+    right: 45px;
 }
 
 .message-options {
@@ -988,6 +989,7 @@ input::placeholder {
         width: 15px;
         height: 15px;
         margin: 0;
+        margin-right: 3px;
     }
 
 .msg-time {
@@ -1208,7 +1210,7 @@ input::placeholder {
     display: flex;
     justify-self: start;
     gap: 12px;
-    padding-left: 12px;
+    padding-left: 35px;
 }
 
 .left-actions button {
@@ -1223,12 +1225,12 @@ input::placeholder {
 .checkbox-actions {
     display: flex;
     background-color: black;
-    padding: 7px;
+    padding: 8px 10px 6px 10px;
     border-radius: 8px;
     justify-self: center;   
     align-items: center;
     font-size: 13px;
-    gap: 12px;
+    gap: 20px;
 }
 
 #importantModeText,
@@ -1347,7 +1349,6 @@ input::placeholder {
     .message-options input[type="checkbox"] {
         width: 13px;
         height: 13px;
-        margin: 0;
     }
 
     .left-actions {
@@ -1360,12 +1361,12 @@ input::placeholder {
     .checkbox-actions {
         display: flex;
         background-color: black;
-        padding: 7px;
+        padding: 8px 10px 6px 10px;
         border-radius: 8px;
         justify-self: center;
         align-items: center;
         font-size: 13px;
-        gap: 12px;
+        gap: 15px;
     }
 
     .right-action {
@@ -1684,7 +1685,6 @@ input::placeholder {
     .message-options input[type="checkbox"] {
         width: 13px;
         height: 13px;
-        margin: 0;
     }
 
     .left-actions {
@@ -1697,12 +1697,12 @@ input::placeholder {
     .checkbox-actions {
         display: flex;
         background-color: black;
-        padding: 7px;
+        padding: 8px 10px 6px 10px;
         border-radius: 8px;
         justify-self: center;
         align-items: center;
         font-size: 13px;
-        gap: 12px;
+        gap: 15px;
     }
 
     .right-action {
