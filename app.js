@@ -512,26 +512,44 @@ function showMessages() {
 
   console.log("hdhdh");
        
-    document.getElementById("boardMessagesDiv").style.display = "block";
-    document.getElementById("boardCategoriesView").style.display = "none";
-    document.getElementById("boardTopicsView").style.display = "none";   
-    document.getElementById("saunaBtn").style.display = "none";
-    document.getElementById("autoBtn").style.display = "none";
-    document.getElementById("backToCategoriesBtn").style.display = "block";
-    document.getElementById("backToCategoriesBtn").style.visibility = "visible";
-    document.getElementById("currentLocation").style.display = "block";
-    document.getElementById("currentLocation").style.visibility = "visible";
+  document.getElementById("boardMessagesDiv").style.display = "block";
+
+  const boardNewMsg = document.getElementById("boardNewMsg");
+  const importantMode = document.getElementById("importantMode");
+  const infoMode = document.getElementById("infoMode");
+
+  if (
+    currentCategory !== "general information" &&
+    currentCategory !== "announcements"
+) {
+    if (importantMode.checked) {
+        boardNewMsg.classList.add("important-mode");
+        boardNewMsg.classList.remove("info-mode");
+    }
+
+    if (infoMode.checked) {
+        boardNewMsg.classList.add("info-mode");
+        boardNewMsg.classList.remove("important-mode");
+    }
+}
+
+  document.getElementById("boardCategoriesView").style.display = "none";
+  document.getElementById("boardTopicsView").style.display = "none";   
+  document.getElementById("saunaBtn").style.display = "none";
+  document.getElementById("autoBtn").style.display = "none";
+  document.getElementById("backToCategoriesBtn").style.display = "block";
+  document.getElementById("backToCategoriesBtn").style.visibility = "visible";
+  document.getElementById("currentLocation").style.display = "block";
+  document.getElementById("currentLocation").style.visibility = "visible";
   
 
-    const role = localStorage.getItem("role");
-    const editMode = document.getElementById("editMode")?.checked;
+  const role = localStorage.getItem("role");
+  const editMode = document.getElementById("editMode")?.checked;
 
-    document.getElementById("clearBtn").style.display =
-        (role === "owner" && editMode)
-        ? ""
-        : "none";
-      
-    
+  document.getElementById("clearBtn").style.display =
+      (role === "owner" && editMode)
+      ? ""
+      : "none";
 }
 
 function editMessage(msg) {
@@ -1098,6 +1116,11 @@ function renderTopicsMessages(topics) {
 function backToCategories() {
 
     console.log("BACK TO CATEGORY CALLED");
+
+    document.getElementById("boardNewMsg").classList.remove("important-mode");
+    document.getElementById("boardNewMsg").classList.remove("info-mode");
+    document.getElementById("importantMode").checked = false;
+    document.getElementById("infoMode").checked = false;
 
     const msg = document.getElementById("boardMessagesDiv");
     const boardType = localStorage.getItem("boardType");
@@ -2021,7 +2044,7 @@ function loadBoardLanguage() {
   //setText("homeBtn", "HOME");
   setText("leaveBoardBtn", "LEAVE_BOARD");
   setText("saunaBtn", "SAUNA");
-  setText("settingsBtn", "SETTINGS");
+  //setText("settingsBtn", "SETTINGS");
   setText("members", "MEMBERS");
   setText("autoBtn", "AUTO");
   //setText("logout", "LOGOUT");
@@ -3004,25 +3027,61 @@ function saveSettings() {
 const importantMode = document.getElementById("importantMode");
 
 if (importantMode) {
+ 
   importantMode.addEventListener("change", function () {
 
-    if (this.checked) {
-      document.getElementById("infoMode").checked = false;
+    if (
+        this.checked &&
+        boardMessagesDiv.style.display !== "none" &&
+        currentCategory !== "general information" &&
+        currentCategory !== "announcements"
+    ) {
+
+        document.getElementById("infoMode").checked = false;
+
+        document.getElementById("boardNewMsg").classList.add("important-mode");
+        document.getElementById("boardNewMsg").classList.remove("info-mode");
+
+    } else {
+
+        document.getElementById("infoMode").checked = false;
+        document.getElementById("boardNewMsg").classList.remove("important-mode");
     }
+
     loadMessage();
-  });
+});
 }
+
+
 
 const infoMode = document.getElementById("infoMode");
 
 if (infoMode) {
+
   infoMode.addEventListener("change", function () {
 
-    if (this.checked) {
-      document.getElementById("importantMode").checked = false;
+    if (
+        this.checked &&
+        boardMessagesDiv.style.display !== "none" &&
+        currentCategory !== "general information" &&
+        currentCategory !== "announcements"
+    ) {
+
+        document.getElementById("importantMode").checked = false;
+
+        document.getElementById("boardNewMsg").classList.add("info-mode");
+        document.getElementById("boardNewMsg").classList.remove("important-mode");
+
+    } else {
+
+        document.getElementById("importantMode").checked = false;
+        document.getElementById("boardNewMsg").classList.remove("info-mode");
     }
+
     loadMessage();
+
   });
+
 }
 
 document.getElementById("editMode")?.addEventListener("change", () => {
@@ -4095,10 +4154,12 @@ function createTopicPopupCategoryChanged() {
     const role = localStorage.getItem("role");
 
     const topicInput = document.getElementById("cp_topic");
-    //console.log("test: ", document.getElementById("cp_message").value);
+
+    if (!editingTopicId) {
     document.getElementById("cp_header").value = "";
     document.getElementById("cp_topic").value = "";
     document.getElementById("cp_message").value = "";
+    }
 
     const showOwnerTools =
     role === "owner" &&

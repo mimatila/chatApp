@@ -1233,6 +1233,14 @@ input::placeholder {
     gap: 20px;
 }
 
+#boardNewMsg.important-mode {
+    border: 2px solid red;
+}
+
+#boardNewMsg.info-mode {
+    border: 2px solid blue;
+}
+
 #importantModeText,
 #infoModeText,
 #todayModeText,
