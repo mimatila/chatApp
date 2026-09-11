@@ -717,7 +717,7 @@ button {
   background-color:  #d9ecff;
 }*/
 
-.message-area {
+.input-row-area {
   position: relative;
   max-width: 500px;
   margin: 0 auto;
@@ -1542,7 +1542,7 @@ input::placeholder {
       font-size: 12px;    
     }
 
-    .message-area {
+    .input-row-area {
         position: relative;
         width: 85vw;
         max-width: none;
@@ -1552,7 +1552,7 @@ input::placeholder {
         box-sizing: border-box;
     }
 
-    .notice-board .message-area {
+    .notice-board .input-row-area {
       width: 90vw;
     }
 
@@ -1878,7 +1878,7 @@ input::placeholder {
       font-size: 12px;    
     }
 
-    .message-area {
+    .input-row-area {
         position: relative;
         width: 85vw;
         max-width: none;
@@ -1888,7 +1888,7 @@ input::placeholder {
         box-sizing: border-box;
     }
 
-    .notice-board .message-area {
+    .notice-board .input-row-area {
       width: 90vw;
     }
 
