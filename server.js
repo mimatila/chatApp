@@ -692,8 +692,6 @@ const [settings] = await pool.query(
 
 const autoDeleteDays = settings[0]?.autoDeleteDays ?? 30;
 
-await cleanup(boardId, autoDeleteDays);
-
   // TÄHÄN TOPIC-TARKISTUS
 
   if (boardType === "notice") {
@@ -740,6 +738,8 @@ await cleanup(boardId, autoDeleteDays);
       topic
     ]
   );
+
+  await cleanup(boardId, autoDeleteDays);
 
   res.json({
     success: true,

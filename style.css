@@ -336,7 +336,8 @@ body.index-page {
 }
 
 .notice-row.owner-message .msg-text {
-    border: 1px solid black;
+    border: 1px solid #d0d0d0;
+    box-shadow: 0 0 6px #999;
     padding: 15px;
 }
 
@@ -1447,7 +1448,7 @@ input::placeholder {
     }
 
     .msg-body {
-      font-size: 10px;
+      font-size: 9px;
     }
 
     .msg-time {
@@ -1783,7 +1784,7 @@ input::placeholder {
     }
 
     .msg-body {
-      font-size: 10px;
+      font-size: 9px;
     }
 
     .msg-time {

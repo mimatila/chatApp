@@ -44,10 +44,10 @@ function getMessageTemplates() {
             title: "",
             header: `${t("CONTACT_HEADER")}`,
             text:
-`👤 ${t("NAME")}: 
-🏠 ${t("ADDRESS")}: 
-📞 ${t("PHONE")}: 
-✉️ ${t("EMAIL")}: `
+`👤: 
+🏠: 
+📞: 
+✉️: `
         },
 
         notice: {
