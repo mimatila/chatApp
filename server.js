@@ -54,6 +54,8 @@ app.post("/login", async (req, res) => {
      AND BINARY users.username = BINARY ?`,
   [boardName, boardUsername]
 );
+
+//console.log("rows: ",rows);
      
   /*ei käsitelty messagea frontendissä, ei tarvia käännöstä*/
 

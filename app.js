@@ -18,7 +18,7 @@ const boardDescriptions = {
         family: "🏠 Perhetaulu",
         taloyhtio: "🏢 Taloyhtiön ilmoitustaulu",
         urheiluseura: "⚽ Urheiluseuran ilmoitustaulu",
-        yhteiso: "💼 Yhteisön ilmoitustaulu",
+        tyopaikka: "💼 Työpaikan ilmoitustaulu",
         yhdistys: "🤝 Yhdistyksen ilmoitustaulu"
     },
 
@@ -26,7 +26,7 @@ const boardDescriptions = {
         family: "🏠 Family board",
         taloyhtio: "🏢 Housing company board",
         urheiluseura: "⚽ Sports club board",
-        yheiso: "💼 Community board",
+        tyopaikka: "💼 Work place board",
         yhdistys: "🤝 Association board"
     }
 };
@@ -54,9 +54,9 @@ function getMessageTemplates() {
             title: "",
             header: `${t("NOTICE_HEADER")}`,
             text:
-`${t("SUBJECT")} :
+`${t("SUBJECT")}: 
 
-${t("ADDITIONAL_INFO")} :`
+${t("ADDITIONAL_INFO")}: `
         }
     };
 }
@@ -211,6 +211,7 @@ const messages = {
         REQUESTS: "Pyynnöt",
         NOTICE_TALOYHTIO: "taloyhtiö",
         NOTICE_YHTEISO: "yhteisö",
+        NOTICE_TYOPAIKKA: "työpaikka",
         NOTICE_URHEILUSEURA: "urheiluseura",
         OWNER_CATEGORY_NO_MESSAGES: "Omistajan kategoria, ei viestejä.",
         NOTICE_YHDISTYS: "yhdistys"
@@ -365,6 +366,7 @@ const messages = {
         REQUESTS: "Requests",
         NOTICE_TALOYHTIO: "housing company",
         NOTICE_YHTEISO: "community",
+        NOTICE_TYOPAIKKA: "work place",
         NOTICE_URHEILUSEURA: "sports club",
         NOTICE_YHDISTYS: "association"
         }
@@ -383,7 +385,7 @@ const categories_taloyhtio = [
 
 /*yleiset tiedot, tiedotteet*/
 
-const categories_yhteiso = [
+const categories_tyopaikka = [
     "general information",
     "announcements",
     "general",
@@ -1042,7 +1044,7 @@ function getCategories(boardType, noticeTemplate) {
         case "taloyhtio":
           return categories_taloyhtio;
 
-        case "yhteiso":
+        case "tyopaikka":
           return categories_tyopaikka;
 
         case "urheiluseura":
@@ -1966,8 +1968,8 @@ function loadIndexLanguage() {
   document.querySelector("#cp_noticeTemplate option[value='taloyhtio']").textContent =
   t("NOTICE_TALOYHTIO");
 
-  document.querySelector("#cp_noticeTemplate option[value='yhteiso']").textContent =
-      t("NOTICE_YHTEISO");
+  document.querySelector("#cp_noticeTemplate option[value='tyopaikka']").textContent =
+      t("NOTICE_TYOPAIKKA");
 
   document.querySelector("#cp_noticeTemplate option[value='urheiluseura']").textContent =
       t("NOTICE_URHEILUSEURA");
@@ -2225,13 +2227,6 @@ if (msg.type === "info") {
         const indicator = document.createElement("span");
         indicator.className = "info-indicator";
         indicator.textContent = "ⓘ";
-
-        const messageTime = new Date(msg.time);
-        const age = Date.now() - messageTime.getTime();
-
-        if (age < 5 * 60 * 1000) {
-            indicator.classList.add("active-alarm");
-        }
 
         div.appendChild(indicator);
     }
@@ -2507,6 +2502,14 @@ if (
     messageEl.value = "";
     loadMessage(true);
 
+     if (importantMode.checked) {
+        boardNewMsg.classList.remove("important-mode");
+    }
+
+    if (infoMode.checked) {
+        boardNewMsg.classList.remove("info-mode");
+    }
+
     document.getElementById("boardNewMsg").blur();
 
     document.getElementById("importantMode").checked = false;
@@ -2575,6 +2578,7 @@ function loginWithPassword() {
   })
   .then(async data => {
 
+    //console.log("data:", data);
     if (!data.success) {
       return alert(t("LOGIN_FAILED"));
     }
