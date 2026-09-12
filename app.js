@@ -7,6 +7,7 @@ let editingTopicId = null;
 let saunaEditMode = false;
 let saunaSlots = [];
 let autoSlots = [];
+let topic_empty = false;
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
@@ -1118,6 +1119,12 @@ function renderTopicsMessages(topics) {
 function backToCategories() {
 
     console.log("BACK TO CATEGORY CALLED");
+
+    if(topic_empty===false
+      &&document.getElementById("boardMessagesDiv").style.display==="block"){
+      showTopics();
+      return;
+    } 
 
     document.getElementById("boardNewMsg").classList.remove("important-mode");
     document.getElementById("boardNewMsg").classList.remove("info-mode");
@@ -2916,10 +2923,12 @@ if (edit) {
     loadTopicCounts();
 
 if (data.topicEmpty) {
+    topic_empty=true;
     backToCategories();
     return;
 }
 
+topic_empty = false;
 loadMessage(true);
   });
 }
