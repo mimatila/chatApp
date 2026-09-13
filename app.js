@@ -512,9 +512,7 @@ function showTopics() {
 }
 
 function showMessages() {
-
-  console.log("hdhdh");
-       
+   
   document.getElementById("boardMessagesDiv").style.display = "block";
 
   const boardNewMsg = document.getElementById("boardNewMsg");
@@ -805,8 +803,6 @@ console.log("BOARD NAME:", boardName);
     window.location.href = "index.html";
     return;
   }
-
-    console.log("LOCAL STORAGE TEST");
 
   const role = localStorage.getItem("role");
   const boardType = localStorage.getItem("boardType");
@@ -2203,7 +2199,7 @@ messages.forEach(msg => {
   if (data.boardType === "notice") {
     div.className = "notice-row";
   } else {
-    div.className = "msg-row";
+    div.className = "family-row";
   }
 
  const editMode = document.getElementById("editMode")?.checked;
@@ -2928,8 +2924,8 @@ if (data.topicEmpty) {
     return;
 }
 
-topic_empty = false;
-loadMessage(true);
+  topic_empty = false;
+  loadMessage(true);
   });
 }
 
@@ -2997,6 +2993,8 @@ function openSettings() {
 
 function closeSettings() {
 
+  document.getElementById("editMode").checked = false;
+  document.getElementById("editMode").dispatchEvent(new Event("change"));
   document.getElementById(
     "settingsPopup"
   ).style.display = "none";
@@ -3032,6 +3030,8 @@ function saveSettings() {
 
     if (data.success) {
       alert(t("SAVE"));
+      document.getElementById("editMode").checked = false;
+      document.getElementById("editMode").dispatchEvent(new Event("change"));
       closeSettings();
     }
   });

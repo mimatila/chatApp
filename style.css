@@ -409,7 +409,7 @@ body.index-page {
     color: black;
 }
 
-.msg-row {
+.family-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -420,7 +420,7 @@ body.index-page {
   border-radius: 10px;
 }
 
-.msg-row.important-msg {
+.family-row.important-msg {
   border-color: red;
   background: #ffeaea;
   position: relative;
@@ -457,7 +457,7 @@ body.index-page {
     animation: importantFlash 0.8s infinite alternate;
 }
 
-.msg-row.info-msg {
+.family-row.info-msg {
   border-color: blue;
   background: #eaf2ff;
   position: relative;
