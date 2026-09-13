@@ -1118,6 +1118,7 @@ function backToCategories() {
 
     if(topic_empty===false
       &&document.getElementById("boardMessagesDiv").style.display==="block"){
+      loadTopicsFromDatabase(currentCategory);
       showTopics();
       return;
     } 
@@ -2120,6 +2121,8 @@ function loadMessage(forceScroll = false) {
 })
   .then(res => res.json())
   .then(data => {
+
+    console.log("huhuu");
 
     const boardType = data.boardType;
     const noticeTemplate = data.noticeTemplate;
