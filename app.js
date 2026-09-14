@@ -2922,6 +2922,11 @@ function deleteMessage(id) {
 
     backToCategories();
 
+    if (edit) {
+      edit.checked = false;
+      //edit.dispatchEvent(new Event("change"));
+    }
+
     return;
     }
 
@@ -2939,8 +2944,8 @@ if (data.topicEmpty) {
     return;
 }*/
 
-  topic_empty = false;
-  loadMessage(true);
+   //poistettu kun dispatch event ajaa saman aikasemmin!
+  //loadMessage(true);
   });
 }
 
@@ -3353,7 +3358,7 @@ function submitCreateBoard() {
 
 function openTopicPopup() {
 
-  console.log("OPEN TOPIC POPUP CURRENT:", currentCategory);
+  console.log("OPEN TOPIC POPUP");
 
   if (!editingTopicId) {
 
@@ -3828,7 +3833,7 @@ document.getElementById("closeQuickBtn")?.addEventListener("click", () => {
 
     if (edit) {
         edit.checked = false;
-        edit.dispatchEvent(new Event("change"));
+        //edit.dispatchEvent(new Event("change"));
     }
 
 });
@@ -4054,7 +4059,7 @@ function saveQuickMessages() {
 
     if (edit && edit.checked) {
       edit.checked = false;
-      edit.dispatchEvent(new Event("change"));
+      //edit.dispatchEvent(new Event("change"));
     }
 
     const defaults = document.getElementById("quickDefaultsCheckbox");
