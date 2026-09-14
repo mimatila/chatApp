@@ -497,6 +497,7 @@ async function updateVisitedUsers() {
 function showTopics() {
     
     console.log("SHOW TOPICS CALLED");
+
     document.getElementById("boardTopicsView").style.display = "grid";
     document.getElementById("backToCategoriesBtn").style.display = "block";
     document.getElementById("currentLocation").style.display = "block";
@@ -784,11 +785,6 @@ function initBoard() {
 
   console.log("INIT BOARD CALLED");
 
-  console.log(
-    "INIT START:",
-    document.documentElement.scrollHeight
-);
-
   let boardName = localStorage.getItem("boardName");
 
   /*
@@ -796,8 +792,6 @@ function initBoard() {
   console.log("NO BOARD NAME");
   return;
 }*/
-
-console.log("BOARD NAME:", boardName);
 
   if (!boardName) {
     window.location.href = "index.html";
@@ -809,8 +803,6 @@ console.log("BOARD NAME:", boardName);
   const noticeTemplate = localStorage.getItem("noticeTemplate");
   const quickBtn = document.getElementById("quickMessagesBtn");
   const templateSection = document.getElementById("templateSection");
-
-  console.log("INIT BOARD TYPE:", boardType);
 
   if (quickBtn) {
     quickBtn.style.display =
@@ -980,6 +972,7 @@ function initLanguageButtons() {
 
   if (langFi) {
     langFi.onclick = () => {
+    console.log("FI clicked");
     localStorage.setItem("language", "fi");
     initLanguage();
     loadBoardCount();
@@ -1032,7 +1025,7 @@ function loadBoardDescription() {
 
 function getCategories(boardType, noticeTemplate) {
    
-    console.log("GET CATEGORIES CALLED");
+    //console.log("GET CATEGORIES CALLED");
 
     if (boardType === "notice") {
 
@@ -1058,9 +1051,9 @@ function getCategories(boardType, noticeTemplate) {
     return categories_family;
 }
 
-function renderTopicsMessages(topics) {
+function renderTopics(topics) {
 
-    console.log("RENDER TOPICS GRID:", topics);
+    console.log("RENDER TOPICS");
 
     const el = document.getElementById("boardTopicsView");
 
@@ -1655,8 +1648,6 @@ async function openAuto() {
 
     const data = await response.json();
 
-    console.log("hep: ", data.slots.length);
-
     if (data.slots.length === 0) {
 
     if (userRole === "owner") {
@@ -2095,6 +2086,8 @@ fetch(`http://localhost:3000/board/${boardName}`, {
 
 function loadMessage(forceScroll = false) {
 
+  //console.trace("LOAD MESSAGES CALLED");
+
   console.log("LOAD MESSAGES CALLED");
   
   const box = document.getElementById("boardMessagesDiv");
@@ -2121,8 +2114,6 @@ function loadMessage(forceScroll = false) {
 })
   .then(res => res.json())
   .then(data => {
-
-    console.log("huhuu");
 
     const boardType = data.boardType;
     const noticeTemplate = data.noticeTemplate;
@@ -2196,7 +2187,7 @@ let showTopicInsideMessage =
     ownerCategories.includes(currentCategory);
 
 messages.forEach(msg => {
-
+  
   const div = document.createElement("div");
 
   if (data.boardType === "notice") {
@@ -2254,7 +2245,7 @@ if (msg.type === "info") {
   const lines = msg.text.split("\n");
 
   const descriptionLabel = t("DESCRIPTION") + ":";
-const additionalInfoLabel = t("ADDITIONAL_INFO") + ":";
+  const additionalInfoLabel = t("ADDITIONAL_INFO") + ":";
 
 lines.forEach(line => {
 
@@ -2404,11 +2395,14 @@ if (
     box.scrollTop = box.scrollHeight;
 }
 
+console.log("LOAD MESSAGES END");
+
   })
   .catch(console.error)
   .finally(() => {
     loading = false;
   });
+  
 }
 
 
@@ -2419,6 +2413,8 @@ if (
 // =====================
 
 function updateMessage() {
+
+  console.log("UPDATE MESSAGE TO DATABASE:");
 
   const ownerCategories = [
     "general information",
@@ -2498,8 +2494,6 @@ if (
   })
   .then(res => res.json())
   .then(data => {
-
-    console.log("MESSAGE SAVED:", data);
      
     if (!data.success) {
     return alert(t(data.message));
@@ -2780,9 +2774,10 @@ async function clearTable() {
 
 function updateCurrentLocation(messages = null) {
 
-    console.log("UPDATE LOCATION CALLED");
+    console.log("UPDATE CURRENT LOCATION CALLED");
 
     const el = document.getElementById("currentLocation");
+    
     const boardType = localStorage.getItem("boardType");
 
     if (!el) return;
@@ -2808,6 +2803,7 @@ function updateCurrentLocation(messages = null) {
 
         const messageCount = messages.length;
 
+
         const importantCount = messages.filter(
             msg => msg.type === "important"
         ).length;
@@ -2827,11 +2823,13 @@ function updateCurrentLocation(messages = null) {
 // =====================
 
 function home() {
+
     sessionStorage.setItem("skipAutoLogin", "true");
     window.location.href = "index.html";   
 }
 
 function clearLoginFields() {
+
     console.log("CLEAR LOGIN FIELDS CALLED");
 
     const boardName = document.getElementById("boardName");
@@ -2899,6 +2897,7 @@ function deleteMessage(id) {
 }
 
   const boardName = localStorage.getItem("boardName");
+  const boardType = localStorage.getItem("boardType");
   const token = localStorage.getItem("token");
 
   fetch(`http://localhost:3000/message/${boardName}/${id}`, {
@@ -2915,17 +2914,30 @@ function deleteMessage(id) {
   .then(data => {
     const edit = document.getElementById("editMode");
 
+    if (boardType === "notice" && data.topicEmpty) {
+
+    topic_empty = true;
+
+    loadTopicCounts();
+
+    backToCategories();
+
+    return;
+    }
+
+topic_empty = false;
+
 if (edit) {
     edit.checked = false;
     edit.dispatchEvent(new Event("change"));
 }
-    loadTopicCounts();
-
+    //loadTopicCounts();
+/*
 if (data.topicEmpty) {
     topic_empty=true;
     backToCategories();
     return;
-}
+}*/
 
   topic_empty = false;
   loadMessage(true);
@@ -2936,7 +2948,7 @@ if (data.topicEmpty) {
 
 function renderVisitedUsers(users) {
 
-  console.log("RENDER VISITED CALLED");
+  console.log("RENDER VISITED USERS CALLED");
 
   const el = document.getElementById("visitedUsers");
   if (!el) return;
@@ -3101,7 +3113,7 @@ if (infoMode) {
 }
 
 document.getElementById("editMode")?.addEventListener("change", () => {
-  console.log("miksi tänne");
+  
     updateEditModeUI();
     loadMessage(false);
 });
@@ -3221,7 +3233,9 @@ function openJoinBoard() {
 }
 
 function closeJoinBoard() {
+
   console.log("CLOSE JOIN POPUP");
+
   document.getElementById("joinBoardPopup").style.display = "none";
 }
 
@@ -3477,8 +3491,6 @@ function submitTopic() {
       topic = document.getElementById("cp_topic").value;
   }
 
-  console.log("topic lenght: ", topic.length);
-
   if (topic.length > 40) {
     alert(t("TOPIC_TOO_LONG"));
     return;
@@ -3571,7 +3583,7 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
             return data;
         }
 
-        renderTopicsMessages(data.topics);
+        renderTopics(data.topics);
 
         if (selectedTopic) {
 
@@ -3597,12 +3609,14 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
 function openRequests() {
 
   console.log("OPEN REQUESTS START");
+
   document.getElementById("requestsPopup").style.display = "flex";
  
   loadRequests();
 }
 
 function closeRequests() {
+
   console.log("CLOSE REQUESTS CALLED");
 
   document.getElementById("requestsPopup").style.display = "none";
@@ -3984,8 +3998,7 @@ function sendQuickMessage(el) {
     }, 400);
 
     setTimeout(() => {
-        document.getElementById("boardNewMsg").value = msg;
-        console.log("QUICK MESSAGE:", msg);
+        document.getElementById("boardNewMsg").value = msg;       
         updateMessage();
         closeQuickMessages();
     }, 800);
