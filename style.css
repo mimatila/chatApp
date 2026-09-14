@@ -90,6 +90,13 @@ body.index-page {
     display: none;
 }
 
+/*
+#boardTopicsView,
+#boardMessagesDiv,
+#boardMessagesView {
+    display: none;
+}*/
+
 .notice-board #boardCategoriesView {
     display: grid;
     height: auto;
@@ -343,6 +350,7 @@ body.index-page {
 
 .owner-message .msg-body {
     width: fit-content;
+    color: black;
     max-width: 100%;
     margin: 0 auto;
     padding: 0;
@@ -1255,7 +1263,8 @@ input::placeholder {
 }
 
 #createAutoPopupBtn,
-#closeAutoPopupBtn {
+#closeAutoPopupBtn,
+#editAutoPopupBtn {
     margin-top: 15px;
 }
 

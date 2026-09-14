@@ -156,7 +156,7 @@ const messages = {
         confirmDeleteAuto: "Haluatko varmasti poistaa parkkipaikat listan?",
         announcement: "Ilmoitukset",
         recommendations: "Suositukset",
-        topic: "Aihe",
+        topic: "Uusi Aihe",
         topics: "Aiheet",
         writeMessage: "Kirjoita viesti...",
         training: "Harjoitukset",
@@ -2963,6 +2963,7 @@ function renderVisitedUsers(users) {
     .slice(0, 5);
 
   const loggedUser = localStorage.getItem("boardUsername") || "";
+  const role = localStorage.getItem("role") || "";
   const lang = localStorage.getItem("language") || "fi";
 
   const labels = lang === "fi"
@@ -2977,7 +2978,9 @@ function renderVisitedUsers(users) {
 
   el.innerHTML =
   `👤 ${labels.loggedIn}: <b>${loggedUser}</b>&nbsp;&nbsp;&nbsp;&nbsp;🟢 ${labels.lastVisited}: ` +
-  sorted.map(u => u.name).join(", ");
+  sorted.map(u =>
+  `${u.name}${u.name === loggedUser && role === "owner" ? " 👑" : ""}`
+).join(", ");
 
 }
 
