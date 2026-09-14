@@ -341,8 +341,6 @@ body.index-page {
     padding: 15px;
 }
 
-
-
 .owner-message .msg-body {
     width: fit-content;
     max-width: 100%;
@@ -423,6 +421,7 @@ body.index-page {
 .family-row.important-msg {
   border-color: red;
   background: #ffeaea;
+  margin: 5px 0;
   position: relative;
 }
 
@@ -460,6 +459,7 @@ body.index-page {
 .family-row.info-msg {
   border-color: blue;
   background: #eaf2ff;
+  margin: 5px 0;
   position: relative;
 }
 
@@ -467,12 +467,11 @@ body.index-page {
     padding: 4px 8px;
     border: 1px solid #e6dca0;
     background: #fff9d6;
-    margin-bottom: 3px;
+    margin: 4px 0;
 }
 
 .notice-row.owner-message{ 
-    margin-bottom: 6px;
-    
+    margin-bottom: 10px;   
 } 
 
 .notice-row .msg-content {
@@ -483,7 +482,7 @@ body.index-page {
     position: relative;
     background: #ffd9d9;
     border: 1px solid red;
-    margin-bottom: 4px;
+    margin: 5px 0;
     padding: 4px 8px;  
 }
 
@@ -492,7 +491,7 @@ body.index-page {
     background: #d9ecff;
     border: 1px solid blue;
     padding: 4px 8px;  
-    margin-bottom: 10px;
+    margin: 5px 0;
 }
 
 #openBoardBtn {

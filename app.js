@@ -390,7 +390,7 @@ const categories_tyopaikka = [
     "general information",
     "announcements",
     "general",
-    "recommendations",
+    "meetings",
     "events"
 ];
 
