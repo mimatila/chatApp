@@ -329,7 +329,7 @@ body.index-page {
     text-align: center;
     font-size: 1.2rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     width: 100%;
 }
 
@@ -343,6 +343,7 @@ body.index-page {
 }
 
 .notice-row.owner-message .msg-text {
+    position: relative;
     border: 1px solid #d0d0d0;
     box-shadow: 0 0 6px #999;
     padding: 15px;
@@ -469,6 +470,15 @@ body.index-page {
   background: #eaf2ff;
   margin: 5px 0;
   position: relative;
+}
+
+.card-author {
+    color: blue;
+    font-size: 12px;
+    font-weight: normal;
+    position: absolute;
+    top: 5px;
+    left: 8px;
 }
 
 .notice-row {
@@ -664,6 +674,16 @@ button {
 }
 
 #cp_existingTopic {
+    background-color: #d9ecff;
+    display: block;
+    margin: 10px auto;
+    height: 34px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#cp_exampleHeader {
     background-color: #d9ecff;
     display: block;
     margin: 10px auto;

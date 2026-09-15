@@ -2288,32 +2288,66 @@ if (
     data.boardType === "notice" &&
     ownerCategories.includes(currentCategory)
 ) {
+
     div.classList.add("owner-message");
 
     if (showTopicInsideMessage) {
 
-    const title = document.createElement("div");
-    title.className = "owner-topic-title";
+        const title = document.createElement("div");
 
-    if (
-        (msg.category === "general information" ||
-         msg.category === "announcements") &&
-        msg.header
-    ) {
-        title.innerText = msg.header;
-    } else {
-        title.innerText = msg.topic;
+        title.className = "owner-topic-title";
+
+        if (
+            (msg.category === "general information" ||
+             msg.category === "announcements") &&
+            msg.header
+        ) {
+
+            title.innerText = msg.header;
+
+        } else {
+
+            title.innerText = msg.topic;
+
+        }
+
+        text.appendChild(title);
     }
-
-    text.appendChild(title);
-}
 
     text.appendChild(body);
-    
-    } else {
-      text.appendChild(author);
-      text.appendChild(body);
-    }
+
+} else if (
+    data.boardType === "notice" &&
+    msg.header
+) {
+
+    // Member Card
+    div.classList.add("owner-message");
+
+    const title = document.createElement("div");
+
+    title.className = "owner-topic-title";
+
+    title.innerText = msg.header;
+
+    text.appendChild(title);
+
+    const createdBy = document.createElement("div");
+
+    createdBy.className = "card-author";
+
+    createdBy.innerText = `${msg.author}`;
+
+    text.appendChild(createdBy);
+
+    text.appendChild(body);
+
+} else {
+
+    text.appendChild(author);
+    text.appendChild(body);
+
+}
 
   const time = document.createElement("div");
   time.className = "msg-time";
@@ -2349,22 +2383,24 @@ if (
   const owner = user?.role === "owner";
 
   const showEdit =
-    boardType === "notice" &&
-    editMode &&
-    owner &&
-    ownerCategories.includes(currentCategory);
+  boardType === "notice" &&
+  editMode &&
+  (
+    (owner && ownerCategories.includes(currentCategory)) ||
+    (msg.header && msg.author === username)
+  );
 
   if (showEdit) {
 
-    const editBtn = document.createElement("button");
-    editBtn.innerText = "✏️";
-    editBtn.className = "edit-btn";
+  const editBtn = document.createElement("button");
+  editBtn.innerText = "✏️";
+  editBtn.className = "edit-btn";
 
-    editBtn.onclick = () => {
-        editMessage(msg);
-    };
+  editBtn.onclick = () => {
+      editMessage(msg);
+  };
 
-    wrapper.appendChild(editBtn);
+  wrapper.appendChild(editBtn);
 }
 
   const showTrash =
@@ -3401,6 +3437,8 @@ function closeTopicPopup() {
   document.getElementById("cp_header").value = "";
   document.getElementById("cp_topic").value = "";
   document.getElementById("cp_message").value = "";
+  document.getElementById("cp_existingTopic").value = "";
+  document.getElementById("cp_exampleHeader").value = "";
 
   //document.getElementById("cp_category").value = currentCategory;
 
@@ -3408,6 +3446,7 @@ function closeTopicPopup() {
 
   document.getElementById("cp_important").checked = false;
   document.getElementById("cp_info").checked = false;
+  document.getElementById("cp_card").checked = false;
 
   document.getElementById("messageTemplate").value="general";
 
@@ -3481,12 +3520,15 @@ function submitTopic() {
   const boardName = localStorage.getItem("boardName");
   const category = document.getElementById("cp_category").value;
   //let topic = document.getElementById("cp_topic").value;
-  const header = document.getElementById("cp_header").value;
   const message = document.getElementById("cp_message").value;
   const author = localStorage.getItem("boardUsername");
   const showHeader =
     category === "general information" ||
-    category === "announcements";
+    category === "announcements" ||
+    document.getElementById("cp_card").checked;
+  const header =
+    document.getElementById("cp_exampleHeader").value ||
+    document.getElementById("cp_header").value;
 
   let topic;
 
@@ -3757,6 +3799,7 @@ if (menuBtn && topMenu) {
       topMenu.classList.remove("open");
     }
   });*/
+
   document.addEventListener("click", function(e) {
 
   if (menuBtn.contains(e.target)) return;
@@ -3774,6 +3817,20 @@ if (quickMessagesPopup) {
       closeQuickMessages();
     }
   });
+}
+
+const card = document.getElementById("cp_card");
+
+if (card) {
+    card.addEventListener("change", function () {
+
+        const header = document.getElementById("cp_header");
+        const exampleHeader = document.getElementById("cp_exampleHeader");
+
+        header.style.display = this.checked ? "block" : "none";
+        exampleHeader.style.display = this.checked ? "block" : "none";
+
+    });
 }
 
 const requestsPopup = document.getElementById("requestsPopup");
@@ -4191,6 +4248,7 @@ function createTopicPopupCategoryChanged() {
     const role = localStorage.getItem("role");
 
     const topicInput = document.getElementById("cp_topic");
+    document.getElementById("cp_exampleHeader").value = "";
 
     if (!editingTopicId) {
     document.getElementById("cp_header").value = "";
@@ -4205,14 +4263,30 @@ function createTopicPopupCategoryChanged() {
         category === "announcements"
     );
 
+    const cardCheckbox = document.getElementById("cp_card");
+    const cardLabel = cardCheckbox.parentElement;
+    const exampleHeader = document.getElementById("cp_exampleHeader");
+
+    exampleHeader.style.display =
+    showOwnerTools ? "block" : "none";
+
+    cardCheckbox.style.display =
+    showOwnerTools ? "none" : "inline";
+    cardLabel.style.display =
+    showOwnerTools ? "none" : "";
 
     topicInput.style.display = "block";
 
     topicInput.placeholder =
         showOwnerTools ? t("new_topic") : t("topic");
-
+/*
     document.getElementById("cp_header").style.display =
         showOwnerTools ? "block" : "none";
+*/
+    const card = document.getElementById("cp_card").checked;
+
+    document.getElementById("cp_header").style.display =
+    showOwnerTools || card ? "block" : "none";
 
     const templateSection = document.getElementById("templateSection");
 
@@ -4227,6 +4301,18 @@ function createTopicPopupCategoryChanged() {
       loadTopicsForCreatePopup(category);
     }
     document.getElementById("messageTemplate").value="general";
+}
+
+function selectExampleHeader() {
+
+    const select = document.getElementById("cp_exampleHeader");
+    const headerInput = document.getElementById("cp_header");
+
+    if (select.value) {
+        headerInput.style.display = "none";
+    } else {
+        headerInput.style.display = "block";
+    }
 }
 
 function loadTopicsForCreatePopup(category) {

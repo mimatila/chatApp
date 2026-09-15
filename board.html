@@ -294,9 +294,27 @@
       </option>
     </select>
     
-    <select id="cp_existingTopic" onchange="selectExistingTopic()"> style="display:none;">
-      <option value="">Valitse olemassa oleva aihe</option>
+   <select id="cp_existingTopic"
+        onchange="selectExistingTopic()"
+        style="display:none;">
+
+    <option value="">Valitse olemassa oleva aihe</option>
+
     </select>
+
+    <select id="cp_exampleHeader"
+        onchange="selectExampleHeader()"
+        style="display:none;">
+
+    <option value="">Valitse olemassa oleva otsikko</option>
+    <option value="💡 Vinkki">💡 Vinkki</option>
+    <option value="ℹ️ Huomio">ℹ️ Huomio</option>
+    <option value="🔧 Ohje">🔧 Ohje</option>
+    <option value="💻 Koodivihje">💻 Koodivihje</option>
+    <option value="🏃 Neuvo">🏃 Neuvo</option>
+    <option value="📌 Muistutus">📌 Muistutus</option>
+
+</select>
     
     <input id="cp_topic" placeholder="topic" maxlength="40">
     <input id="cp_header" type="text" placeholder="Header" maxlength="40">
@@ -308,10 +326,13 @@
 
     <div class="topic-type-options">
     <label>
+        <input type="checkbox" id="cp_card">
+        Card
+    </label>
+    <label>
         <input type="checkbox" id="cp_important">
         Important
     </label>
-
     <label>
         <input type="checkbox" id="cp_info">
         Info
