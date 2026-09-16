@@ -683,8 +683,24 @@ button {
     text-align: center;
 }
 
+.type-icon {
+    display: inline-block;
+    transform: translateY(-2px);
+}
+
 .emoji-header {
-    transform: translateX(-17px);
+    transform: translateX(-13px);
+}
+
+.header-icon {
+    font-size: 0.9rem;
+    display: inline-block;
+    transform: translateY(-1px);
+    margin-right: 5px;
+}
+
+.header-text {
+    font-size: 1.2rem;
 }
 
 #cp_exampleHeader {

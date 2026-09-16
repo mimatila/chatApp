@@ -2297,6 +2297,7 @@ if (
 
         title.className = "owner-topic-title";
 
+        
         if (msg.header && /^\p{Extended_Pictographic}/u.test(msg.header)) {
           title.classList.add("emoji-header");
         }
@@ -2307,7 +2308,17 @@ if (
             msg.header
         ) {
 
-            title.innerText = msg.header;
+            //title.innerText = msg.header;
+            const icon = document.createElement("span");
+              icon.className = "header-icon";
+              icon.textContent = "💡";
+
+            const headerText = document.createElement("span");
+              headerText.className = "header-text";
+              headerText.textContent = "Vihje";
+
+            title.appendChild(icon);
+            title.appendChild(headerText);
 
   
 
@@ -2338,7 +2349,18 @@ if (
       title.classList.add("emoji-header");
     }
 
-    title.innerText = msg.header;
+    //title.innerText = msg.header;
+
+    const icon = document.createElement("span");
+      icon.className = "header-icon";
+      icon.textContent = "💡";
+
+    const headerText = document.createElement("span");
+      headerText.className = "header-text";
+      headerText.textContent = "Vihje";
+
+    title.appendChild(icon);
+    title.appendChild(headerText);
 
     text.appendChild(title);
 
@@ -3533,12 +3555,31 @@ function submitTopic() {
   const message = document.getElementById("cp_message").value;
   const author = localStorage.getItem("boardUsername");
   const showHeader =
+
     category === "general information" ||
+
     category === "announcements" ||
+
     document.getElementById("cp_card").checked;
-  const header =
-    document.getElementById("cp_exampleHeader").value ||
-    document.getElementById("cp_header").value;
+
+
+    const exampleHeader =
+        document.getElementById("cp_exampleHeader");
+
+    const selectedOption =
+        exampleHeader.options[exampleHeader.selectedIndex];
+
+    const icon =
+        selectedOption.dataset.icon || "";
+
+    const headerText =
+        exampleHeader.value ||
+        document.getElementById("cp_header").value;
+
+    const header =
+        icon
+            ? `${icon} ${headerText}`
+            : headerText;
 
   let topic;
 
