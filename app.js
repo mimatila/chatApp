@@ -36,13 +36,13 @@ function getMessageTemplates() {
     return {
 
         general: {
-            title: "",
+            topic: "",
             header: "",
             text: ""
         },
 
         contact: {
-            title: "",
+            topic: `${t("CONTACT_TOPIC")}`,
             header: `${t("CONTACT_HEADER")}`,
             text:
 `👤: 
@@ -52,7 +52,7 @@ function getMessageTemplates() {
         },
 
         notice: {
-            title: "",
+            topic: `${t("NOTICE_TOPIC")}`,
             header: `${t("NOTICE_HEADER")}`,
             text:
 `${t("SUBJECT")}: 
@@ -75,7 +75,7 @@ const messages = {
         QUICK_BREAK: "Tauolla",
         QUICK_GYM: "Punttisalilla",
         YLEINEN_: "Yleinen",
-        YHTEYS_: "Yhteystiedot",
+        YHTEYS_: "Yhteystieto",
         TIEDOTE_: "Tiedote",
         Header: "Otsikko",
         ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
@@ -164,8 +164,8 @@ const messages = {
         meetings: "Kokoukset",
         "select topic": "valitse aihe",
         "general information": "Info",
-        CONTACT_TITLE: "Yhteystiedot",
-        NOTICE_TITLE: "Tiedotteet",
+        CONTACT_TOPIC: "Yhteystiedot",
+        NOTICE_TOPIC: "Tiedotteet",
         NOTICE_HEADER: "Tiedote",
         CONTACT_HEADER: "Yhteystiedot",
         NAME: "Nimi",
@@ -256,8 +256,8 @@ const messages = {
         confirmRemoveMessage: "You want to remove this message?",
         confirmRemoveMessages: "You want to remove this message chain?",
         LOGIN_FAILED: "Login failed.",
-        CONTACT_TITLE: "Contact Information",
-        NOTICE_TITLE: "Notices",
+        CONTACT_TOPIC: "Contact Information",
+        NOTICE_TOPIC: "Notices",
         NOTICE_HEADER: "Notice",
         CONTANT_HEADER: "Contact info",
         NAME: "Name",
@@ -429,7 +429,7 @@ function changeTemplate() {
     const templates = getMessageTemplates();
     const template = templates[type];
 
-    document.getElementById("cp_topic").value = template.title;
+    document.getElementById("cp_topic").value = template.topic;
     document.getElementById("cp_header").value = template.header;
     document.getElementById("cp_message").value = template.text;
 }
@@ -4163,11 +4163,12 @@ function updateEditModeUI() {
     ? ""
     : "none";
 
+  /*
   settingsBtn.style.display =
     (role === "owner" && editMode)
     ? ""
     : "none";
-
+*/
   deleteBoardBtn.style.display =
     (role === "owner" && editMode)
     ? ""
