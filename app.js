@@ -2297,6 +2297,10 @@ if (
 
         title.className = "owner-topic-title";
 
+        if (msg.header && /^\p{Extended_Pictographic}/u.test(msg.header)) {
+          title.classList.add("emoji-header");
+        }
+
         if (
             (msg.category === "general information" ||
              msg.category === "announcements") &&
@@ -2304,6 +2308,8 @@ if (
         ) {
 
             title.innerText = msg.header;
+
+  
 
         } else {
 
@@ -2327,6 +2333,10 @@ if (
     const title = document.createElement("div");
 
     title.className = "owner-topic-title";
+
+    if (msg.header && /^\p{Extended_Pictographic}/u.test(msg.header)) {
+      title.classList.add("emoji-header");
+    }
 
     title.innerText = msg.header;
 
