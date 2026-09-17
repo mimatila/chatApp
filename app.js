@@ -75,12 +75,13 @@ const messages = {
         QUICK_BREAK: "Tauolla",
         QUICK_GYM: "Punttisalilla",
         YLEINEN_: "Yleinen",
-        YHTEYS_: "Yhteystieto",
-        TIEDOTE_: "Tiedote",
+        YHTEYS_: "Yhteystiedot",
+        TIEDOTE_: "Tiedotteet",
         Header: "Otsikko",
         ADMIN_LOGIN_FAILED: "Virheellinen admin-käyttäjänimi tai salasana.",
         BOARD_NOT_FOUND: "Taulua ei löytynyt.",
         SELECT_EXISTING_TOPIC: "Valitse olemassa oleva aihe",
+        SELECT_EXAMPLE_HEADER: "Valitse olemassa oleva otsikko",
         new_topic: "Uusi Aihe",
         onlyOwnerCanWrite: "Vain omistaja voi kirjoittaa tähän ketjuun.",
         PleaseSelectTopicFirst: "Valitse aihe ensin.",
@@ -97,6 +98,11 @@ const messages = {
         SAUNA_DELETED: "Saunavuorot poistettu.",
         AUTO_DELETED: "Autopaikat poistettu.",
         MM_ROLE: "jäsen",
+        HINT: "Vihje",
+        NOTICE: "Huomio",
+        INSTRUCTION: "Ohje",
+        ADVICE: "Neuvo",
+        REMINDER: "Muistutus",
         CREATE_SAUNA_SLOTS: "Haluatko luoda saunavuorot?",
         DATABASE_ERROR: "Tietokantavirhe.",
         ONLY_OWNER_EDIT: "Vain omistaja voi muuttaa.",
@@ -244,8 +250,8 @@ const messages = {
         CONTACT_HEADER: "Contact Information",
         ADDITIONAL_INFO: "Additional info",
         YLEINEN_: "General",
-        YHTEYS_: "Contact info",
-        TIEDOTE_: "Notice",
+        YHTEYS_: "Contact infos",
+        TIEDOTE_: "Notices",
         ADMIN_LOGIN_FAILED: "Invalid admin username or password.",
         BOARD_NOT_FOUND: "Board not found.",
         BOARD_INFO: "Notice Board",
@@ -265,6 +271,7 @@ const messages = {
         ADDRESS: "Address",
         MESSAGES: "messages",
         SELECT_EXISTING_TOPIC: "Select existing topic",
+        SELECT_EXAMPLE_HEADER: "Select existing header",
         PHONE: "Phone",
         EMAIL: "Email",
         SUBJECT: "Description",
@@ -330,6 +337,11 @@ const messages = {
         NETWORK_ERROR: "Network error.",
         BOARD_TYPE_FAMILY: "family",
         BOARD_TYPE_NOTICE: "notice",
+        HINT: "Hint",
+        NOTICE: "Notice",
+        INSTRUCTION: "Instruction",
+        ADVICE: "Advice",
+        REMINDER: "Reminder",
         information: "information",
         general: "General",
         maintenance: "Maintenance",
@@ -3009,7 +3021,7 @@ function deleteMessage(id) {
 
     if (edit) {
       edit.checked = false;
-      //edit.dispatchEvent(new Event("change"));
+      edit.dispatchEvent(new Event("change"));
     }
 
     return;
@@ -3017,20 +3029,14 @@ function deleteMessage(id) {
 
 topic_empty = false;
 
-if (edit) {
-    edit.checked = false;
-    edit.dispatchEvent(new Event("change"));
-}
-    //loadTopicCounts();
 /*
-if (data.topicEmpty) {
-    topic_empty=true;
-    backToCategories();
-    return;
+if (edit) {
+    //edit.checked = false;
+    //edit.dispatchEvent(new Event("change"));
 }*/
 
    //poistettu kun dispatch event ajaa saman aikasemmin!
-  //loadMessage(true);
+  loadMessage(true);
   });
 }
 
@@ -4339,6 +4345,23 @@ function createTopicPopupCategoryChanged() {
     const cardCheckbox = document.getElementById("cp_card");
     const cardLabel = cardCheckbox.parentElement;
     const exampleHeader = document.getElementById("cp_exampleHeader");
+
+    exampleHeader.options[0].textContent = t("SELECT_EXAMPLE_HEADER");
+
+    exampleHeader.options[1].textContent =
+    `💡 ${t("HINT")}`;
+
+    exampleHeader.options[2].textContent =
+        `ℹ️ ${t("NOTICE")}`;
+
+    exampleHeader.options[3].textContent =
+        `🔧 ${t("INSTRUCTION")}`;
+
+    exampleHeader.options[4].textContent =
+        `🏃 ${t("ADVICE")}`;
+
+    exampleHeader.options[5].textContent =
+        `📌 ${t("REMINDER")}`;
 
     exampleHeader.style.display =
     showOwnerTools ? "block" : "none";
