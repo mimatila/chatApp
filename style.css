@@ -325,12 +325,25 @@ body.index-page {
 }
 
 .owner-topic-title {
-    display: block;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: bold;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
     margin-bottom: 15px;
     width: 100%;
+}
+
+.header-icon {
+    grid-column: 1;
+    justify-self: end;
+    margin-right: 8px;
+    font-size: 0.9rem;
+}
+
+.header-text {
+    grid-column: 2;
+    font-size: 1.2rem;
+    font-weight: bold;
+    justify-self: center;
 }
 
 .owner-message .msg-text {
@@ -686,21 +699,6 @@ button {
 .type-icon {
     display: inline-block;
     transform: translateY(-2px);
-}
-
-.emoji-header {
-    transform: translateX(-13px);
-}
-
-.header-icon {
-    font-size: 0.9rem;
-    display: inline-block;
-    transform: translateY(-1px);
-    margin-right: 5px;
-}
-
-.header-text {
-    font-size: 1.2rem;
 }
 
 #cp_exampleHeader {

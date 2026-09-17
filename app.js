@@ -93,6 +93,7 @@ const messages = {
         REMOVE_USER_CONFIRM: "Poistetaanko käyttäjä?",
         BOARD_CREATED: "Taulu luotu.",
         M_ROLE: "omistaja",
+        MESSAGE_CREATED: "Viesti luotu.",
         SAUNA_DELETED: "Saunavuorot poistettu.",
         AUTO_DELETED: "Autopaikat poistettu.",
         MM_ROLE: "jäsen",
@@ -294,6 +295,7 @@ const messages = {
         PARKING_SLOTS_CREATE_FAILED: "Parking slots creation failed.",
         SAUNA_TITLE: "Sauna List",
         SELECT_TOPIC: "Select topic first.",
+        MESSAGE_CREATED: "Message created.",
         AUTO_TITLE: "Parking Slots",
         MESSAGES_CLEARED: "Messages cleared.",
         USERNAME_EXISTS: "Username already exists.",
@@ -2297,35 +2299,42 @@ if (
 
         title.className = "owner-topic-title";
 
-        
-        if (msg.header && /^\p{Extended_Pictographic}/u.test(msg.header)) {
-          title.classList.add("emoji-header");
-        }
-
         if (
             (msg.category === "general information" ||
              msg.category === "announcements") &&
             msg.header
         ) {
 
-            //title.innerText = msg.header;
-            const icon = document.createElement("span");
+          const hasIcon = /^\p{Extended_Pictographic}/u.test(msg.header);
+
+          if (hasIcon) {
+
+              const spaceIndex = msg.header.indexOf(" ");
+
+              const icon = document.createElement("span");
               icon.className = "header-icon";
-              icon.textContent = "💡";
+              icon.textContent = msg.header.substring(0, spaceIndex);
 
-            const headerText = document.createElement("span");
+              const headerText = document.createElement("span");
               headerText.className = "header-text";
-              headerText.textContent = "Vihje";
+              headerText.textContent = msg.header.substring(spaceIndex + 1);
 
-            title.appendChild(icon);
-            title.appendChild(headerText);
+              title.appendChild(icon);
+              title.appendChild(headerText);
 
-  
+          } else {
+
+              const headerText = document.createElement("span");
+              headerText.className = "header-text";
+              headerText.textContent = msg.header;
+
+              title.appendChild(headerText);
+
+          }
 
         } else {
 
             title.innerText = msg.topic;
-
         }
 
         text.appendChild(title);
@@ -2345,29 +2354,37 @@ if (
 
     title.className = "owner-topic-title";
 
-    if (msg.header && /^\p{Extended_Pictographic}/u.test(msg.header)) {
-      title.classList.add("emoji-header");
-    }
+    const hasIcon = /^\p{Extended_Pictographic}/u.test(msg.header);
 
-    //title.innerText = msg.header;
+    if (hasIcon) {
+
+    const spaceIndex = msg.header.indexOf(" ");
 
     const icon = document.createElement("span");
-      icon.className = "header-icon";
-      icon.textContent = "💡";
+    icon.className = "header-icon";
+    icon.textContent = msg.header.substring(0, spaceIndex);
 
     const headerText = document.createElement("span");
-      headerText.className = "header-text";
-      headerText.textContent = "Vihje";
+    headerText.className = "header-text";
+    headerText.textContent = msg.header.substring(spaceIndex + 1);
 
     title.appendChild(icon);
     title.appendChild(headerText);
 
+} else {
+
+    const headerText = document.createElement("span");
+    headerText.className = "header-text";
+    headerText.textContent = msg.header;
+
+    title.appendChild(headerText);
+
+}
     text.appendChild(title);
 
     const createdBy = document.createElement("div");
 
     createdBy.className = "card-author";
-
     createdBy.innerText = `${msg.author}`;
 
     text.appendChild(createdBy);
@@ -3630,10 +3647,14 @@ if (!message.trim()) {
   .then(r => r.json())
   .then(data => {
 
-    alert(t(data.message));
 
 if (data.success) {
 
+    if (existingTopic) {
+      alert(t("MESSAGE_CREATED"));
+    } else {
+      alert(t(data.message));
+      } 
 
     localStorage.setItem("currentCategory", category);
 
