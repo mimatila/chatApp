@@ -487,7 +487,7 @@ body.index-page {
 
 .card-author {
     color: blue;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: normal;
     position: absolute;
     top: 5px;
@@ -660,6 +660,18 @@ button {
     font-size: 11px;
     padding: 4px;
     box-sizing: border-box;  
+}
+
+#messageBtn {
+    background-color: lightgreen;
+    height:34px;
+    width: 40px;
+}
+
+#messageBtn span {
+    display: block;
+    transform: translate(-1px, -1px);
+    font-size: 17px;
 }
 
 #topicBtn {

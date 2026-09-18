@@ -43,6 +43,7 @@
 
 <div class="message-options">
   <div class="left-actions"> 
+    <button id="messageBtn" onclick="openTopicPopup()"><span>📝</span></button>
     <button id="topicBtn" onclick="openTopicPopup()"><span>📝</span></button>
     <button id="backToCategoriesBtn" onclick="backToCategories()"><span>◀</span></button> 
   </div>
@@ -277,7 +278,7 @@
       <select id="cp_category" onchange="createTopicPopupCategoryChanged()">
       </select>
       <div id="templateSection">
-      <select id="messageTemplate" onchange="changeTemplate()">
+      <select id="cp_messageTemplate" onchange="changeTemplate()">
         <option value="general">Yleinen</option>
         <option value="contact">Yhteystiedot</option>
         <option value="notice">Tiedote</option>

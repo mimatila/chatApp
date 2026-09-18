@@ -204,6 +204,7 @@ const messages = {
         SAUNA_SLOT_SAVE_FAILED: "Saunavuorojen talletus epäonnistui.",
         CANCEL: "Peru",
         CREATE_TOPIC_TITLE: "Uusi Info",
+        CREATE_MESSAGE_TITLE: "Uusi Viesti",
         SAUNA_SLOT_CREATE_NO_SUCCESS: "Saunavuorolistan luonti epäonnistui.",
         CREATE_BTN: "Luo",
         SAVE_BTN: "Talleta",
@@ -371,6 +372,7 @@ const messages = {
         SEND_REQUEST: "Send Request",
         CANCEL: "Cancel",
         CREATE_TOPIC_TITLE: "Create New Topic",
+        CREATE_MESSAGE_TITLE: "Create New Message",
         CREATE_BTN: "Create",
         SAVE_BTN: "Save",
         SETTINGS: "Settings",
@@ -438,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function changeTemplate() {
 
-    const type = document.getElementById("messageTemplate").value;
+    const type = document.getElementById("cp_messageTemplate").value;
 
     const templates = getMessageTemplates();
     const template = templates[type];
@@ -852,7 +854,7 @@ if (boardType === "notice") {
     "announcements"
 ];
 
-const templateSelect = document.getElementById("messageTemplate");
+const templateSelect = document.getElementById("cp_messageTemplate");
 
 if (templateSelect) {
     templateSelect.value = "general";
@@ -934,6 +936,7 @@ updateTemplateVisibility();
   // Notice Uusi Aihe 
  if (boardType === "notice") {
 
+    document.getElementById("messageBtn").style.display = "none";
     document.getElementById("topicBtn").style.display = "block";
     document.getElementById("backToCategoriesBtn").style.display = "block";
     document.getElementById("backToCategoriesBtn").style.visibility = "visible";
@@ -952,6 +955,7 @@ updateTemplateVisibility();
 
 } else {
 
+    document.getElementById("messageBtn").style.display = "block";
     document.getElementById("topicBtn").style.display = "none";
     document.getElementById("backToCategoriesBtn").style.display = "none";
     document.getElementById("saunaBtn").style.display = "none";
@@ -2021,11 +2025,14 @@ function loadIndexLanguage() {
 
 function loadBoardLanguage() {
 
+  const boardType=localStorage.getItem("boardType");
   setPlaceholder("cp_topic", "topic");
   setPlaceholder("cp_message", "writeMessage");
   setPlaceholder("cp_header", "Header");
 
+  if(boardType==="notice"){  
   setText("createTopicTitle", "CREATE_TOPIC_TITLE");
+  }else setText("createTopicTitle", "CREATE_MESSAGE_TITLE");
 
   document.querySelector("#cp_informationTopic option[value='general information']").textContent =
       t("general information");
@@ -2033,11 +2040,11 @@ function loadBoardLanguage() {
   document.querySelector("#cp_informationTopic option[value='announcements']").textContent =
       t("announcements");
 
-  document.querySelector("#messageTemplate option[value='general']").textContent =
+  document.querySelector("#cp_messageTemplate option[value='general']").textContent =
       t("YLEINEN_");
-  document.querySelector("#messageTemplate option[value='contact']").textContent =
+  document.querySelector("#cp_messageTemplate option[value='contact']").textContent =
       t("YHTEYS_");
-  document.querySelector("#messageTemplate option[value='notice']").textContent =
+  document.querySelector("#cp_messageTemplate option[value='notice']").textContent =
       t("TIEDOTE_");
 
   setText("cp_createBtn", "CREATE_BTN");
@@ -3454,6 +3461,16 @@ function openTopicPopup() {
 
   console.log("OPEN TOPIC POPUP");
 
+  const boardType=localStorage.getItem("boardType");
+
+  if(boardType==="family"){
+    document.getElementById("cp_category").style.display="none";
+    document.getElementById("cp_informationTopic").style.display="none";
+    document.getElementById("cp_existingTopic").style.display="none";
+    document.getElementById("cp_topic").style.display="none";
+    document.getElementById("cp_messageTemplate").style.display="none";
+  } 
+
   if (!editingTopicId) {
 
     document.getElementById("cp_category").value = "general";
@@ -3503,7 +3520,7 @@ function closeTopicPopup() {
   document.getElementById("cp_info").checked = false;
   document.getElementById("cp_card").checked = false;
 
-  document.getElementById("messageTemplate").value="general";
+  document.getElementById("cp_messageTemplate").value="general";
 
 }
 
@@ -3673,7 +3690,7 @@ if (data.success) {
     document.getElementById("cp_header").value = "";
     document.getElementById("cp_topic").value = "";
     document.getElementById("cp_message").value = "";
-    document.getElementById("messageTemplate").value="general";
+    document.getElementById("cp_messageTemplate").value="general";
     closeTopicPopup();
 }
   });
@@ -4322,6 +4339,7 @@ function createTopicPopupCategoryChanged() {
 
 function createTopicPopupCategoryChanged() {
 
+    const boardType=localStorage.getItem("boardType");
     const category = document.getElementById("cp_category").value;
     currentCategory=category;
     const role = localStorage.getItem("role");
@@ -4371,10 +4389,12 @@ function createTopicPopupCategoryChanged() {
     cardLabel.style.display =
     showOwnerTools ? "none" : "";
 
+    if(boardType==="notice"){  
     topicInput.style.display = "block";
 
     topicInput.placeholder =
         showOwnerTools ? t("new_topic") : t("topic");
+    } 
 /*
     document.getElementById("cp_header").style.display =
         showOwnerTools ? "block" : "none";
@@ -4393,10 +4413,10 @@ function createTopicPopupCategoryChanged() {
 
     const existingTopic = document.getElementById("cp_existingTopic");
 
-    if (existingTopic) {
+    if (existingTopic&&boardType==="notice") {
       loadTopicsForCreatePopup(category);
     }
-    document.getElementById("messageTemplate").value="general";
+    document.getElementById("cp_messageTemplate").value="general";
 }
 
 function selectExampleHeader() {
