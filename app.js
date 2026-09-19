@@ -929,6 +929,7 @@ updateTemplateVisibility();
     initNoticeBoard();
     document.getElementById("cp_important").checked = false;
     document.getElementById("cp_info").checked = false;
+    document.getElementById("cp_card").checked = false;
   } else {
       initFamilyBoard();
   }
@@ -2319,6 +2320,12 @@ if (
 
     div.classList.add("owner-message");
 
+    const createdBy = document.createElement("div");
+    createdBy.className = "card-author";
+    createdBy.innerText = msg.author;
+
+    text.appendChild(createdBy);
+
     if (showTopicInsideMessage) {
 
         const title = document.createElement("div");
@@ -3483,16 +3490,19 @@ function openTopicPopup() {
 
   if (!editingTopicId) {
 
-    document.getElementById("cp_category").value = "general";
+    const role = localStorage.getItem("role");
+
+    if (role === "owner") {
+        document.getElementById("cp_category").value = "general information";
+    } else {
+        document.getElementById("cp_category").value = "general";
+    }
 
     document.getElementById("cp_header").value = "";
-
     document.getElementById("cp_topic").value = "";
-
     document.getElementById("cp_message").value = "";
 
     document.getElementById("cp_createBtn").innerText = t("CREATE_BTN");
-
   }
 
   document.getElementById("createTopicPopup").style.display = "flex";
@@ -3613,7 +3623,7 @@ function submitTopic() {
 
     document.getElementById("cp_card").checked;
 
-
+/*
     const exampleHeader =
         document.getElementById("cp_exampleHeader");
 
@@ -3622,7 +3632,8 @@ function submitTopic() {
 
     const icon =
         selectedOption.dataset.icon || "";
-
+*/
+/*
     const headerText =
         exampleHeader.value ||
         document.getElementById("cp_header").value;
@@ -3631,17 +3642,10 @@ function submitTopic() {
         icon
             ? `${icon} ${headerText}`
             : headerText;
+*/
+  const header = document.getElementById("cp_header").value;       
 
-  let topic;
-
-  const existingTopic =
-      document.getElementById("cp_existingTopic")?.value;
-
-  if (existingTopic) {
-      topic = existingTopic;
-  } else {
-      topic = document.getElementById("cp_topic").value;
-  }
+  const topic = document.getElementById("cp_topic").value;
 
   if (topic.length > 40) {
     alert(t("TOPIC_TOO_LONG"));
@@ -3684,7 +3688,7 @@ if (!message.trim()) {
 
 if (data.success) {
 
-    if (existingTopic && boardType === "notice") {
+    if (boardType === "notice") {
       alert(t("MESSAGE_CREATED"));
     } else {
       if (boardType === "notice"){  
@@ -3931,18 +3935,50 @@ if (quickMessagesPopup) {
   });
 }
 
+const important = document.getElementById("cp_important");
+
+if(important){ 
+  document.getElementById("cp_important").addEventListener("change", function () {
+
+      if (this.checked) {
+          document.getElementById("cp_info").checked = false;
+      }
+
+  });
+}
+
+const info = document.getElementById("cp_info");
+
+if(info){ 
+  document.getElementById("cp_info").addEventListener("change", function () {
+
+      if (this.checked) {
+          document.getElementById("cp_important").checked = false;
+      }
+
+  });
+}
+
 const card = document.getElementById("cp_card");
 
 if (card) {
     card.addEventListener("change", function () {
 
+        const topic = document.getElementById("cp_topic");
         const header = document.getElementById("cp_header");
         const exampleHeader = document.getElementById("cp_exampleHeader");
 
         header.style.display = this.checked ? "block" : "none";
         exampleHeader.style.display = this.checked ? "block" : "none";
 
+        if (!this.checked) {
+            header.value = "";
+            exampleHeader.value = "";
+            topic.value = "";
+        }
+
     });
+  
 }
 
 const requestsPopup = document.getElementById("requestsPopup");
@@ -4438,11 +4474,9 @@ function selectExampleHeader() {
     const select = document.getElementById("cp_exampleHeader");
     const headerInput = document.getElementById("cp_header");
 
-    if (select.value) {
-        headerInput.style.display = "none";
-    } else {
-        headerInput.style.display = "block";
-    }
+    headerInput.value = select.value;
+
+    select.value = "";
 }
 
 function loadTopicsForCreatePopup(category) {
@@ -4490,9 +4524,7 @@ function selectExistingTopic() {
     const select = document.getElementById("cp_existingTopic");
     const topicInput = document.getElementById("cp_topic");
 
-    if (select.value) {
-        topicInput.style.display = "none";
-    } else {
-        topicInput.style.display = "block";
-    }
+    topicInput.value = select.value;
+
+    select.value = "";
 }
