@@ -355,7 +355,8 @@ body.index-page {
     box-sizing: border-box;
 }
 
-.notice-row.owner-message .msg-text {
+.notice-row.owner-message .msg-text,
+.family-row.owner-message .msg-text {
     position: relative;
     border: 1px solid #d0d0d0;
     box-shadow: 0 0 6px #999;
@@ -1229,7 +1230,7 @@ input::placeholder {
     background-color: #d9ecff;
 }
 
-#messageTemplate {
+#cp_messageTemplate {
     min-height: 0;
     text-align: center;
     text-align-last: center;

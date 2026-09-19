@@ -1074,9 +1074,11 @@ function renderTopics(topics) {
     console.log("RENDER TOPICS");
 
     const el = document.getElementById("boardTopicsView");
+    const boardType = localStorage.getItem("boardType");
 
     if (!el) return;
 
+    if(boardType==="notice"){  
     el.innerHTML = "";
 
     topics.forEach(topic => {
@@ -1118,6 +1120,11 @@ function renderTopics(topics) {
 
         el.appendChild(card);
     });
+  } else{  
+    
+    loadMessage(true);
+  } 
+   
 }
 
 
@@ -2340,6 +2347,7 @@ if (
 
               title.appendChild(icon);
               title.appendChild(headerText);
+            
 
           } else {
 
@@ -2362,8 +2370,10 @@ if (
     text.appendChild(body);
 
 } else if (
-    data.boardType === "notice" &&
-    msg.header
+
+    (data.boardType === "notice" || data.boardType === "family") &&
+msg.header
+
 ) {
 
     // Member Card
@@ -2372,7 +2382,7 @@ if (
     const title = document.createElement("div");
 
     title.className = "owner-topic-title";
-
+    
     const hasIcon = /^\p{Extended_Pictographic}/u.test(msg.header);
 
     if (hasIcon) {
@@ -3590,6 +3600,7 @@ function submitTopic() {
   }
 
   const boardName = localStorage.getItem("boardName");
+  const boardType = localStorage.getItem("boardType");
   const category = document.getElementById("cp_category").value;
   //let topic = document.getElementById("cp_topic").value;
   const message = document.getElementById("cp_message").value;
@@ -3637,12 +3648,12 @@ function submitTopic() {
     return;
   }
 
-    if (!topic.trim()) {
+    if (!topic.trim() && boardType === "notice") {
     alert(t("TOPIC_MISSING"));
     return;
 }
 
-if (showHeader && !header.trim()) {
+if (showHeader && !header.trim() && boardType === "notice") {
     alert(t("HEADER_MISSING"));
     return;
 }
@@ -3673,11 +3684,17 @@ if (!message.trim()) {
 
 if (data.success) {
 
-    if (existingTopic) {
+    if (existingTopic && boardType === "notice") {
       alert(t("MESSAGE_CREATED"));
     } else {
+      if (boardType === "notice"){  
       alert(t(data.message));
       } 
+    } 
+
+    if(boardType === "family"){
+      alert(t("MESSAGE_CREATED"));
+    } 
 
     localStorage.setItem("currentCategory", category);
 
@@ -4395,10 +4412,7 @@ function createTopicPopupCategoryChanged() {
     topicInput.placeholder =
         showOwnerTools ? t("new_topic") : t("topic");
     } 
-/*
-    document.getElementById("cp_header").style.display =
-        showOwnerTools ? "block" : "none";
-*/
+    
     const card = document.getElementById("cp_card").checked;
 
     document.getElementById("cp_header").style.display =
