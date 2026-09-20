@@ -4419,19 +4419,22 @@ function createTopicPopupCategoryChanged() {
 
     exampleHeader.options[0].textContent = t("SELECT_EXAMPLE_HEADER");
 
-    exampleHeader.options[1].textContent =
-    `💡 ${t("HINT")}`;
+    exampleHeader.options[2].textContent =
+        `ℹ️  ${t("information")}`;
 
     exampleHeader.options[2].textContent =
-        `ℹ️ ${t("NOTICE")}`;
+        `💡 ${t("HINT")}`;
 
     exampleHeader.options[3].textContent =
-        `🔧 ${t("INSTRUCTION")}`;
+        `ℹ️ ${t("NOTICE")}`;
 
     exampleHeader.options[4].textContent =
-        `🏃 ${t("ADVICE")}`;
+        `🔧 ${t("INSTRUCTION")}`;
 
     exampleHeader.options[5].textContent =
+        `🏃 ${t("ADVICE")}`;
+
+    exampleHeader.options[6].textContent =
         `📌 ${t("REMINDER")}`;
 
     exampleHeader.style.display =
