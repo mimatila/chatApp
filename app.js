@@ -2279,7 +2279,7 @@ if (msg.type === "info") {
   const descriptionLabel = t("DESCRIPTION") + ":";
   const additionalInfoLabel = t("ADDITIONAL_INFO") + ":";
 
-lines.forEach(line => {
+  lines.forEach(line => {
 
     if (line.startsWith(descriptionLabel)) {
 
@@ -4444,14 +4444,14 @@ function createTopicPopupCategoryChanged() {
 
     exampleHeader.options[0].textContent = t("SELECT_EXAMPLE_HEADER");
 
-    exampleHeader.options[2].textContent =
+    exampleHeader.options[1].textContent =
         `ℹ️  ${t("information")}`;
 
     exampleHeader.options[2].textContent =
         `💡 ${t("HINT")}`;
 
     exampleHeader.options[3].textContent =
-        `ℹ️ ${t("NOTICE")}`;
+        `📢 ${t("NOTICE")}`;
 
     exampleHeader.options[4].textContent =
         `🔧 ${t("INSTRUCTION")}`;
@@ -4494,8 +4494,22 @@ function createTopicPopupCategoryChanged() {
     if (existingTopic&&boardType==="notice") {
       loadTopicsForCreatePopup(category);
     }
-    document.getElementById("cp_messageTemplate").value="general";
+
+    if (existingTopic && boardType === "notice") {
+    loadTopicsForCreatePopup(category);
 }
+
+    const templateSelect =
+        document.getElementById("cp_messageTemplate");
+
+    templateSelect.options[1].style.display =
+        category === "general information" ? "" : "none";
+
+    templateSelect.options[2].style.display =
+        category === "announcements" ? "" : "none";
+
+    templateSelect.value = "general";
+    }
 
 function selectExampleHeader() {
 

@@ -76,11 +76,11 @@ body.index-page {
 
 #boardDescription {
   margin: 0 0 10px 0;
-  font-size: 0.75rem;
+  font-size: 12px;
 }
 
 #visitedUsers {
-  font-size: 0.75rem;
+  font-size: 12px;
   min-height: 20px;
 }
 
@@ -148,7 +148,7 @@ body.index-page {
   transition: all 0.15s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   cursor: pointer;
-  font-size: 0.7rem; 
+  font-size: 12px; 
   overflow-wrap: anywhere;
 }
 
@@ -336,12 +336,13 @@ body.index-page {
     grid-column: 1;
     justify-self: end;
     margin-right: 8px;
-    font-size: 0.9rem;
+    font-size: 15px;
 }
 
 .header-text {
     grid-column: 2;
-    font-size: 1.2rem;
+    font-size: 19px;
+    color:blue;
     font-weight: bold;
     justify-self: center;
 }
@@ -439,7 +440,7 @@ body.index-page {
 }
 
 .notice-label {
-    color: green;
+    color: blue;
 }
 
 .family-row {
@@ -505,9 +506,9 @@ body.index-page {
 }
 
 .card-author {
-    color: blue;
-    font-size: 10px;
-    font-weight: normal;
+    color: black;
+    font-size: 12px;
+    font-weight: bold;
     position: absolute;
     top: 5px;
     left: 8px;
@@ -981,7 +982,7 @@ input::placeholder {
   min-width: 0;
   margin-top: 10px;
   margin-right: 2px;
-  font-size: 0.9rem;
+  font-size: 15px;
   font-weight: bold;
   text-align: left;
   color: blue;
@@ -1071,7 +1072,7 @@ input::placeholder {
   position: absolute;
   right: 0;
   bottom: 0;
-  font-size: 0.6rem;
+  font-size: 9px;
   opacity: 0.4;
   white-space: nowrap;
 }
@@ -1181,7 +1182,7 @@ input::placeholder {
     margin-bottom: 5px;
     border-radius: 5px;
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 15px;
 }
 
 .quick-row {
@@ -1333,7 +1334,6 @@ input::placeholder {
 #importantModeText{
     display: inline-block;
     transform: translateX(-2px);
-    transform: translateY(-1px);
 } 
 
 #infoModeText{
@@ -1430,7 +1430,7 @@ input::placeholder {
         border: 1px solid #ccc;
         border-radius: 10px;
         background: #e8e9eb;
-        font-size: 10px;
+        font-size: 12px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
@@ -1471,6 +1471,14 @@ input::placeholder {
         flex: 0 0 40px;
         padding: 0 7px;
         font-size: 10px;
+    }
+
+    .card-author {
+    font-size: 12px;  
+    }
+
+    .header-text {
+        font-size: 0.9rem;
     }
 
     #openJoinBtn {
@@ -1528,22 +1536,20 @@ input::placeholder {
       font-size: 10px;
     }
 
+    .msg-author {
+      font-size: 10px;
+    }
+
     .msg-body {
-      font-size: 9px;
+      font-size: 10px;
     }
 
     .msg-time {
       font-size: 9px;
     }
 
-    .owner-message .msg-text {
-    display: grid;
-    grid-template-columns: 1fr;
-    flex: 1;
-    font-size: 10px;
-    min-width: 0;
-    margin: 0 5px;
-    box-sizing: border-box;
+    .owner-message .msg-text {  
+      margin: 0 5px;
     }
 
     .msg-content {
@@ -1883,14 +1889,9 @@ input::placeholder {
       font-size: 9px;
     }
 
-    .owner-message .msg-text {
-    display: grid;
-    grid-template-columns: 1fr;
-    flex: 1;
-    font-size: 10px;
-    min-width: 0;
-    margin: 0 5px;
-    box-sizing: border-box;
+    .owner-message .msg-text {  
+      font-size: 10px;
+      margin: 0 5px;
     }
 
     .msg-content {
