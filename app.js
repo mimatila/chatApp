@@ -2660,7 +2660,9 @@ if (
     document.getElementById("infoMode").checked = false;
     
     type="normal";
-  });  
+  });
+  
+  console.log("UPDATE MESSAGE TO DATABASE END")
 }
 
 // LF
