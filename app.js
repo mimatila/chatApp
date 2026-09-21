@@ -8,6 +8,7 @@ let saunaEditMode = false;
 let saunaSlots = [];
 let autoSlots = [];
 let topic_empty = false;
+let isCard = false;
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
@@ -573,6 +574,8 @@ function showMessages() {
 function editMessage(msg) {
 
     editingTopicId = msg.id;
+
+    document.getElementById("cp_card").checked = !!msg.header;
 
     document.getElementById("cp_header").value = msg.header;
     document.getElementById("cp_category").value = msg.category;
@@ -2320,6 +2323,8 @@ if (
 
     div.classList.add("owner-message");
 
+     isCard = true;
+
     const createdBy = document.createElement("div");
     createdBy.className = "card-author";
     createdBy.innerText = msg.author;
@@ -2384,6 +2389,9 @@ msg.header
 ) {
 
     // Member Card
+
+    isCard = true;
+
     div.classList.add("owner-message");
 
     const title = document.createElement("div");
@@ -2409,6 +2417,8 @@ msg.header
 
 } else {
 
+    isCard = true;
+
     const headerText = document.createElement("span");
     headerText.className = "header-text";
     headerText.textContent = msg.header;
@@ -2429,6 +2439,7 @@ msg.header
 
 } else {
 
+    isCard = false;
     text.appendChild(author);
     text.appendChild(body);
 
@@ -2477,28 +2488,40 @@ msg.header
 
   if (showEdit) {
 
-  const editBtn = document.createElement("button");
-  editBtn.innerText = "✏️";
-  editBtn.className = "edit-btn";
+    const editBtn = document.createElement("button");
 
-  editBtn.onclick = () => {
-      editMessage(msg);
-  };
+    editBtn.innerText = "✏️";
+    editBtn.className = "edit-btn";
 
-  wrapper.appendChild(editBtn);
+    editBtn.onclick = () => {
+        editMessage(msg);
+    };
+
+    if (isCard) {
+        text.appendChild(editBtn);
+    } else {
+        wrapper.appendChild(editBtn);
+    }
 }
 
   const showTrash =
     editMode && (owner || msg.author === username);
-    
-  if (showTrash) {
+
+if (showTrash) {
+
     const trash = document.createElement("button");
+
     trash.innerText = "🗑";
     trash.className = "trash-btn";
+
     trash.onclick = () => deleteMessage(msg.id);
 
-    wrapper.appendChild(trash);   // ← tänne
-  }
+    if (isCard) {
+        text.appendChild(trash);
+    } else {
+        wrapper.appendChild(trash);
+    }
+}
 
   div.appendChild(wrapper);  
   box.appendChild(div);

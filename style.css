@@ -355,6 +355,18 @@ body.index-page {
     box-sizing: border-box;
 }
 
+.owner-message .msg-text .edit-btn {
+    position: absolute;
+    right: 25px;
+    top: 2px;
+}
+
+.owner-message .msg-text .trash-btn {
+    position: absolute;
+    right: 5px;
+    top: 2px;
+}
+
 .notice-row.owner-message .msg-text,
 .family-row.owner-message .msg-text {
     position: relative;
@@ -395,8 +407,8 @@ body.index-page {
 .trash-btn {
     all: unset;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -2px;
+    right: -2px;
     cursor: pointer;
     font-size: 12px;
 }
@@ -1424,7 +1436,7 @@ input::placeholder {
 
     .message-options {
         justify-content: left;
-        gap: 12px;
+        gap: 5px;
         margin-top: 10px;
         padding-left: 0px;
         max-width: 100%;
@@ -1443,19 +1455,8 @@ input::placeholder {
     .left-actions {
         display: flex;
         justify-self: start;
-        gap: 7px;
+        gap: 4px;
         padding-left: 0px;
-    }
-
-    .checkbox-actions {
-        display: flex;
-        background-color: black;
-        padding: 8px 5px 6px 10px;
-        border-radius: 8px;
-        justify-self: center;
-        align-items: center;
-        font-size: 13px;
-        gap: 10px;
     }
 
     .right-action {
@@ -1622,6 +1623,17 @@ input::placeholder {
       font-size: 12px;    
     }
 
+    .checkbox-actions {
+    display: flex;
+    background-color: black;
+    padding: 4px 5px 4px 5px;
+    border-radius: 8px;
+    justify-self: center;  
+    align-items: center;
+    font-size: 10px;
+    gap: 5px;
+}
+
     .input-row-area {
         position: relative;
         width: 85vw;
@@ -1786,12 +1798,12 @@ input::placeholder {
     .checkbox-actions {
         display: flex;
         background-color: black;
-        padding: 8px 10px 6px 10px;
+        padding: 6px 8px 4px 8px;
         border-radius: 8px;
         justify-self: center;
         align-items: center;
-        font-size: 13px;
-        gap: 15px;
+        font-size: 12px;
+        gap: 10px;
     }
 
     .right-action {
