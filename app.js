@@ -3523,6 +3523,11 @@ function openTopicPopup() {
         document.getElementById("cp_category").value = "general";
     }
 
+    console.log(
+    "POPUP CATEGORY AFTER OWNER SET:",
+    document.getElementById("cp_category").value
+);
+
     document.getElementById("cp_header").value = "";
     document.getElementById("cp_topic").value = "";
     document.getElementById("cp_message").value = "";
@@ -3548,6 +3553,10 @@ function openTopicPopup() {
 }
 
 function closeTopicPopup() {
+
+  console.log("CLOSE POPUP");
+console.log("cp_category:", document.getElementById("cp_category").value);
+console.log("currentCategory:", currentCategory);
 
   document.getElementById("createTopicPopup").style.display = "none";
 
@@ -4419,7 +4428,7 @@ function createTopicPopupCategoryChanged() {
 
     const boardType=localStorage.getItem("boardType");
     const category = document.getElementById("cp_category").value;
-    currentCategory=category;
+    //currentCategory=category;
     const role = localStorage.getItem("role");
 
     const topicInput = document.getElementById("cp_topic");
@@ -4494,10 +4503,6 @@ function createTopicPopupCategoryChanged() {
     if (existingTopic&&boardType==="notice") {
       loadTopicsForCreatePopup(category);
     }
-
-    if (existingTopic && boardType === "notice") {
-    loadTopicsForCreatePopup(category);
-}
 
     const templateSelect =
         document.getElementById("cp_messageTemplate");

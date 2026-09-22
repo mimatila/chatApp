@@ -342,7 +342,7 @@ body.index-page {
 .header-text {
     grid-column: 2;
     font-size: 19px;
-    color:black;
+    color:red;
     font-weight: bold;
     justify-self: center;
 }
@@ -429,7 +429,7 @@ body.index-page {
 
 .msg-author {
     font-weight: bold;
-    color: red;
+    color: #444;
     white-space: nowrap;
 }
 
@@ -507,7 +507,7 @@ body.index-page {
 }
 
 .card-author {
-    color: red;
+    color: #444;
     font-size: 12px;
     font-weight: bold;
     position: absolute;
@@ -1089,6 +1089,7 @@ input::placeholder {
 .visited-users {
   padding: 6px 10px;
   font-size: 13px;
+  font-weight: bold;
   color: #444;
   border-bottom: 1px solid #ddd;
   margin-bottom: 5px;
