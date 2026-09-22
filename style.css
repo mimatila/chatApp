@@ -342,7 +342,7 @@ body.index-page {
 .header-text {
     grid-column: 2;
     font-size: 19px;
-    color:blue;
+    color:black;
     font-weight: bold;
     justify-self: center;
 }
@@ -378,7 +378,7 @@ body.index-page {
 
 .owner-message .msg-body {
     width: fit-content;
-    color: black;
+    color: blue;
     max-width: 100%;
     margin: 0 auto;
     padding: 0;
@@ -429,6 +429,7 @@ body.index-page {
 
 .msg-author {
     font-weight: bold;
+    color: red;
     white-space: nowrap;
 }
 
@@ -440,7 +441,7 @@ body.index-page {
 }
 
 .notice-label {
-    color: blue;
+    color: green;
 }
 
 .family-row {
@@ -506,7 +507,7 @@ body.index-page {
 }
 
 .card-author {
-    color: black;
+    color: red;
     font-size: 12px;
     font-weight: bold;
     position: absolute;
@@ -1323,7 +1324,6 @@ input::placeholder {
     border: 2px solid blue;
 }
 
-#importantModeText,
 #infoModeText,
 #todayModeText,
 #editModeText {
@@ -1335,6 +1335,11 @@ input::placeholder {
     display: inline-block;
     transform: translateX(-2px);
 } 
+
+#importantModeText{
+    display: inline-block;
+    transform: translateY(-1.5px);
+}
 
 #infoModeText{
     display: inline-block;
