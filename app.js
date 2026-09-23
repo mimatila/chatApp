@@ -2467,10 +2467,14 @@ msg.header
     });
   }
 
-  wrapper.appendChild(text);
-  wrapper.appendChild(time);
+  if (isCard) {
+    text.appendChild(time);
+} else {
+    wrapper.appendChild(time);
+}
 
-  div.appendChild(wrapper);
+wrapper.appendChild(text);
+div.appendChild(wrapper);
 
   //const editMode = document.getElementById("editMode")?.checked;
   const username = localStorage.getItem("boardUsername");

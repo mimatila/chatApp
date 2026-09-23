@@ -328,7 +328,7 @@ body.index-page {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     width: 100%;
 }
 
@@ -350,6 +350,7 @@ body.index-page {
 .owner-message .msg-text {
     display: grid;
     grid-template-columns: 1fr;
+    background: #fff9d6;
     flex: 1;
     min-width: 0;
     margin: 0 70px;
@@ -376,6 +377,11 @@ body.index-page {
     padding: 15px;
 }
 
+.family-row.owner-message .msg-time {
+    right: 8px;
+    bottom: 4px;
+}
+
 .owner-message .msg-body {
     width: fit-content;
     color: blue;
@@ -390,7 +396,7 @@ body.index-page {
 }
 
 .owner-message .msg-content {
-    padding-bottom: 20px;
+    padding-bottom: 6px;
 }  
 
 .edit-btn {
@@ -417,7 +423,7 @@ body.index-page {
 .msg-content {
   flex: 1;
   position: relative;
-  padding: 6px 0 14px 0px;
+  padding: 6px 0px 14px 0px;
 }
 
 .msg-text {
@@ -449,7 +455,7 @@ body.index-page {
   justify-content: space-between;
   align-items: flex-start;
   margin: 4px 0;
-  padding: 8px 10px;
+  padding: 4px 8px;
   background: #fff9d6;
   border: 1px solid #e6dca0;
   border-radius: 10px;
@@ -508,7 +514,7 @@ body.index-page {
 
 .card-author {
     color: #444;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
     position: absolute;
     top: 5px;
@@ -518,12 +524,13 @@ body.index-page {
 .notice-row {
     padding: 4px 8px;
     border: 1px solid #e6dca0;
-    background: #fff9d6;
+    background: #fff9d6;  
     margin: 4px 0;
 }
 
 .notice-row.owner-message{ 
-    margin-bottom: 10px;   
+    margin-bottom: 10px; 
+    background: transparent;  
 } 
 
 .notice-row .msg-content {
@@ -1071,11 +1078,16 @@ input::placeholder {
 
 .msg-time {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 0px;
+  bottom: 0px;
   font-size: 9px;
   opacity: 0.4;
   white-space: nowrap;
+}
+
+.notice-row.owner-message .msg-time {
+    right: 8px;
+    bottom: 4px;
 }
 
 #openJoinBtn { 
