@@ -4484,10 +4484,10 @@ function createTopicPopupCategoryChanged() {
     showOwnerTools ? "none" : "";
 
     if(boardType==="notice"){  
-    topicInput.style.display = "block";
+      topicInput.style.display = "block";
 
-    topicInput.placeholder =
-        showOwnerTools ? t("new_topic") : t("topic");
+      topicInput.placeholder =
+      showOwnerTools ? t("new_topic") : t("topic");
     } 
     
     const card = document.getElementById("cp_card").checked;
@@ -4520,14 +4520,25 @@ function createTopicPopupCategoryChanged() {
     templateSelect.value = "general";
     }
 
+const exampleHeaderSelect = document.getElementById("cp_exampleHeader");
+const headerInput = document.getElementById("cp_header");
+
 function selectExampleHeader() {
 
-    const select = document.getElementById("cp_exampleHeader");
-    const headerInput = document.getElementById("cp_header");
+    headerInput.value = exampleHeaderSelect.value;
 
-    headerInput.value = select.value;
+    exampleHeaderSelect.value = "";
+    exampleHeaderSelect.style.display = "none";
+}
 
-    select.value = "";
+if (headerInput) {
+    headerInput.addEventListener("input", function () {
+
+        if (this.value === "") {
+            exampleHeaderSelect.style.display = "block";
+        }
+
+    });
 }
 
 function loadTopicsForCreatePopup(category) {
@@ -4549,20 +4560,20 @@ function loadTopicsForCreatePopup(category) {
 
     const select = document.getElementById("cp_existingTopic");
 
-select.innerHTML = `
-  <option value="">${t("SELECT_EXISTING_TOPIC")}</option>
-`;
+    select.innerHTML = `
+      <option value="">${t("SELECT_EXISTING_TOPIC")}</option>
+    `;
 
-    data.topics.forEach(item => {
+        data.topics.forEach(item => {
 
-      const option = document.createElement("option");
+          const option = document.createElement("option");
 
-      option.value = item.topic;
-      option.textContent = item.topic;
+          option.value = item.topic;
+          option.textContent = item.topic;
 
-      select.appendChild(option);
+          select.appendChild(option);
 
-    });
+        });
 
     select.style.display = "block";
 
@@ -4570,12 +4581,23 @@ select.innerHTML = `
   });
 }
 
-function selectExistingTopic() {
+const select = document.getElementById("cp_existingTopic");
+const topicInput = document.getElementById("cp_topic");
 
-    const select = document.getElementById("cp_existingTopic");
-    const topicInput = document.getElementById("cp_topic");
+function selectExistingTopic() {
 
     topicInput.value = select.value;
 
     select.value = "";
+    select.style.display = "none";
+}
+
+if (topicInput) {
+    topicInput.addEventListener("input", function () {
+
+        if (this.value === "") {
+            select.style.display = "block";
+        }
+
+    });
 }

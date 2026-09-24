@@ -16,17 +16,6 @@ body {
     user-select: none;
 }
 
-#logo {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 45px;
-  height: 45px;
-  object-fit: contain;
-  z-index: 9999;
-  background: transparent;
-}
-
 #logoBox {
     position: absolute;
     display: flex;
@@ -462,7 +451,7 @@ body.index-page {
 }
 
 .family-row.important-msg {
-  border-color: red;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.6);
   background: #ffeaea;
   margin: 5px 0;
   position: relative;
@@ -506,7 +495,7 @@ body.index-page {
 }
 
 .family-row.info-msg {
-  border-color: blue;
+  box-shadow: 0 0 5px rgba(30, 100, 200, 0.6);
   background: #eaf2ff;
   margin: 5px 0;
   position: relative;
@@ -540,7 +529,7 @@ body.index-page {
 .notice-row.important-msg {
     position: relative;
     background: #ffd9d9;
-    border: 1px solid red;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.6);
     margin: 5px 0;
     padding: 4px 8px;  
 }
@@ -548,8 +537,9 @@ body.index-page {
 .notice-row.info-msg {
     position: relative;
     background: #d9ecff;
-    border: 1px solid blue;
-    padding: 4px 8px;  
+    border: none;
+    box-shadow: 0 0 5px rgba(30, 100, 200, 0.6);
+    padding: 4px 8px;
     margin: 5px 0;
 }
 
@@ -1050,7 +1040,7 @@ input::placeholder {
 
 .message-options.message-options-family {
     justify-content: center;
-    padding-left: 0;
+    padding-left: 10px;
 }
 
 .right-action {
