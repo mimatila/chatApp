@@ -768,17 +768,14 @@ app.get("/board/:boardName", async (req, res) => {
         );
 
         if (boards.length === 0) {
-
             return res.status(404).json({
                 success: false,
                 message: "Taulua ei löydy"
             });
-
         }
 
         const boardId = boards[0].id;
         const boardType = boards[0].boardType;
-
 
         // Hae settings
 
@@ -790,7 +787,6 @@ app.get("/board/:boardName", async (req, res) => {
         const autoDeleteDays =
             settings[0]?.autoDeleteDays ?? 30;
 
-
         // Hae käyttäjät
 
         const [users] = await pool.query(
@@ -799,7 +795,6 @@ app.get("/board/:boardName", async (req, res) => {
              WHERE board_id = ?`,
             [boardId]
         );
-
 
         // Hae viestit
 
@@ -820,20 +815,16 @@ app.get("/board/:boardName", async (req, res) => {
             [boardId]
         );
 
-
         // Tunnista kirjautunut käyttäjä
 
         const user = await authUser(req, boardName);
 
         if (!user) {
-
             return res.status(401).json({
                 success: false,
                 message: "LOGIN_AGAIN"
             });
-
         }
-
 
         // Hae quickMessagesTemplate vain family-boardille
 
@@ -848,9 +839,7 @@ app.get("/board/:boardName", async (req, res) => {
             quickMessagesTemplate = templateRows.map(
                 q => q.message
             );
-
         }
-
 
         // Hae käyttäjän omat quickMessages
 
@@ -870,9 +859,7 @@ app.get("/board/:boardName", async (req, res) => {
             quickMessages = rows.map(
                 q => q.message
             );
-
         }
-
 
         // Hae viimeksi nähdyt käyttäjät
 
@@ -883,13 +870,11 @@ app.get("/board/:boardName", async (req, res) => {
             [boardId]
         );
 
-
         // Rakennetaan JSON
 
         const board = {
 
             boardType: boards[0].boardType,
-
             noticeTemplate: boards[0].noticeTemplate,
 
             users,
@@ -908,12 +893,9 @@ app.get("/board/:boardName", async (req, res) => {
             quickMessagesTemplate,
 
             visitedUsers
-
         };
 
-
         res.json(board);
-
 
     } catch (err) {
 
@@ -923,7 +905,6 @@ app.get("/board/:boardName", async (req, res) => {
             success: false,
             message: "Database error"
         });
-
     }
 
 });
@@ -1785,6 +1766,78 @@ app.post("/removeMember", async (req, res) => {
   }
 });
 
+app.post("/markTopicRead", async (req, res) => {
+
+    const {
+        boardName,
+        topic
+    } = req.body;
+
+    try {
+
+        // Hae board_id
+
+        const [boards] = await pool.query(
+            "SELECT id FROM boards WHERE name = ?",
+            [boardName]
+        );
+
+        if (boards.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "BOARD_NOT_FOUND"
+            });
+        }
+
+        const boardId = boards[0].id;
+
+        // Tunnista kirjautunut käyttäjä
+
+        const user = await authUser(req, boardName);
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "LOGIN_AGAIN"
+            });
+        }
+
+        console.log("MARK TOPIC READ");
+        console.log("USER ID:", user.id);
+        console.log("TOPIC:", topic);
+
+        // Merkitse topic luetuksi
+
+        await pool.query(
+            `UPDATE userTopicState
+             SET state = 1
+             WHERE user_id = ?
+               AND board_id = ?
+               AND topic = ?`,
+            [
+                user.id,
+                boardId,
+                topic
+            ]
+        );
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: "DATABASE_ERROR"
+        });
+
+    }
+
+});
+
 app.post("/createTopic", async (req, res) => {
 
   const {
@@ -1798,32 +1851,38 @@ app.post("/createTopic", async (req, res) => {
   } = req.body;
 
   if (topic.length > 40) {
+
     return res.json({
       success: false,
       message: "TOPIC_TOO_LONG"
     });
+
   }
 
   try {
 
     // Hae board_id
+
     const [boards] = await pool.query(
       "SELECT id FROM boards WHERE name = ?",
       [boardName]
     );
 
     if (boards.length === 0) {
+
       return res.status(404).json({
         success: false,
         message: "BOARD_NOT_FOUND"
       });
+
     }
 
     const boardId = boards[0].id;
 
-    // Hae käyttäjän rooli
+    // Hae käyttäjän id ja rooli
+
     const [users] = await pool.query(
-      `SELECT role
+      `SELECT id, role
        FROM users
        WHERE board_id = ?
          AND username = ?`,
@@ -1831,34 +1890,57 @@ app.post("/createTopic", async (req, res) => {
     );
 
     if (users.length === 0) {
+
       return res.status(404).json({
         success: false,
         message: "USER_NOT_FOUND"
       });
+
     }
 
     const user = users[0];
 
-    // Informationia saa lisätä vain owner
-    const ownerOnlyCategories = [
-    "general information",
-    "announcements"
-];
+    console.log("TOPIC CREATOR ID:", user.id);
+    console.log("TOPIC CREATOR:", author);
 
-if (
-    ownerOnlyCategories.includes(category) &&
-    user.role !== "owner"
-) {
-    return res.status(403).json({
+
+    // Informationia saa lisätä vain owner
+
+    const ownerOnlyCategories = [
+      "general information",
+      "announcements"
+    ];
+
+    if (
+      ownerOnlyCategories.includes(category) &&
+      user.role !== "owner"
+    ) {
+
+      return res.status(403).json({
         success: false,
         message: "ONLY_OWNER_INFORMATION"
-    });
-}
+      });
+
+    }
+
+    const [existingTopic] = await pool.query(
+  `SELECT id
+   FROM boardMessages
+   WHERE board_id = ?
+     AND topic = ?
+   LIMIT 1`,
+  [boardId, topic]
+);
+
+const isNewTopic = existingTopic.length === 0;
+
+console.log("IS NEW TOPIC:", isNewTopic);
 
     // Lisää viesti
+
     await pool.query(
       `INSERT INTO boardMessages
-      (id, board_id, author, time, text, type, category, topic,header)
+      (id, board_id, author, time, text, type, category, topic, header)
       VALUES (UUID(), ?, ?, NOW(), ?, ?, ?, ?, ?)`,
       [
         boardId,
@@ -1870,6 +1952,40 @@ if (
         header
       ]
     );
+
+
+    // Hae kaikki boardin käyttäjät
+
+    if (isNewTopic) {
+    const [boardUsers] = await pool.query(
+      `SELECT id
+       FROM users
+       WHERE board_id = ?`,
+      [boardId]
+    );
+
+
+    // Luo topicin lukutila käyttäjille
+
+    for (const boardUser of boardUsers) {
+
+      const state = boardUser.id === user.id;
+
+      await pool.query(
+      `INSERT INTO userTopicState
+      (user_id, board_id, topic, state)
+      VALUES (?, ?, ?, ?)`,
+      [
+        boardUser.id,
+        boardId,
+        topic,
+        state
+      ]
+    );
+
+    }
+
+}
 
     res.json({
       success: true,
@@ -1884,31 +2000,88 @@ if (
       success: false,
       message: "DATABASE_ERROR"
     });
+
   }
+
 });
 
-app.post("/topics", async (req,res)=>{
+app.post("/topics", async (req, res) => {
+
+
+    console.log("TOPICS AUTH HEADER:", req.headers.authorization);
+    console.log("TOPICS BODY:", req.body);
+
     const { boardName, category } = req.body;
+
+    const user = await authUser(req, boardName);
+
+    if (!user) {
+
+        return res.status(401).json({
+            success: false,
+            message: "LOGIN_AGAIN"
+        });
+
+    }
+
+    const [boards] = await pool.query(
+        `SELECT id
+         FROM boards
+         WHERE name = ?`,
+        [boardName]
+    );
+
+    const boardId = boards[0].id;
+
+    // Haetaan käyttäjän topic-tilat
+    const [topicStates] = await pool.query(
+        `SELECT topic, state
+         FROM userTopicState
+         WHERE user_id = ?
+           AND board_id = ?`,
+        [user.id, boardId]
+    );
 
     const [rows] = await pool.query(
         `SELECT 
-            topic, 
+            topic,
+            category,
             COUNT(*) AS count,
             MIN(time) AS first_time
+
          FROM boardMessages
+
          WHERE board_id = (
-             SELECT id FROM boards WHERE name = ?
+             SELECT id
+             FROM boards
+             WHERE name = ?
          )
+
          AND category = ?
          AND topic IS NOT NULL
-         GROUP BY topic
+
+         GROUP BY topic, category
+
          ORDER BY first_time DESC`,
+
         [boardName, category]
     );
+
+    // Lisätään state jokaiseen topiciin
+    rows.forEach(topic => {
+
+        const state = topicStates.find(
+            item => item.topic === topic.topic
+        );
+
+        topic.state = state ? state.state : 1;
+
+    });
 
     res.json({
         topics: rows
     });
+
 });
 
 app.post("/topicCounts", async (req, res) => {

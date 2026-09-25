@@ -1,6 +1,7 @@
 let loading = false;
 let refreshInterval = null;
 let categories = [];
+let topics = [];
 let currentCategory = "";
 let currentTopic = "";
 let editingTopicId = null;
@@ -9,6 +10,7 @@ let saunaSlots = [];
 let autoSlots = [];
 let topic_empty = false;
 let isCard = false;
+let topicStates = [];
 //let currentButtonsCache = [];
 
 console.log("APP.JS VERSION 123");
@@ -608,25 +610,37 @@ function renderCategories() {
   el.innerHTML = `
 
   <div id="mainCategories">
-      ${main.map(category => `
-          <div class="category-card"
-              data-category="${category}"
-              onclick="openCategory('${category}', this)">
-              ${t(category)}
-          </div>
-      `).join("")}
-  </div>
+
+    ${main.map(category => {
+
+        return `
+            <div class="category-card"
+                data-category="${category}"
+                onclick="openCategory('${category}', this)">
+                ${t(category)}
+            </div>
+        `;
+
+    }).join("")}
+
+</div>
 
 
-  <div id="otherCategories">
-      ${other.map(category => `
-          <div class="category-card"
-              data-category="${category}"
-              onclick="openCategory('${category}', this)">
-              ${t(category)}
-          </div>
-      `).join("")}
-  </div>
+<div id="otherCategories">
+
+    ${other.map(category => {
+
+        return `
+            <div class="category-card"
+                data-category="${category}"
+                onclick="openCategory('${category}', this)">
+                ${t(category)}
+            </div>
+        `;
+
+    }).join("")}
+
+</div>
 
   `;
 
@@ -1087,13 +1101,30 @@ function renderTopics(topics) {
 
     topics.forEach(topic => {
 
+        console.log("TOPIC:", topic.topic);
+    console.log("CATEGORY:", topic.category);
+    console.log("STATE:", topic.state);
+
         const card = document.createElement("div");
 
         card.className = "topic-card";
         card.dataset.topic = topic.topic;
 
+        console.log("TOPIC:", topic.topic);
+
         const title = document.createElement("span");
-        title.innerText = topic.topic;
+        const topicText = document.createElement("span");
+        
+        topicText.innerText = topic.topic;
+        topicText.style.textDecoration = "underline";
+
+        title.appendChild(topicText);
+
+        if (topic.state === 0) {
+            const star = document.createElement("span");
+            star.innerText = "\u00A0⭐";
+            title.appendChild(star);
+        }
 
         const count = document.createElement("span");
         count.className = "topic-count";
@@ -2132,14 +2163,40 @@ function loadMessage(forceScroll = false) {
 
   const boardName = getBoardName();
 
-  const boardType = localStorage.getItem("boardType");
+const boardType = localStorage.getItem("boardType");
 
-  if (!boardName) {
+if (!boardName) {
+
     loading = false;
-    return;
-  }
 
-  fetch(`http://localhost:3000/board/${boardName}`, {
+    return;
+
+}
+
+fetch("http://localhost:3000/markTopicRead", {
+
+    method: "POST",
+
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": localStorage.getItem("token")
+    },
+
+    body: JSON.stringify({
+        boardName,
+        topic: currentTopic
+    })
+
+})
+.then(res => res.json())
+.then(data => {
+
+    console.log("MARK TOPIC READ:", data);
+
+})
+.catch(console.error);
+
+fetch(`http://localhost:3000/board/${boardName}`, {
   headers: {
     "Authorization": localStorage.getItem("token")
   }
@@ -2155,7 +2212,7 @@ function loadMessage(forceScroll = false) {
 
     if (boardType === "notice") {
     categories = getCategories(boardType, noticeTemplate);
-}
+    }
 
     if (boardType === "notice" && !currentTopic) {
       clearMessages();
@@ -3661,26 +3718,6 @@ function submitTopic() {
 
     document.getElementById("cp_card").checked;
 
-/*
-    const exampleHeader =
-        document.getElementById("cp_exampleHeader");
-
-    const selectedOption =
-        exampleHeader.options[exampleHeader.selectedIndex];
-
-    const icon =
-        selectedOption.dataset.icon || "";
-*/
-/*
-    const headerText =
-        exampleHeader.value ||
-        document.getElementById("cp_header").value;
-
-    const header =
-        icon
-            ? `${icon} ${headerText}`
-            : headerText;
-*/
   const header = document.getElementById("cp_header").value;       
 
   const topic = document.getElementById("cp_topic").value;
@@ -3767,11 +3804,15 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
 
     const boardName = localStorage.getItem("boardName");
 
+    console.log("TOPICS BOARD:", boardName);
+console.log("TOPICS TOKEN:", localStorage.getItem("token"));
+
     return fetch("http://localhost:3000/topics", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
-        },
+        "Content-Type": "application/json",
+        "Authorization": localStorage.getItem("token")
+    },
         body: JSON.stringify({
             boardName,
             category
@@ -3780,6 +3821,12 @@ function loadTopicsFromDatabase(category, selectedTopic = "") {
     .then(r => r.json())
     .then(data => {
 
+        topics = data.topics;
+        /*
+        topicStates = data.topics;
+
+        renderCategories();
+*/
         if (data.topics.length === 0) {
 
             document.getElementById("boardTopicsView").innerHTML = "";
@@ -4547,8 +4594,9 @@ function loadTopicsForCreatePopup(category) {
 
   return fetch("http://localhost:3000/topics", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
+     headers: {
+      "Content-Type": "application/json",
+      "Authorization": localStorage.getItem("token")
     },
     body: JSON.stringify({
       boardName,
@@ -4564,6 +4612,8 @@ function loadTopicsForCreatePopup(category) {
       <option value="">${t("SELECT_EXISTING_TOPIC")}</option>
     `;
 
+        console.log("TOPICS DATA:", data);
+console.log("DATA.TOPICS:", data.topics);
         data.topics.forEach(item => {
 
           const option = document.createElement("option");

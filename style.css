@@ -16,6 +16,17 @@ body {
     user-select: none;
 }
 
+#logo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  z-index: 9999;
+  background: transparent;
+}
+
 #logoBox {
     position: absolute;
     display: flex;
@@ -108,7 +119,7 @@ body.index-page {
   content: "👑";
   position: absolute;
   top: 3px;
-  right: 4px;
+  left: 4px;
   font-size: 13px;
 }
 
@@ -199,7 +210,6 @@ body.index-page {
     min-height: 15px;
     transition: all 0.15s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    text-decoration: underline;
     overflow-wrap: anywhere;
 }
 
