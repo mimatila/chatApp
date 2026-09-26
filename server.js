@@ -2088,18 +2088,51 @@ app.post("/topicCounts", async (req, res) => {
 
     const { boardName } = req.body;
 
-    const sql = `
-        SELECT category, COUNT(DISTINCT topic) AS count
-        FROM boardMessages
-        WHERE board_id = (
-            SELECT id FROM boards WHERE name = ?
-        )
-        GROUP BY category
-    `;
+    const user = await authUser(req, boardName);
 
+    if (!user) {
+
+        return res.status(401).json({
+            success: false,
+            message: "LOGIN_AGAIN"
+        });
+
+    }
+
+    console.log("TOPIC COUNTS USER:", user.id);
+
+    const sql = `
+
+    SELECT
+        bm.category,
+        COUNT(DISTINCT bm.topic) AS count,
+        MAX(
+            CASE
+                WHEN uts.state = 0 THEN 1
+                ELSE 0
+            END
+        ) AS unread
+
+    FROM boardMessages bm
+
+    LEFT JOIN userTopicState uts
+        ON uts.board_id = bm.board_id
+        AND uts.topic = bm.topic
+        AND uts.user_id = ?
+
+    WHERE bm.board_id = (
+        SELECT id
+        FROM boards
+        WHERE name = ?
+    )
+
+    GROUP BY bm.category
+
+`;
     try {
 
-        const [result] = await pool.query(sql, [boardName]);
+        const [result] = await pool.query(sql, [user.id, boardName]);
+        console.log("TOPIC COUNTS RESULT:", result);
 
         res.json({
             success: true,

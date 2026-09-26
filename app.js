@@ -1114,25 +1114,27 @@ function renderTopics(topics) {
 
         const title = document.createElement("span");
         const topicText = document.createElement("span");
-        
+
         topicText.innerText = topic.topic;
         topicText.style.textDecoration = "underline";
 
         title.appendChild(topicText);
 
-        if (topic.state === 0) {
-            const star = document.createElement("span");
-            star.innerText = "\u00A0⭐";
-            title.appendChild(star);
-        }
-
         const count = document.createElement("span");
         count.className = "topic-count";
         count.innerText = `(${topic.count})`;
 
-        card.appendChild(title);
-        card.appendChild(count);
+        if (topic.state === 0) {
+            const star = document.createElement("span");
+            star.innerText = "⭐";
+            star.className = "topic-star";
+            card.appendChild(title);
+            card.appendChild(star);
+        } else {
+            card.appendChild(title);
+        }
 
+        card.appendChild(count);
 
         card.onclick = () => {
 
@@ -1162,6 +1164,67 @@ function renderTopics(topics) {
    
 }
 
+function backToCategoriesDirect() {
+
+    console.log("BACK TO CATEGORIES DIRECT");
+
+    document.getElementById("boardNewMsg").classList.remove("important-mode");
+    document.getElementById("boardNewMsg").classList.remove("info-mode");
+    document.getElementById("importantMode").checked = false;
+    document.getElementById("infoMode").checked = false;
+
+    const msg = document.getElementById("boardMessagesDiv");
+    const boardType = localStorage.getItem("boardType");
+    const noticeTemplate = localStorage.getItem("noticeTemplate");
+
+    const location = document.getElementById("currentLocation");
+    //const visited = document.getElementById("visitedUsers");
+
+    if (location) {
+      location.innerText = "";
+    }
+
+    /*
+    if (visited) {
+      visited.innerHTML="";
+    }
+    */
+
+    if (msg) {
+        msg.style.display = "none";
+        msg.innerHTML = "";
+    }
+
+    loadTopicCounts();
+
+    document.getElementById("boardCategoriesView").style.display = "grid";
+    document.getElementById("backToCategoriesBtn").style.display = "block";
+    document.getElementById("backToCategoriesBtn").style.visibility = "visible";
+    document.getElementById("currentLocation").style.display = "block";
+    document.getElementById("currentLocation").style.visibility = "hidden";
+    document.getElementById("boardTopicsView").innerHTML = "";
+    document.getElementById("boardTopicsView").style.display = "none";
+    document.getElementById("saunaBtn").style.display = "none";
+    document.getElementById("autoBtn").style.display = "none";
+    document.getElementById("clearBtn").style.display = "none";
+
+    if (
+        boardType === "notice" &&
+        noticeTemplate === "taloyhtio"
+    ) {
+        document.getElementById("saunaBtn").style.display = "block";
+        document.getElementById("autoBtn").style.display = "block";
+       
+    }
+
+    currentCategory = "";
+    currentTopic = "";
+    
+    localStorage.removeItem("currentCategory");
+    localStorage.removeItem("currentTopic");
+
+    //updateCurrentLocation();
+}
 
 //BCF
 
@@ -1202,6 +1265,8 @@ function backToCategories() {
         msg.style.display = "none";
         msg.innerHTML = "";
     }
+
+    loadTopicCounts();
 
     document.getElementById("boardCategoriesView").style.display = "grid";
     document.getElementById("backToCategoriesBtn").style.display = "block";
@@ -4416,8 +4481,9 @@ function loadTopicCounts() {
 
     fetch("http://localhost:3000/topicCounts", {
         method:"POST",
-        headers:{
-            "Content-Type":"application/json"
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token")
         },
         body:JSON.stringify({
             boardName
@@ -4441,10 +4507,21 @@ function loadTopicCounts() {
         );
 
         if (card) {
-            card.innerHTML = `${t(category)} (${count})`;
-        }
 
-    });
+    card.innerHTML = `${t(category)} (${count})`;
+
+    if (c && c.unread === 1) {
+
+        const star = document.createElement("span");
+
+        star.className = "category-star";
+        star.innerText = "⭐";
+
+        card.appendChild(star);
+    }
+}
+
+        });
 
 });
 }
