@@ -25,11 +25,10 @@
 <div id="visitedUsers" class="visited-users"></div>
 
 <div id="currentLocationRow">
-    <button id="backToCategoriesBtn2" onclick="backToCategoriesDirect()">
-        <span>🏠</span> 
-    </button>
+    <button id="topicBtn" onclick="openTopicPopup()"><span>📝</span></button>
+    <!--<button id="backToCategoriesBtn2" onclick="backToCategoriesDirect()"><span>🏠</span></button>-->
     <div id="currentLocation"></div>
-
+    <button id="clearBtn" class="clearBtn" onclick="clearTable()"><span>🗑️</span></button>
 </div>
 
 <!-- viestit -->
@@ -50,7 +49,8 @@
 <div class="message-options">
   <div class="left-actions"> 
     <button id="messageBtn" onclick="openTopicPopup()"><span>📝</span></button>
-    <button id="topicBtn" onclick="openTopicPopup()"><span>📝</span></button>
+    <!--<button id="topicBtn" onclick="openTopicPopup()"><span>📝</span></button>-->
+    <button id="backToCategoriesBtn2" onclick="backToCategoriesDirect()"><span>🏠</span></button>
     <button id="backToCategoriesBtn" onclick="backToCategories()"><span>◀</span></button> 
   </div>
   <div class="checkbox-actions"> 
@@ -75,7 +75,7 @@
 </label>
   </div>
   <div class="right-action"> 
-    <button id="clearBtn" class="clearBtn" onclick="clearTable()">🗑️</button>
+    <!--<button id="clearBtn" class="clearBtn" onclick="clearTable()">🗑️</button>-->
 </div>
 </div>
 
@@ -86,7 +86,7 @@
     </span>
     <div class="input-row">
     <input id="boardNewMsg" placeholder="Write message...">
-    <button id="sendBtn" onclick="updateMessage()">▶</button>
+    <button id="sendBtn" onclick="updateMessage()"><span>▶</span></button>
     </div>
   </div>
   <button id="menuBtn">☰</button>

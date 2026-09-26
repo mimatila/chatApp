@@ -181,25 +181,12 @@ body.index-page {
 
 #currentLocationRow {
     position: relative;
-    height: 25px;
+    height: 35px;
     display: flex;
     margin-bottom: 5px;
     align-items: center;
     justify-content: center;
 }
-
-#backToCategoriesBtn2 {
-    position: absolute;
-    background-color: lightgreen;
-    height:29px;
-    width: 35px;
-    left: 45px;   
-}
-
-#backToCategoriesBtn2 span {
-    display: inline-block;
-    transform: translate(-8px,-5px);
-} 
 
 #boardTopicsView {
     flex: 1;
@@ -735,18 +722,43 @@ button {
     transform: translate(-1px, -1px);
     font-size: 17px;
 }
-
+/*
 #topicBtn {
     background-color: lightgreen;
     height:34px;
     width: 40px;
-}
+}*/
 
+#topicBtn {
+    position: absolute;
+    background-color: lightgreen;
+    height:34px;
+    width: 40px;
+    left: 45px;
+}
+/*
 #topicBtn span {
     display: block;
     transform: translate(-1px, -1px);
     font-size: 17px;
+}*/
+
+#topicBtn span {
+    display: inline-block;
+    transform: translate(-5px,-3px);
 }
+
+#backToCategoriesBtn2 {
+    background-color: lightgreen;
+    height:34px;
+    width: 40px;  
+}
+
+#backToCategoriesBtn2 span {
+    display: block;
+    transform: translate(-1px, -1px);
+    font-size: 17px;
+} 
 
 #backToCategoriesBtn {
     display:none;
@@ -758,6 +770,7 @@ button {
 #backToCategoriesBtn span {
     display: block;
     transform: translate(-1px, -2px);
+    font-size: 17px;
 }
 
 #cp_existingTopic {
@@ -863,7 +876,14 @@ button {
 
 .input-row #sendBtn {
     width: 40px !important;
+    background-color: lightgreen;
     flex: 0 0 60px;
+}
+
+.input-row #sendBtn span {
+    display: inline-block;
+    font-size: 17px;
+    transform: translate(2px,-2px);
 }
 
 .login-box .language-select {
@@ -1440,13 +1460,28 @@ input::placeholder {
     margin-right: 8px;
 }
 
+/*
 .clearBtn {
     display:flex;
     justify-content:center;
     align-items:center;
-    height:34px; 
-    background-color: lightyellow;
+    height:34px;
+    width: 40px;
+    background-color: white;
+}*/
+
+.clearBtn {
+    position: absolute;
+    background-color: black;
+    height:34px;
+    width: 40px;
+    right: 45px;
 }
+
+.clearBtn span{
+  display: inline-block;
+  transform: translate(-5px,-3px);
+} 
 
 @media (max-width: 600px) {
 
@@ -1482,6 +1517,32 @@ input::placeholder {
         font-size: 12px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+
+    .clearBtn {
+      right: 10px;
+    }
+
+    .clearBtn span{
+      display: inline-block;
+      font-size: 12px;
+      transform: translate(0,1px);
+    } 
+
+    #topicBtn {
+      left: 10px;
+    }
+
+    #topicBtn span{
+      display: inline-block;
+      font-size: 12px;
+      transform: translate(-4px,-4px);
+    } 
+
+    .input-row #sendBtn span {
+    display: inline-block;
+    font-size: 17px;
+    transform: translate(2px,-4px);
+}
 
     .message-options {
         justify-content: left;
@@ -1539,7 +1600,6 @@ input::placeholder {
     }
 
     #backToCategoriesBtn {
-      height:30px;
       font-size: 10px;
     }
 
